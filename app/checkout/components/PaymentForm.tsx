@@ -44,12 +44,26 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
     if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4 (Visa) أو 5 (Mastercard)"); return; }
     if (!luhn(rawCard)) { setCardError("رقم البطاقة غير صحيح"); return; }
     setCardError("");
-    const [expMonth, expYear] = fields.age.split("/").map(Number);
+    const parts = fields.age.split("/");
+    const expMonth = Number(parts[0]);
+    const expYear = Number(parts[1]);
     const now = new Date();
+    if (!expMonth || !expYear || parts[0]?.length !== 2 || parts[1]?.length !== 2) {
+      setExpiryError("⚠️ يرجى إدخال تاريخ انتهاء صحيح بصيغة MM/YY");
+      return;
+    }
+    if (expMonth < 1 || expMonth > 12) {
+      setExpiryError("⚠️ الشهر يجب أن يكون بين 01 و 12");
+      return;
+    }
     const cardDate = new Date(2000 + expYear, expMonth - 1, 1);
     const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    if (!expMonth || !expYear || cardDate < currentMonth) {
+    if (cardDate < currentMonth) {
       setExpiryError("⚠️ تاريخ انتهاء البطاقة منتهي، يرجى استخدام بطاقة سارية");
+      return;
+    }
+    if (2000 + expYear > now.getFullYear() + 10) {
+      setExpiryError("⚠️ تاريخ انتهاء البطاقة غير صحيح");
       return;
     }
     setExpiryError("");

