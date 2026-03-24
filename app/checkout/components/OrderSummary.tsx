@@ -1,4 +1,4 @@
-const fmt = (n: number) => n.toLocaleString("ar-SA");
+const fmt = (n: number) => n.toLocaleString("en-US");
 
 export default function OrderSummary({ total, downPayment }: { total: number; downPayment: number }) {
   return (
