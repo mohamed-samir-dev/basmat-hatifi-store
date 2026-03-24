@@ -31,7 +31,10 @@ export interface Product {
   installment?: {
     available: boolean;
     downPayment?: number;
+    months?: number;
     note?: string;
+    conditions?: string[];
+    policy?: string;
   };
   taxIncluded: boolean;
   category?: string;
