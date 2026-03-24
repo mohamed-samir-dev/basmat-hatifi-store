@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { IoCartOutline } from "react-icons/io5";
 import type { Product } from "./types";
 
@@ -20,7 +21,7 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* Image */}
       <div className="relative aspect-square bg-gray-50">
         {image ? (
-          <img src={image} alt={name} className="w-full h-full object-contain p-4" />
+          <Image src={image} alt={name} fill className="object-contain p-4" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300 text-5xl">📱</div>
         )}
