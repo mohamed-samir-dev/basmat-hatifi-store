@@ -33,18 +33,27 @@ export default function Navbar() {
     <nav className="bg-white shadow-md sticky top-0 z-50" dir="rtl">
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
         <div className="flex items-center justify-between h-12 sm:h-16">
-          {/* Logo - responsive sizing */}
-          <Link href="/" className="shrink-0">
-            <Image
-              src="/removelogo.webp"
-              alt="Logo"
-              width={120}
-              height={40}
-              className="object-contain w-[65px] xs:w-[80px] sm:w-[100px] md:w-[120px]"
-              style={{ width: "auto", height: "auto" }}
-              priority
-            />
-          </Link>
+          {/* Logo + Hamburger */}
+          <div className="flex items-center gap-1">
+            <button
+              aria-label="القائمة"
+              className="lg:hidden p-1 sm:p-2 text-gray-600 hover:text-purple-700 rounded-full transition-colors"
+              onClick={() => setMobileOpen(!mobileOpen)}
+            >
+              {mobileOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
+            <Link href="/" className="shrink-0">
+              <Image
+                src="/removelogo.webp"
+                alt="Logo"
+                width={120}
+                height={40}
+                className="object-contain w-[65px] xs:w-[80px] sm:w-[100px] md:w-[120px]"
+                style={{ width: "auto", height: "auto" }}
+                priority
+              />
+            </Link>
+          </div>
 
           <DesktopNav items={navItems} />
 
@@ -61,13 +70,6 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-            <button
-              aria-label="القائمة"
-              className="lg:hidden p-1 sm:p-2 text-gray-600 hover:text-purple-700 rounded-full transition-colors"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <CloseIcon /> : <MenuIcon />}
-            </button>
           </div>
         </div>
       </div>
