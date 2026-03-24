@@ -59,8 +59,8 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
               )}
               {/* Dropdown with animation */}
               <div
-                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                  item.children && openDropdown === item.label ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                className={`transition-all duration-300 ease-in-out ${
+                  item.children && openDropdown === item.label ? "max-h-96 opacity-100 overflow-y-auto" : "max-h-0 opacity-0 overflow-hidden"
                 }`}
               >
                 <div className="bg-gray-50 py-1">
