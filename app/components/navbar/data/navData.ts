@@ -89,10 +89,10 @@ export const navItems: NavItem[] = [
     label: "ألعاب الفيديو",
     href: "/games",
     children: [
-      { label: "ماوسات وكيبوردات ألعاب", href: "/games/ps5-games" },
-      { label: "مايكروفونات", href: "/games/ps5-games" },
-      { label: "مجسمات وفيقرز", href: "/games/ps5-games" },
-      { label: " اضاءات RGB", href: "/games/ps5-games" },
+      { label: "ماوسات وكيبوردات ألعاب", href: "/games/mice-keyboards" },
+      { label: "مايكروفونات", href: "/games/microphones" },
+      { label: "مجسمات وفيقرز", href: "/games/figures" },
+      { label: " اضاءات RGB", href: "/games/rgb-lighting" },
     ],
   },
 ];

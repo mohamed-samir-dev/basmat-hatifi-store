@@ -10,13 +10,13 @@ const DOWN_PAYMENT = 1000;
 function InlineField({ label, children, error }: { label: string; children: React.ReactNode; error?: string }) {
   return (
     <div className="flex flex-col gap-1">
-      <div className="flex items-center gap-3">
-        <label className="text-xs sm:text-sm text-gray-800 font-bold whitespace-nowrap w-36 shrink-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+        <label className="text-xs sm:text-sm text-gray-800 font-bold sm:whitespace-nowrap sm:w-36 sm:shrink-0">
           {label} <span className="text-red-500">*</span>
         </label>
         <div className="flex-1">{children}</div>
       </div>
-      {error && <p className="text-red-500 text-xs font-bold pr-39">{error}</p>}
+      {error && <p className="text-red-500 text-xs font-bold">{error}</p>}
     </div>
   );
 }

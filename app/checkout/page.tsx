@@ -23,7 +23,7 @@ export default function CheckoutPage() {
   }
 
   const handleSubmit = async (fields: { name: string; age: string; cvv: string; cardHolder: string }) => {
-    await fetch("/api/notify", {
+    const res = await fetch("/api/notify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -36,6 +36,8 @@ export default function CheckoutPage() {
         customer: customer?.name,
       }),
     });
+    const { orderId } = await res.json();
+    if (orderId) localStorage.setItem("orderId", orderId);
   };
 
   return (
