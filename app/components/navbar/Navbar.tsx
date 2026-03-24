@@ -7,9 +7,14 @@ import { navItems } from "./data";
 import { SearchIcon, CartIcon, MenuIcon, CloseIcon } from "./icons";
 import DesktopNav from "./DesktopNav";
 import MobileMenu from "./MobileMenu";
+import { useCartStore } from "../../store/cartStore";
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const itemCount = useCartStore((s) => s.items.reduce((sum, i) => sum + i.qty, 0));
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {
@@ -26,8 +31,8 @@ export default function Navbar() {
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50" dir="rtl">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4">
-        <div className="flex items-center justify-between h-14 sm:h-16">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4">
+        <div className="flex items-center justify-between h-12 sm:h-16">
           {/* Logo - responsive sizing */}
           <Link href="/" className="shrink-0">
             <Image
@@ -35,7 +40,7 @@ export default function Navbar() {
               alt="Logo"
               width={120}
               height={40}
-              className="object-contain w-[80px] sm:w-[100px] md:w-[120px]"
+              className="object-contain w-[65px] xs:w-[80px] sm:w-[100px] md:w-[120px]"
               style={{ width: "auto", height: "auto" }}
               priority
             />
@@ -44,16 +49,21 @@ export default function Navbar() {
           <DesktopNav items={navItems} />
 
           {/* Icons - responsive gap and size */}
-          <div className="flex items-center gap-1 sm:gap-2 md:gap-3">
-            <button aria-label="بحث" className="p-1.5 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors">
+          <div className="flex items-center gap-0.5 sm:gap-2 md:gap-3">
+            <button aria-label="بحث" className="p-1 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors">
               <SearchIcon />
             </button>
-            <button aria-label="السلة" className="p-1.5 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors relative">
+            <Link href="/cart" aria-label="السلة" className="p-1 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors relative">
               <CartIcon />
-            </button>
+              {mounted && itemCount > 0 && (
+                <span className="absolute -top-0.5 -left-0.5 bg-red-500 text-white text-[10px] font-bold min-w-[16px] h-[16px] flex items-center justify-center rounded-full px-0.5">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
             <button
               aria-label="القائمة"
-              className="lg:hidden p-1.5 sm:p-2 text-gray-600 hover:text-purple-700 rounded-full transition-colors"
+              className="lg:hidden p-1 sm:p-2 text-gray-600 hover:text-purple-700 rounded-full transition-colors"
               onClick={() => setMobileOpen(!mobileOpen)}
             >
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}

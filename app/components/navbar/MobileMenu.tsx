@@ -22,7 +22,7 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
     <>
       {/* Overlay */}
       <div
-        className={`lg:hidden fixed inset-0 top-14 sm:top-16 bg-black/40 z-40 transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 top-12 sm:top-16 bg-black/40 z-40 transition-opacity duration-300 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         }`}
         onClick={onClose}
@@ -30,8 +30,8 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
 
       {/* Menu Panel */}
       <div
-        className={`lg:hidden fixed top-14 sm:top-16 right-0 w-[280px] sm:w-[320px] h-[calc(100dvh-3.5rem)] sm:h-[calc(100dvh-4rem)] bg-white z-50 overflow-y-auto shadow-2xl transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
+        className={`lg:hidden fixed top-12 sm:top-16 right-0 w-[75vw] max-w-[320px] h-[calc(100dvh-3rem)] sm:h-[calc(100dvh-4rem)] bg-white z-50 overflow-y-auto shadow-2xl transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "translate-x-[110%]"
         }`}
         dir="rtl"
       >
