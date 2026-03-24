@@ -1,0 +1,161 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import type { CustomerInfo } from "../../store/cartStore";
+
+const fmt = (n: number) => n.toLocaleString("ar-SA");
+const MONTHS_OPTIONS = Array.from({ length: 24 }, (_, i) => i + 1);
+const DOWN_PAYMENT = 1000;
+
+function InlineField({ label, children, error }: { label: string; children: React.ReactNode; error?: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-3">
+        <label className="text-xs sm:text-sm text-gray-800 font-bold whitespace-nowrap w-36 shrink-0">
+          {label} <span className="text-red-500">*</span>
+        </label>
+        <div className="flex-1">{children}</div>
+      </div>
+      {error && <p className="text-red-500 text-xs font-bold pr-39">{error}</p>}
+    </div>
+  );
+}
+
+interface CustomerFormProps {
+  total: number;
+  initialData?: CustomerInfo | null;
+  onSubmit: (info: CustomerInfo) => void;
+}
+
+export default function CustomerForm({ total, initialData, onSubmit }: CustomerFormProps) {
+  const [name, setName] = useState(initialData?.name ?? "");
+  const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
+  const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");
+  const [address, setAddress] = useState(initialData?.address ?? "");
+  const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "full");
+  const [months, setMonths] = useState(initialData?.months ?? 3);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const monthlyPayment = useMemo(() => {
+    if (installmentType === "full") return 0;
+    const remaining = total - DOWN_PAYMENT;
+    return remaining > 0 ? Math.ceil(remaining / months) : 0;
+  }, [total, months, installmentType]);
+
+  const schedule = useMemo(() => {
+    const now = new Date();
+    return Array.from({ length: months }, (_, i) => {
+      const d = new Date(now.getFullYear(), now.getMonth() + i + 1, now.getDate());
+      return {
+        index: i + 1,
+        date: `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`,
+        amount: monthlyPayment,
+      };
+    });
+  }, [months, monthlyPayment]);
+
+  const inputClass = (field: string) =>
+    `w-full border rounded-xl px-3 py-2.5 text-sm text-gray-900 focus:outline-none transition placeholder:text-gray-400 ${
+      errors[field]
+        ? "border-red-400 focus:border-red-400 focus:ring-1 focus:ring-red-400/20"
+        : "border-gray-300 focus:border-teal-400 focus:ring-1 focus:ring-teal-400/20"
+    }`;
+
+  const handleSubmit = () => {
+    const newErrors: Record<string, string> = {};
+    if (!name.trim()) newErrors.name = "مطلوب";
+    if (!nationalId.trim()) newErrors.nationalId = "مطلوب";
+    if (!whatsapp.trim()) newErrors.whatsapp = "مطلوب";
+    if (!address.trim()) newErrors.address = "مطلوب";
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
+      onSubmit({ name, nationalId, whatsapp, address, installmentType, months });
+    }
+  };
+
+  return (
+    <>
+      <div className="bg-white rounded-2xl p-3 sm:p-4 space-y-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+        <InlineField label="الاسم كاملاً" error={errors.name}>
+          <input value={name} onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }} placeholder="محمد أحمد" className={inputClass("name")} />
+        </InlineField>
+        <InlineField label="رقم الهوية / الإقامة" error={errors.nationalId}>
+          <input value={nationalId} onChange={(e) => { setNationalId(e.target.value); setErrors((p) => ({ ...p, nationalId: "" })); }} placeholder="10XXXXXXXX" className={inputClass("nationalId")} />
+        </InlineField>
+        <InlineField label="رقم الواتساب" error={errors.whatsapp}>
+          <input type="tel" value={whatsapp} onChange={(e) => { setWhatsapp(e.target.value); setErrors((p) => ({ ...p, whatsapp: "" })); }} placeholder="05XXXXXXXX" className={inputClass("whatsapp")} />
+        </InlineField>
+        <InlineField label="العنوان" error={errors.address}>
+          <input value={address} onChange={(e) => { setAddress(e.target.value); setErrors((p) => ({ ...p, address: "" })); }} placeholder="المدينة - الحي - الشارع" className={inputClass("address")} />
+        </InlineField>
+
+        <div className="border-t border-gray-200 pt-3" />
+
+        <InlineField label="آلية التقسيط">
+          <select
+            value={installmentType === "full" ? "full" : String(months)}
+            onChange={(e) => {
+              if (e.target.value === "full") {
+                setInstallmentType("full");
+              } else {
+                setInstallmentType("installment");
+                setMonths(Number(e.target.value));
+              }
+            }}
+            className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-900 bg-white focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400/20 transition cursor-pointer"
+          >
+            <option value="full">سداد المبلغ كاملاً</option>
+            {MONTHS_OPTIONS.map((m) => (
+              <option key={m} value={m}>تقسيط {m} شهر</option>
+            ))}
+          </select>
+        </InlineField>
+
+        {installmentType === "installment" && (
+          <>
+            <InlineField label="الدفعة الأولى">
+              <div className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-900">
+                {fmt(DOWN_PAYMENT)} ر.س
+              </div>
+            </InlineField>
+            <InlineField label="القسط الشهري">
+              <div className="w-full bg-teal-50 border border-teal-200 rounded-xl px-3 py-2.5 text-sm font-extrabold text-teal-800">
+                {fmt(monthlyPayment)} ر.س
+              </div>
+            </InlineField>
+
+            {months > 0 && (
+              <div className="rounded-xl overflow-hidden border border-gray-100 mt-1">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="py-2 px-3 text-right text-xs sm:text-sm font-bold text-gray-600">#</th>
+                      <th className="py-2 px-3 text-right text-xs sm:text-sm font-bold text-gray-600">التاريخ</th>
+                      <th className="py-2 px-3 text-right text-xs sm:text-sm font-bold text-gray-600">المبلغ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {schedule.map((row, i) => (
+                      <tr key={row.index} className={i % 2 === 0 ? "bg-white" : "bg-gray-50/50"}>
+                        <td className="py-2 px-3 text-gray-500 font-bold text-xs sm:text-sm">{row.index}</td>
+                        <td className="py-2 px-3 text-gray-700 text-xs sm:text-sm">{row.date}</td>
+                        <td className="py-2 px-3 font-bold text-gray-900 text-xs sm:text-sm">{fmt(row.amount)} ر.س</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <button
+        onClick={handleSubmit}
+        className="w-full bg-teal-500 hover:bg-teal-600 active:scale-[0.98] text-white font-bold py-3.5 rounded-2xl transition-all text-sm shadow-lg shadow-teal-500/20"
+      >
+        التالي
+      </button>
+    </>
+  );
+}
