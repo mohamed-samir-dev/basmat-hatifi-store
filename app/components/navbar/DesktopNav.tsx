@@ -19,9 +19,11 @@ export default function DesktopNav({ items }: DesktopNavProps) {
             className="flex items-center gap-1 px-2 xl:px-3 py-2 text-xs xl:text-sm font-medium text-gray-700 hover:text-purple-700 rounded-md hover:bg-purple-50 transition-colors whitespace-nowrap"
           >
             {item.label}
-            {item.children && <ChevronDownIcon />}
+          {(item.children || item.groups) && <ChevronDownIcon />}
           </Link>
-          {item.children && <DropdownMenu items={item.children} />}
+          {(item.children || item.groups) && (
+            <DropdownMenu items={item.children} groups={item.groups} />
+          )}
         </div>
       ))}
     </div>

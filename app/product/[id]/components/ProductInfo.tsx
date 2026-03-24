@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { IoCartOutline, IoCheckmarkCircle, IoShieldCheckmark, IoTimeOutline, IoCarOutline, IoCheckmarkDoneCircle } from "react-icons/io5";
 import type { Product } from "../../../components/products/types";
 
-const fmt = (n: number) => n.toLocaleString("ar-SA");
+const fmt = (n: number) => n.toLocaleString("en-US");
 
 interface ProductInfoProps {
   product: Product;

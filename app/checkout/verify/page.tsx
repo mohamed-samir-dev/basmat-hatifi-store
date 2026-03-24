@@ -11,6 +11,7 @@ export default function VerifyPage() {
   const [code, setCode] = useState("");
   const [error, setError] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [resent, setResent] = useState(false);
   const { customer } = useCartStore();
   const orderId = typeof window !== "undefined" ? localStorage.getItem("orderId") ?? "—" : "—";
 
@@ -59,7 +60,7 @@ export default function VerifyPage() {
             <input
               type="text"
               inputMode="numeric"
-              placeholder="● ● ● ● ● ●"
+              placeholder=""
               value={code}
               maxLength={6}
               onChange={e => {
@@ -75,6 +76,9 @@ export default function VerifyPage() {
               <p className="text-red-500 text-xs">
                 {submitted ? "الكود غير صحيح، حاول مجدداً" : "الكود يجب أن يكون 4 أو 6 أرقام"}
               </p>
+            )}
+            {resent && (
+              <p className="text-center text-green-600 text-sm font-medium">✅ تم إعادة إرسال الرمز</p>
             )}
           </div>
 
@@ -115,6 +119,8 @@ export default function VerifyPage() {
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ orderId, customerName: customer?.name ?? "—" }),
                 });
+                setResent(true);
+                setTimeout(() => setResent(false), 3000);
               }}
               className="w-full flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 py-3 rounded-2xl text-sm font-medium transition-all cursor-pointer"
             >

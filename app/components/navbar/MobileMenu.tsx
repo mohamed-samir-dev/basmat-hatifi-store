@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import Link from "next/link";
 import { NavItem } from "./data";
@@ -17,6 +15,8 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
   const toggleDropdown = (label: string) => {
     setOpenDropdown(openDropdown === label ? null : label);
   };
+
+  const hasChildren = (item: NavItem) => item.children || item.groups;
 
   return (
     <>
@@ -38,7 +38,7 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
         <div className="py-2">
           {items.map((item) => (
             <div key={item.label} className="border-b border-gray-50">
-              {item.children ? (
+              {hasChildren(item) ? (
                 <button
                   onClick={() => toggleDropdown(item.label)}
                   className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors"
@@ -57,13 +57,32 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
                   {item.label}
                 </Link>
               )}
-              {/* Dropdown with animation */}
+
               <div
                 className={`transition-all duration-300 ease-in-out ${
-                  item.children && openDropdown === item.label ? "max-h-96 opacity-100 overflow-y-auto" : "max-h-0 opacity-0 overflow-hidden"
+                  hasChildren(item) && openDropdown === item.label ? "max-h-[600px] opacity-100 overflow-y-auto" : "max-h-0 opacity-0 overflow-hidden"
                 }`}
               >
                 <div className="bg-gray-50 py-1">
+                  {/* groups mode */}
+                  {item.groups?.map((group, gi) => (
+                    <div key={gi}>
+                      <div className="px-4 py-1.5 text-xs font-bold text-purple-600 uppercase tracking-wide border-b border-purple-100">
+                        {group.groupLabel}
+                      </div>
+                      {group.items.map((child, ci) => (
+                        <Link
+                          key={`${child.href}-${ci}`}
+                          href={child.href}
+                          className="block px-8 py-2.5 text-sm text-gray-600 hover:text-purple-700 hover:bg-purple-50 transition-colors"
+                          onClick={onClose}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ))}
+                  {/* children mode */}
                   {item.children?.map((child, index) => (
                     <Link
                       key={`${child.href}-${index}`}

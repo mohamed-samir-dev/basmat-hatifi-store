@@ -3,9 +3,8 @@
 import { useState, useMemo } from "react";
 import type { CustomerInfo } from "../../store/cartStore";
 
-const fmt = (n: number) => n.toLocaleString("ar-SA");
+const fmt = (n: number) => n.toLocaleString("en-US");
 const MONTHS_OPTIONS = Array.from({ length: 24 }, (_, i) => i + 1);
-const DOWN_PAYMENT = 1000;
 
 function InlineField({ label, children, error }: { label: string; children: React.ReactNode; error?: string }) {
   return (
@@ -23,11 +22,13 @@ function InlineField({ label, children, error }: { label: string; children: Reac
 
 interface CustomerFormProps {
   total: number;
+  itemCount: number;
   initialData?: CustomerInfo | null;
   onSubmit: (info: CustomerInfo) => void;
 }
 
-export default function CustomerForm({ total, initialData, onSubmit }: CustomerFormProps) {
+export default function CustomerForm({ total, itemCount, initialData, onSubmit }: CustomerFormProps) {
+  const DOWN_PAYMENT = itemCount * 1000;
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");

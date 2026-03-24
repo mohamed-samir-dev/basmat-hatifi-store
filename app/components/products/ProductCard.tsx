@@ -8,7 +8,7 @@ import { IoCartOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 import type { Product } from "./types";
 import { useCartStore } from "../../store/cartStore";
 
-const fmt = (n: number) => n.toLocaleString("ar-SA");
+const fmt = (n: number) => n.toLocaleString("en-US");
 
 export default function ProductCard({ product }: { product: Product }) {
   const { name, salePrice, discountPercent = 0, image } = product;
