@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { API } from "../../lib/api";
+import { apiFetch } from "../../lib/api";
 
 type SubCat = { name: string; category: string; count: number };
 
@@ -28,12 +28,12 @@ export default function SubCategoriesPage() {
   const [confirmDelete, setConfirmDelete] = useState<SubCat | null>(null);
 
   async function fetchData() {
-    const res = await fetch(`${API}/api/admin/sub-categories`, { credentials: "include" });
+    const res = await apiFetch("/api/admin/sub-categories", { credentials: "include" });
     if (res.ok) setItems(await res.json());
   }
 
   useEffect(() => {
-    fetch(`${API}/api/admin/sub-categories`, { credentials: "include" })
+    apiFetch("/api/admin/sub-categories", { credentials: "include" })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => { if (data) setItems(data); });
   }, []);
@@ -42,7 +42,7 @@ export default function SubCategoriesPage() {
     e.preventDefault();
     if (!editItem) return;
     setEditLoading(true);
-    const res = await fetch(`${API}/api/admin/sub-categories/rename`, {
+    const res = await apiFetch("/api/admin/sub-categories/rename", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -57,7 +57,7 @@ export default function SubCategoriesPage() {
 
   async function handleDelete() {
     if (!confirmDelete) return;
-    const res = await fetch(`${API}/api/admin/sub-categories/remove`, {
+    const res = await apiFetch("/api/admin/sub-categories/remove", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

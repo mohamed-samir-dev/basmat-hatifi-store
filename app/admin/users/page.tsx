@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { API } from "../../lib/api";
+
 
 type Admin = { _id: string; name: string; email: string; phone: string; createdAt: string };
 
@@ -34,6 +34,8 @@ export default function UsersPage() {
   const [editFormErrors, setEditFormErrors] = useState({ email: "", password: "" });
 
   const arabicRegex = /[\u0600-\u06FF]/;
+  const objectIdRegex = /^[a-f0-9]{24}$/i;
+  function safeId(id: string) { return objectIdRegex.test(id) ? id : ""; }
   const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9\u0600-\u06FF]).{8,}$/;
 
@@ -52,15 +54,15 @@ export default function UsersPage() {
     return "";
   }
 
+  const ADMIN_USERS_URL = "/api/admin/users" as const;
+
   async function fetchAdmins() {
-    const res = await fetch(`${API}/api/admin/users`, { credentials: "include" });
+    const res = await fetch(ADMIN_USERS_URL);
     if (res.ok) setAdmins(await res.json());
   }
 
   useEffect(() => {
-    fetch(`${API}/api/admin/users`, { credentials: "include" })
-      .then((res) => res.ok ? res.json() : null)
-      .then((data) => { if (data) setAdmins(data); });
+    fetch(ADMIN_USERS_URL).then((res) => res.ok ? res.json() : null).then((data) => { if (data) setAdmins(data); });
   }, []);
 
   async function handleAdd(e: React.FormEvent) {
@@ -71,10 +73,9 @@ export default function UsersPage() {
     if (emailErr || passErr) return;
     setError("");
     setLoading(true);
-    const res = await fetch(`${API}/api/admin/users`, {
+    const res = await fetch("/api/admin/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify(form),
     });
     const data = await res.json();
@@ -94,10 +95,11 @@ export default function UsersPage() {
     if (emailErr || passErr) return;
     setEditError("");
     setEditLoading(true);
-    const res = await fetch(`${API}/api/admin/users/${editAdmin!._id}`, {
+    const id = safeId(editAdmin!._id);
+    if (!id) return setEditError("معرّف غير صالح");
+    const res = await fetch(`/api/admin/users/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",
       body: JSON.stringify(editForm),
     });
     const data = await res.json();
@@ -116,13 +118,14 @@ export default function UsersPage() {
     if (!confirmDelete) return;
     const { id, name } = confirmDelete;
     setConfirmDelete(null);
-    const res = await fetch(`${API}/api/admin/users/${id}`, { method: "DELETE", credentials: "include" });
+    const safeDeleteId = safeId(id);
+    if (!safeDeleteId) return toast.error("معرّف غير صالح");
+    const res = await fetch(`/api/admin/users/${safeDeleteId}`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) return toast.error(data.error);
     toast.success(`تم حذف ${name} بنجاح ✅`);
     fetchAdmins();
   }
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6 gap-3">

@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { API } from "../../../../lib/api";
 
 type ColorVariant = { color: string; images: string[] };
 
@@ -60,7 +59,7 @@ export default function EditProductPage() {
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch(`${API}/api/admin/products/${id}`, { credentials: "include" })
+    fetch(`/api/admin/products/${id}`, { credentials: "include" })
       .then((r) => r.json())
       .then((p) => {
         setForm({
@@ -143,7 +142,7 @@ export default function EditProductPage() {
 
       if (newImageFile) fd.append("image", newImageFile);
 
-      const res = await fetch(`${API}/api/admin/products/${id}`, {
+      const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         credentials: "include",
         body: fd,
@@ -174,7 +173,7 @@ export default function EditProductPage() {
     );
   }
 
-  const displayImage = newImagePreview || (currentImage ? `${API}${currentImage}?t=${imageTs}` : "");
+  const displayImage = newImagePreview || (currentImage ? `${currentImage}?t=${imageTs}` : "");
 
   return (
     <form onSubmit={handleSubmit} className="w-full">

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { API } from "../../lib/api";
+import { apiFetch } from "../../lib/api";
 const PAGE_SIZE = 10;
 
 interface Review {
@@ -42,14 +42,14 @@ export default function ReviewsPage() {
   const [commentPopup, setCommentPopup] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/api/admin/reviews/all`, { credentials: "include" })
+    apiFetch("/api/admin/reviews/all", { credentials: "include" })
       .then((r) => r.json())
       .then((data) => { if (Array.isArray(data)) setReviews(data); })
       .finally(() => setLoading(false));
   }, []);
 
   async function toggleApproved(id: string) {
-    const res = await fetch(`${API}/api/admin/reviews/${id}/toggle`, { method: "PATCH", credentials: "include" });
+    const res = await apiFetch(`/api/admin/reviews/${id}/toggle`, { method: "PATCH", credentials: "include" });
     const data = await res.json();
     if (!res.ok) return toast.error("حدث خطأ");
     setReviews((prev) => prev.map((r) => r._id === id ? { ...r, approved: data.approved } : r));
@@ -58,7 +58,7 @@ export default function ReviewsPage() {
 
   async function remove(id: string) {
     setConfirmDelete(null);
-    const res = await fetch(`${API}/api/admin/reviews/${id}`, { method: "DELETE", credentials: "include" });
+    const res = await apiFetch(`/api/admin/reviews/${id}`, { method: "DELETE", credentials: "include" });
     if (!res.ok) return toast.error("حدث خطأ");
     toast.success("تم حذف التعليق ✅");
     setReviews((prev) => prev.filter((r) => r._id !== id));
@@ -72,7 +72,7 @@ export default function ReviewsPage() {
   async function saveEdit() {
     if (!editReview) return;
     setSaving(true);
-    const res = await fetch(`${API}/api/admin/reviews/${editReview._id}`, {
+    const res = await apiFetch(`/api/admin/reviews/${editReview._id}`, {
       method: "PUT",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -88,7 +88,7 @@ export default function ReviewsPage() {
 
   async function saveAdd() {
     setSaving(true);
-    const res = await fetch(`${API}/api/admin/reviews/admin-add`, {
+    const res = await apiFetch("/api/admin/reviews/admin-add", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -275,7 +275,7 @@ export default function ReviewsPage() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setCommentPopup(null)}>
           <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-lg font-bold text-gray-800 mb-3">التعليق</h2>
-            <p className="text-sm text-gray-600 leading-relaxed break-words whitespace-pre-wrap">{commentPopup}</p>
+            <p className="text-sm text-gray-600 leading-relaxed wrap-break-word whitespace-pre-wrap">{commentPopup}</p>
             <button onClick={() => setCommentPopup(null)} className="mt-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold px-5 py-2 rounded-lg transition-colors">إغلاق</button>
           </div>
         </div>

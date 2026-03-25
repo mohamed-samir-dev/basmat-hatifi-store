@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { API } from "../../lib/api";
 
 type Product = {
   _id: string;
@@ -31,12 +30,12 @@ export default function ProductsPage() {
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
 
   async function fetchProducts() {
-    const res = await fetch(`${API}/api/products`, { credentials: "include" });
+    const res = await fetch("/api/products", { credentials: "include" });
     if (res.ok) setProducts(await res.json());
   }
 
   useEffect(() => {
-    fetch(`${API}/api/products`, { credentials: "include" })
+    fetch("/api/products", { credentials: "include" })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => { if (data) setProducts(data); });
   }, []);
@@ -45,7 +44,7 @@ export default function ProductsPage() {
     if (!confirmDelete) return;
     const { id, name } = confirmDelete;
     setConfirmDelete(null);
-    const res = await fetch(`${API}/api/products/${id}`, { method: "DELETE", credentials: "include" });
+    const res = await fetch(`/api/products/${id}`, { method: "DELETE", credentials: "include" });
     const data = await res.json();
     if (!res.ok) return toast.error(data.message || "فشل الحذف");
     toast.success(`تم حذف "${name}" بنجاح ✅`);

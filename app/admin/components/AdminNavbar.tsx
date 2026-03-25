@@ -4,7 +4,6 @@ import { Bell, LogOut, Menu } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useCompanyStore } from "../../store/companyStore";
-import { API } from "../../lib/api";
 
 export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
   const router = useRouter();
@@ -13,7 +12,7 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
   useEffect(() => { fetchLogo(); }, [fetchLogo]);
 
   const handleLogout = async () => {
-    await fetch(`${API}/api/admin/logout`, { method: "POST", credentials: "include" });
+    await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
     router.push("/admin/login");
   };
 
