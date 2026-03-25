@@ -45,14 +45,14 @@ export default function Navbar() {
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
             <Link href="/" className="shrink-0">
-              <div className="relative w-[100px] sm:w-[130px] md:w-[160px] h-10 sm:h-12">
+              <div className="relative w-[120px] sm:w-[150px] md:w-[180px] h-10 sm:h-12">
                 {logo && (
                   <Image
                     src={logo}
                     unoptimized
                     alt="Logo"
                     fill
-                    className="object-contain object-center"
+                    className="object-contain object-right-top"
                     priority
                     loading="eager"
                   />
