@@ -4,8 +4,7 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import type { Product } from "./types";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-const LIMIT = 8;
+const LIMIT = 4;
 
 // map category value → page path for "عرض الكل" link
 const categoryPageMap: Record<string, string> = {
@@ -94,7 +93,7 @@ export default function ProductGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API}/api/products`)
+    fetch("/api/products")
       .then((r) => r.json())
       .then(setProducts)
       .catch(console.error)

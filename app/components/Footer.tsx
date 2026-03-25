@@ -2,7 +2,30 @@ import Link from "next/link";
 import Image from "next/image";
 import { FaWhatsapp, FaMobileAlt, FaPhone, FaEnvelope } from "react-icons/fa";
 
-export default function Footer() {
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+async function getCompany() {
+  try {
+    const r = await fetch(`${API}/api/admin/company`, { next: { revalidate: 60 } });
+    return r.ok ? r.json() : {};
+  } catch {
+    return {};
+  }
+}
+
+export default async function Footer() {
+  const c = await getCompany();
+
+  const qrSrc: string = c.qrImage || "";
+  const qrLink: string = c.qrLink || "";
+
+  const footerItems: { image: string; linkType: string; link: string; file: string }[] =
+    (c.footerItems || []).filter((item: { image: string }) => item.image);
+
+  function getHref(item: { linkType: string; link: string; file: string }) {
+    return item.linkType === "link" ? item.link : item.file;
+  }
+
   return (
     <footer className="bg-gray-50 text-gray-600 mt-16" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8">
@@ -55,10 +78,28 @@ export default function Footer() {
               <span>ايميل</span>
             </li>
           </ul>
-          <div className="flex gap-3 flex-wrap">
-            {["/footer1.webp", "/footer2.webp", "/footer3.webp", "/footer4.webp"].map((src, i) => (
-              <Image key={i} src={src} alt={`footer-${i + 1}`} width={60} height={40} className="object-contain rounded" style={{ width: "auto" }} />
-            ))}
+
+          <div className="flex gap-3 flex-wrap items-center">
+            {/* QR */}
+            {qrSrc && (
+              qrLink
+                ? <a href={qrLink} target="_blank" rel="noreferrer">
+                    <Image src={qrSrc} alt="qr" width={55} height={55} className="object-contain rounded border border-gray-200 bg-white p-1" style={{ width: "auto" }} />
+                  </a>
+                : <Image src={qrSrc} alt="qr" width={55} height={55} className="object-contain rounded border border-gray-200 bg-white p-1" style={{ width: "auto" }} />
+            )}
+
+            {/* Footer Items */}
+            {footerItems.map((item, i) => {
+              const href = getHref(item);
+              const el = (
+                <Image key={i} src={item.image} alt={`footer-item-${i}`} width={60} height={40}
+                  className="object-contain rounded" style={{ width: 60, height: 40 }} />
+              );
+              return href
+                ? <a key={i} href={href} target="_blank" rel="noreferrer" download={item.linkType === "file" ? true : undefined}>{el}</a>
+                : <span key={i}>{el}</span>;
+            })}
           </div>
         </div>
       </div>

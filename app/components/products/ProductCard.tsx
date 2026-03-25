@@ -12,7 +12,7 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const resolveImg = (src: string) =>
-  src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${API}${src}`;
+  src.startsWith("http") ? src : `${API}${src.startsWith("/") ? src : "/" + src}`;
 
 export default function ProductCard({ product }: { product: Product }) {
   const { name, salePrice, discountPercent = 0 } = product;

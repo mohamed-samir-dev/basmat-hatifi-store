@@ -1,17 +1,16 @@
-"use client";
-import { usePathname } from "next/navigation";
-import { Navbar } from "./navbar";
 import Footer from "./Footer";
+import ClientLayout from "./ClientLayout";
+import { headers } from "next/headers";
 
-export default function ConditionalLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+export default async function ConditionalLayout({ children }: { children: React.ReactNode }) {
+  const headersList = await headers();
+  const pathname = headersList.get("x-pathname") || headersList.get("x-invoke-path") || "";
   const isAdmin = pathname.startsWith("/admin");
 
   return (
-    <>
-      {!isAdmin && <Navbar />}
+    <ClientLayout>
       {children}
       {!isAdmin && <Footer />}
-    </>
+    </ClientLayout>
   );
 }

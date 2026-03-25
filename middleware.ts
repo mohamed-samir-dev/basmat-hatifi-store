@@ -12,9 +12,11 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
-  return NextResponse.next();
+  const res = NextResponse.next();
+  res.headers.set("x-pathname", pathname);
+  return res;
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/:path*"],
 };

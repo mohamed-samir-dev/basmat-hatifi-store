@@ -1,7 +1,8 @@
 const ALLOWED_HOSTS = ["localhost", "pasmthatfee.com"];
 const ALLOWED_PREFIXES = [
-  "/api/admin/sub-categories",
-  "/api/admin/reviews",
+  "/api/admin",
+  "/api/products",
+  "/api/checkout",
 ];
 
 function getApiBase(): string {

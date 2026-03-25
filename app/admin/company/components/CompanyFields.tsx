@@ -38,7 +38,14 @@ export default function CompanyFields({ data, onChange }: CompanyFieldsProps) {
         {["currencyAr", "currencyEn"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
-        {["taxNumber", "shippingCompany", "paymentMethod"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
+        {["taxNumber", "shippingCompany"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
+        <div>
+          <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-1">طريقة الدفع</label>
+          <select value={data.paymentMethod || ""} onChange={(e) => onChange("paymentMethod", e.target.value)} className={inputClass}>
+            <option value="حوالات بنكية فقط">حوالات بنكية فقط</option>
+            <option value="بطاقة بنكية فقط">بطاقة بنكية فقط</option>
+          </select>
+        </div>
       </div>
       <div>
         <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-1">التفاصيل</label>
