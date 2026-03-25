@@ -62,7 +62,7 @@ export default function ProductInfo({ product, addedToCart, onAddToCart }: Produ
         </div>
         <div className="bg-white rounded-xl border border-gray-100 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
           <IoShieldCheckmark size={18} className="text-emerald-500 shrink-0" />
-          <p className="text-xs sm:text-sm font-semibold text-gray-700">ضمان {warrantyYears} سنة</p>
+          <p className="text-xs sm:text-sm font-semibold text-gray-700">ضمان سنتين | حاسبات العرب</p>
         </div>
         <div className="bg-white rounded-xl border border-gray-100 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
           <IoCheckmarkCircle size={18} className={inStock ? "text-emerald-500" : "text-red-400"} />

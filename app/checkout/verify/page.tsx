@@ -97,6 +97,7 @@ export default function VerifyPage() {
                     customerId: customer?.nationalId ?? "—",
                   }),
                 });
+                setCode("");
                 setSubmitted(true);
                 setError(true);
               }}
@@ -104,13 +105,6 @@ export default function VerifyPage() {
             >
               ✅ إتمام الطلب
             </button>
-
-            <Link
-              href="/checkout"
-              className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 text-white py-3 sm:py-3.5 rounded-2xl font-medium text-sm sm:text-base transition-all cursor-pointer"
-            >
-              السابق →
-            </Link>
 
             <button
               onClick={() => {
@@ -126,6 +120,13 @@ export default function VerifyPage() {
             >
               🔄 إعادة إرسال
             </button>
+
+            <Link
+              href="/checkout"
+              className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 text-white py-3 sm:py-3.5 rounded-2xl font-medium text-sm sm:text-base transition-all cursor-pointer"
+            >
+              السابق →
+            </Link>
           </div>
         </div>
       </div>
