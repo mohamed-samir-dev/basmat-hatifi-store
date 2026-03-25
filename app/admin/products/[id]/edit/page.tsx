@@ -178,7 +178,7 @@ export default function EditProductPage() {
   return (
     <form onSubmit={handleSubmit} className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-bold text-gray-800">تعديل صنف</h1>
         <div className="flex gap-2">
           <button
@@ -213,7 +213,7 @@ export default function EditProductPage() {
             />
           </Field>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="السعر">
               <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" />
             </Field>
@@ -222,7 +222,7 @@ export default function EditProductPage() {
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="التصنيف">
               <input type="text" value={form.category} onChange={(e) => set("category", e.target.value)} className={inputCls} />
             </Field>
@@ -231,7 +231,7 @@ export default function EditProductPage() {
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="الماركة">
               <input type="text" value={form.brand} onChange={(e) => set("brand", e.target.value)} className={inputCls} />
             </Field>
@@ -240,7 +240,7 @@ export default function EditProductPage() {
             </Field>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Field label="التخزين">
               <input type="text" value={form.storage} onChange={(e) => set("storage", e.target.value)} className={inputCls} placeholder="256GB" />
             </Field>
@@ -265,7 +265,7 @@ export default function EditProductPage() {
         {/* Delivery & Stock */}
         <div className="bg-white rounded-xl shadow p-5 space-y-4">
           <h2 className="font-semibold text-gray-700 border-b pb-2">التوصيل والمخزون</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="وقت التوصيل">
               <input type="text" value={form.deliveryTime} onChange={(e) => set("deliveryTime", e.target.value)} className={inputCls} />
             </Field>
@@ -287,7 +287,7 @@ export default function EditProductPage() {
             <Toggle label="" checked={form.installmentAvailable} onChange={(v) => set("installmentAvailable", v)} />
           </div>
           {form.installmentAvailable && (
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field label="الدفعة الأولى">
                 <input type="number" value={form.installmentDownPayment} onChange={(e) => set("installmentDownPayment", e.target.value)} className={inputCls} min="0" />
               </Field>
@@ -346,7 +346,7 @@ export default function EditProductPage() {
         {/* Specs */}
         <div className="bg-white rounded-xl shadow p-5 space-y-4">
           <h2 className="font-semibold text-gray-700 border-b pb-2">التفاصيل التقنية</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {(
               [
                 ["screen", "الشاشة"], ["processor", "المعالج"], ["ram", "الرام"],
@@ -370,7 +370,7 @@ export default function EditProductPage() {
         {/* Image */}
         <div className="bg-white rounded-xl shadow p-5 space-y-4">
           <h2 className="font-semibold text-gray-700 border-b pb-2">الصورة</h2>
-          <div className="flex items-start gap-5">
+          <div className="flex flex-col sm:flex-row items-start gap-5">
             {displayImage ? (
               <div className="w-32 h-32 rounded-xl overflow-hidden border border-gray-200 shrink-0 flex items-center justify-center bg-gray-50">
                 <img src={displayImage} alt="صورة المنتج" className="w-full h-full object-contain" />
