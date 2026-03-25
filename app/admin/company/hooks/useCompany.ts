@@ -12,7 +12,7 @@ export function useCompany() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch(`${API}/api/admin/company`, { credentials: "include" })
+    fetch(`/api/admin/company`)
       .then((r) => r.json())
       .then((res) => {
         const merged: CompanyData = { ...defaultData };
@@ -32,9 +32,8 @@ export function useCompany() {
     const formData = new FormData();
     formData.append("image", file);
     try {
-      const res = await fetch(`${API}/api/admin/company/upload/${key}`, {
+      const res = await fetch(`/api/admin/company/upload/${key}`, {
         method: "POST",
-        credentials: "include",
         body: formData,
       });
       const json = await res.json();
@@ -51,9 +50,8 @@ export function useCompany() {
 
   const handleImageDelete = async (key: string) => {
     try {
-      const res = await fetch(`${API}/api/admin/company/image/${key}`, {
+      const res = await fetch(`/api/admin/company/image/${key}`, {
         method: "DELETE",
-        credentials: "include",
       });
       if (!res.ok) { toast.error("فشل حذف الصورة"); return; }
       handleChange(key, "");
@@ -67,10 +65,9 @@ export function useCompany() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`${API}/api/admin/company`, {
+      const res = await fetch(`/api/admin/company`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error();
