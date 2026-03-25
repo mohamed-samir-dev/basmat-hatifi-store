@@ -22,6 +22,7 @@ export default function CustomerReviews() {
   const [form, setForm] = useState({ name: "", comment: "", rating: 5 });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   useEffect(() => {
     fetch(`${API}/api/admin/reviews`)
@@ -80,14 +81,20 @@ export default function CustomerReviews() {
           >
             {reviews.map((r) => (
               <SwiperSlide key={r._id}>
-                <div className="relative bg-white rounded-2xl shadow-md border border-gray-100 p-5 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200 h-full">
+                <div
+                  onClick={() => setSelectedReview(r)}
+                  className="relative bg-white rounded-2xl shadow-md border border-gray-100 p-5 flex flex-col gap-3 hover:shadow-lg transition-shadow duration-200 h-full cursor-pointer"
+                >
                   <div className="absolute top-4 left-4 text-purple-100 text-5xl font-serif leading-none select-none">❝</div>
                   <div className="flex gap-0.5">
                     {[1, 2, 3, 4, 5].map((s) => (
                       <span key={s} className={`text-lg ${s <= r.rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
                     ))}
                   </div>
-                  <p className="text-gray-600 text-sm leading-relaxed flex-1 relative z-10">{r.comment}</p>
+                  <p className="text-gray-600 text-sm leading-relaxed flex-1 relative z-10 line-clamp-3">{r.comment}</p>
+                  {r.comment.length > 120 && (
+                    <span className="text-purple-500 text-xs font-medium">اضغط لقراءة المزيد...</span>
+                  )}
                   <div className="h-px bg-gray-100" />
                   <div className="flex items-center gap-3">
                     <div className={`w-9 h-9 rounded-full bg-linear-to-br ${avatarGradient(r.gender)} flex items-center justify-center text-white font-bold text-sm shrink-0`}>
@@ -102,6 +109,36 @@ export default function CustomerReviews() {
         </div>
       ) : (
         <p className="text-center text-gray-400 text-sm mb-6">لا توجد آراء بعد، كن أول من يعلق!</p>
+      )}
+
+      {selectedReview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+          onClick={() => setSelectedReview(null)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full flex flex-col gap-4 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedReview(null)}
+              className="absolute top-3 left-3 text-gray-400 hover:text-gray-600 text-xl leading-none"
+            >✕</button>
+            <div className="flex gap-0.5">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <span key={s} className={`text-xl ${s <= selectedReview.rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
+              ))}
+            </div>
+            <p className="text-gray-700 text-sm leading-relaxed">{selectedReview.comment}</p>
+            <div className="h-px bg-gray-100" />
+            <div className="flex items-center gap-3">
+              <div className={`w-10 h-10 rounded-full bg-linear-to-br ${avatarGradient(selectedReview.gender)} flex items-center justify-center text-white font-bold shrink-0`}>
+                {selectedReview.name.trim().charAt(0).toUpperCase()}
+              </div>
+              <span className="font-semibold text-gray-800">{selectedReview.name}</span>
+            </div>
+          </div>
+        </div>
       )}
 
       <div className="flex items-center gap-3">

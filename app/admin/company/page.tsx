@@ -10,8 +10,8 @@ export default function CompanyPage() {
 
   return (
     <div className="pt-2">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">بيانات الشركة</h1>
-      <div className="bg-white rounded-xl shadow p-6 space-y-5">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-4 sm:mb-6">بيانات الشركة</h1>
+      <div className="bg-white rounded-xl shadow p-4 sm:p-6 space-y-4 sm:space-y-5">
         <CompanyFields data={data} onChange={handleChange} />
         <CompanyImages data={data} onImageChange={handleImageChange} onImageDelete={handleImageDelete} />
         <button

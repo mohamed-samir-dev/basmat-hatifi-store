@@ -20,8 +20,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="fixed inset-0 bg-black/40 z-30 md:hidden" onClick={() => setSidebarOpen(false)} />
       )}
       <Toaster position="top-right" toastOptions={{ style: { fontSize: "14px", padding: "12px 16px", maxWidth: "320px", fontWeight: "600" } }} />
-      <main className="md:mr-64 pt-24 p-6 min-h-screen">
-        {children}
+      <main className="md:mr-64 pt-20 min-h-screen overflow-x-hidden">
+        <div className="px-3 pb-4 sm:px-5 sm:pb-5 md:px-6 md:pb-6">
+          {children}
+        </div>
       </main>
     </div>
   );

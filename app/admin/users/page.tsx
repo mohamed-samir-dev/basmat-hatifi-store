@@ -180,8 +180,8 @@ export default function UsersPage() {
       </div>
 
       {editAdmin && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md shadow-xl overflow-y-auto max-h-[90vh]">
             <h2 className="text-lg font-bold text-gray-800 mb-4">تعديل: {editAdmin.name}</h2>
             <form onSubmit={handleEdit} className="space-y-3">
               {[
@@ -283,8 +283,8 @@ export default function UsersPage() {
       )}
 
       {showModal && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md shadow-xl overflow-y-auto max-h-[90vh]">
             <h2 className="text-lg font-bold text-gray-800 mb-4">إضافة مستخدم جديد</h2>
 
             <div className="flex items-start gap-2 bg-amber-50 border border-amber-300 rounded-lg px-3 py-2 mb-4">

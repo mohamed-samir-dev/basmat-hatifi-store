@@ -13,7 +13,7 @@ export default function BannersPage() {
   const activeCount = banners.filter((b) => b.url && b.active).length;
 
   return (
-    <div className="-m-6 min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 -mx-3 -mt-0 sm:-mx-5 md:-mx-6">
       <BannersHeader
         activeCount={activeCount}
         filled={filled}
@@ -21,7 +21,7 @@ export default function BannersPage() {
         addingBanner={addingBanner}
         onAdd={handleAddBanner}
       />
-      <div className="p-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="p-4 sm:p-6 md:p-8 grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-5 md:gap-6">
         {banners.map((banner, i) => (
           <BannerCard
             key={i}

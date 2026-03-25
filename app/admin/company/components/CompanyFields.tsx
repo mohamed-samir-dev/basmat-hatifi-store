@@ -7,13 +7,13 @@ interface CompanyFieldsProps {
   onChange: (key: string, value: string) => void;
 }
 
-const inputClass = "w-full border border-gray-300 rounded-lg px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-blue-500";
+const inputClass = "w-full border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500";
 
 function FieldInput({ fieldKey, data, onChange }: { fieldKey: string; data: CompanyData; onChange: (k: string, v: string) => void }) {
   const label = fields.find((f) => f.key === fieldKey)?.label;
   return (
     <div>
-      <label className="block text-base font-semibold text-gray-700 mb-1">{label}</label>
+      <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-1">{label}</label>
       <input value={data[fieldKey] || ""} onChange={(e) => onChange(fieldKey, e.target.value)} className={inputClass} />
     </div>
   );
@@ -21,27 +21,27 @@ function FieldInput({ fieldKey, data, onChange }: { fieldKey: string; data: Comp
 
 export default function CompanyFields({ data, onChange }: CompanyFieldsProps) {
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-5">
+    <div className="space-y-4 sm:space-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
         {["nameAr", "nameEn"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
         {["addressAr", "addressEn"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
         {["phone", "whatsapp"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
         {["website", "email"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
         {["currencyAr", "currencyEn"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-5">
         {["taxNumber", "shippingCompany", "paymentMethod"].map((k) => <FieldInput key={k} fieldKey={k} data={data} onChange={onChange} />)}
       </div>
       <div>
-        <label className="block text-base font-semibold text-gray-700 mb-1">التفاصيل</label>
+        <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-1">التفاصيل</label>
         <textarea value={data.details || ""} onChange={(e) => onChange("details", e.target.value)}
           rows={3} className={inputClass} />
       </div>
