@@ -1,8 +1,9 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { API } from "../constants";
 import type { Category } from "../types";
+
+const BASE = "/api/admin/main-categories";
 
 export function useMainCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -19,8 +20,8 @@ export function useMainCategories() {
 
   const fetchCategories = useCallback(() => {
     Promise.all([
-      fetch(`${API}/api/admin/main-categories`, { credentials: "include" }),
-      fetch(`${API}/api/admin/main-categories/extra`, { credentials: "include" }),
+      fetch(BASE, { credentials: "include" }),
+      fetch(`${BASE}/extra`, { credentials: "include" }),
     ]).then(async ([res1, res2]) => {
       const fromProducts: Category[] = res1.ok ? await res1.json() : [];
       const extra: Category[] = res2.ok ? await res2.json() : [];
@@ -35,7 +36,7 @@ export function useMainCategories() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const res = await fetch(`${API}/api/admin/main-categories`, {
+    const res = await fetch(BASE, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -54,7 +55,7 @@ export function useMainCategories() {
     e.preventDefault();
     setEditError("");
     setEditLoading(true);
-    const res = await fetch(`${API}/api/admin/main-categories/rename`, {
+    const res = await fetch(`${BASE}/rename`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -72,7 +73,7 @@ export function useMainCategories() {
     if (!confirmDelete) return;
     const catName = confirmDelete;
     setConfirmDelete(null);
-    const res = await fetch(`${API}/api/admin/main-categories/remove`, {
+    const res = await fetch(`${BASE}/remove`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
