@@ -44,7 +44,11 @@ export default function Banner() {
     if (Math.abs(diff) > SWIPE_THRESHOLD) goTo(current + (diff > 0 ? 1 : -1));
   };
 
-  if (!images.length) return null;
+  if (!images.length) return (
+    <section className="w-full flex justify-center py-6 px-4">
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-2xl bg-gray-200 animate-pulse" style={{ aspectRatio: "1.8/1" }} />
+    </section>
+  );
 
   return (
     <section className="w-full flex justify-center py-6 px-4">

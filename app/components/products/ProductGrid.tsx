@@ -110,7 +110,31 @@ export default function ProductGrid() {
     return map;
   }, [products]);
 
-  if (loading) return <p className="text-center text-gray-400 py-10">جاري التحميل...</p>;
+  if (loading) return (
+    <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+      {[1, 2, 3].map((g) => (
+        <div key={g} className="mb-10">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-gray-200" />
+            <div className="h-6 w-32 bg-gray-200 animate-pulse rounded" />
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                <div className="w-full aspect-square bg-gray-200 animate-pulse" />
+                <div className="p-3 space-y-2">
+                  <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4" />
+                  <div className="h-4 bg-gray-200 animate-pulse rounded w-1/2" />
+                </div>
+                <div className="border-t border-gray-100 h-12 bg-gray-50 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
   if (!products.length) return <p className="text-center text-gray-400 py-10">لا توجد منتجات حالياً</p>;
 
   return (
