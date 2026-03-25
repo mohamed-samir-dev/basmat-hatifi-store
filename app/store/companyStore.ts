@@ -12,7 +12,7 @@ interface CompanyStore {
 export const useCompanyStore = create<CompanyStore>()(
   persist(
     (set) => ({
-      logo: "/removelogo.webp",
+      logo: "",
       fetchLogo: async () => {
         try {
           const res = await fetch(`${API}/api/admin/company`, { credentials: "include" });

@@ -10,8 +10,14 @@ import { useCartStore } from "../../store/cartStore";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
 
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const resolveImg = (src: string) =>
+  src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${API}${src}`;
+
 export default function ProductCard({ product }: { product: Product }) {
-  const { name, salePrice, discountPercent = 0, image } = product;
+  const { name, salePrice, discountPercent = 0 } = product;
+  const image = product.images?.[0] || product.image;
+  const resolvedImage = image ? resolveImg(image) : undefined;
   const originalPrice = product.originalPrice ?? product.price ?? 0;
   const hasDiscount = salePrice && salePrice < originalPrice;
   const addItem = useCartStore((s) => s.addItem);
@@ -38,8 +44,8 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* Image */}
       <div className="relative w-full" style={{ paddingBottom: "100%" }}>
         <div className="absolute inset-0 bg-gray-50">
-          {image ? (
-            <Image src={image} alt={name} fill className="object-contain p-2 sm:p-4" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" />
+          {resolvedImage ? (
+            <Image src={resolvedImage} alt={name} fill className="object-contain p-2 sm:p-4" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-300 text-3xl sm:text-5xl">📱</div>
           )}

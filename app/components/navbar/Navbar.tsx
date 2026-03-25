@@ -45,16 +45,18 @@ export default function Navbar() {
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
             <Link href="/" className="shrink-0">
-              <div className="relative w-[140px] sm:w-[170px] md:w-[200px] h-14">
-                <Image
-                  src={logo}
-                  unoptimized
-                  alt="Logo"
-                  fill
-                  className="object-contain object-center"
-                  priority
-                  loading="eager"
-                />
+              <div className="relative w-[100px] sm:w-[130px] md:w-[160px] h-10 sm:h-12">
+                {logo && (
+                  <Image
+                    src={logo}
+                    unoptimized
+                    alt="Logo"
+                    fill
+                    className="object-contain object-center"
+                    priority
+                    loading="eager"
+                  />
+                )}
               </div>
             </Link>
           </div>
@@ -63,16 +65,6 @@ export default function Navbar() {
 
           {/* Icons - responsive gap and size */}
           <div className="flex items-center gap-0.5 sm:gap-2 md:gap-3">
-            <Link
-              href="/admin/login"
-              aria-label="لوحة التحكم"
-              className="p-1 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors"
-              title="لوحة التحكم"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </Link>
             <button aria-label="بحث" className="p-1 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors">
               <SearchIcon />
             </button>

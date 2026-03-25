@@ -18,9 +18,14 @@ interface CartItemProps {
   onRemove: (id: string) => void;
 }
 
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const resolveImg = (src: string) =>
+  src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${API}${src}`;
+
 export default function CartItem({ product, qty, onUpdateQty, onRemove }: CartItemProps) {
   const price = product.salePrice ?? product.originalPrice ?? product.price;
-  const img = product.images?.[0] || product.image;
+  const rawImg = product.images?.[0] || product.image;
+  const img = rawImg ? resolveImg(rawImg) : undefined;
 
   return (
     <div className="bg-white rounded-2xl p-2.5 sm:p-3.5 flex gap-2 sm:gap-3 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
