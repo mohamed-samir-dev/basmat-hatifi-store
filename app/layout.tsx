@@ -1,17 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "./components/navbar";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import ConditionalLayout from "./components/ConditionalLayout";
 
 export const metadata: Metadata = {
   title: "المتجر",
@@ -26,11 +15,10 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
         suppressHydrationWarning
       >
-        <Navbar />
-        {children}
+        <ConditionalLayout>{children}</ConditionalLayout>
       </body>
     </html>
   );
