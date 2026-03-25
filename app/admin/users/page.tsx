@@ -126,18 +126,19 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">إدارة المستخدمين</h1>
+      <div className="flex items-center justify-between mb-6 gap-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">إدارة المستخدمين</h1>
         <button
           onClick={() => { setShowModal(true); setError(""); }}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium"
+          className="bg-blue-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-blue-700 text-sm font-medium whitespace-nowrap"
         >
           + إضافة مستخدم
         </button>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
-        <table className="w-full text-sm text-right">
+        <div className="overflow-x-auto">
+        <table className="w-full text-sm text-right min-w-[500px]">
           <thead className="bg-gray-50 text-gray-600 font-semibold text-base">
             <tr>
               <th className="px-4 py-3">#</th>
@@ -175,6 +176,7 @@ export default function UsersPage() {
             )}
           </tbody>
         </table>
+        </div>
       </div>
 
       {editAdmin && (

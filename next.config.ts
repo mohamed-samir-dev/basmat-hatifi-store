@@ -5,10 +5,11 @@ const nextConfig: NextConfig = {
     root: ".",
   },
   async rewrites() {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     return [
       {
         source: "/uploads/:path*",
-        destination: "http://localhost:5000/uploads/:path*",
+        destination: `${backendUrl}/uploads/:path*`,
       },
     ];
   },
@@ -18,6 +19,9 @@ const nextConfig: NextConfig = {
       { hostname: "i.ibb.co" },
       { protocol: "http", hostname: "localhost", port: "5000" },
       { protocol: "http", hostname: "localhost", port: "3000" },
+      { protocol: "https", hostname: "**.railway.app" },
+      { protocol: "https", hostname: "**.render.com" },
+      { protocol: "https", hostname: "**.onrender.com" },
     ],
   },
 };

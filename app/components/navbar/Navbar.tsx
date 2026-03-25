@@ -45,7 +45,7 @@ export default function Navbar() {
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
             <Link href="/" className="shrink-0">
-              <div className="relative w-[110px] sm:w-[140px] md:w-[160px] h-14">
+              <div className="relative w-[140px] sm:w-[170px] md:w-[200px] h-14">
                 <Image
                   src={logo}
                   unoptimized
