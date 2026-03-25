@@ -5,16 +5,27 @@ import type { CompanyData } from "../types";
 interface CompanyImagesProps {
   data: CompanyData;
   onImageChange: (key: string, file: File) => void;
+  onImageDelete: (key: string) => void;
 }
 
-export default function CompanyImages({ data, onImageChange }: CompanyImagesProps) {
+export default function CompanyImages({ data, onImageChange, onImageDelete }: CompanyImagesProps) {
   return (
     <div className="grid grid-cols-4 gap-5">
       {imageFields.map(({ key, label }) => (
         <div key={key}>
           <label className="block text-base font-semibold text-gray-700 mb-1">{label}</label>
           {data[key] && (
-            <img src={toFullUrl(data[key])} alt={label} className="h-14 object-contain mb-2 rounded border" />
+            <div className="relative inline-block mb-2">
+              <img src={toFullUrl(data[key])} alt={label} className="h-14 object-contain rounded border" />
+              <button
+                type="button"
+                onClick={() => onImageDelete(key)}
+                className="absolute -top-2 -left-2 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none"
+                title="حذف الصورة"
+              >
+                ×
+              </button>
+            </div>
           )}
           <input
             type="file"

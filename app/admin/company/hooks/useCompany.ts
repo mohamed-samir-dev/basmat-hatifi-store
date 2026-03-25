@@ -49,6 +49,21 @@ export function useCompany() {
     }
   };
 
+  const handleImageDelete = async (key: string) => {
+    try {
+      const res = await fetch(`${API}/api/admin/company/image/${key}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) { toast.error("فشل حذف الصورة"); return; }
+      handleChange(key, "");
+      if (key === "logo") setLogo("");
+      toast.success("تم حذف الصورة");
+    } catch {
+      toast.error("فشل حذف الصورة");
+    }
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
@@ -67,5 +82,5 @@ export function useCompany() {
     }
   };
 
-  return { data, loading, saving, handleChange, handleImageChange, handleSave };
+  return { data, loading, saving, handleChange, handleImageChange, handleImageDelete, handleSave };
 }
