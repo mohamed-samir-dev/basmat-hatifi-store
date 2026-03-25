@@ -22,8 +22,8 @@ export default function AdminNavbar() {
     <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 fixed top-0 left-0 right-0 z-50" dir="rtl">
       {/* اليمين - اللوجو */}
       <div className="flex items-center gap-2">
-        <div className="h-10 w-24 relative shrink-0">
-          <Image src={logo} alt="Logo" fill className="object-contain object-right" unoptimized />
+        <div className="h-14 w-36 relative shrink-0">
+          <Image src={logo} alt="Logo" fill className="object-contain object-center" unoptimized />
         </div>
 
       </div>
