@@ -91,8 +91,8 @@ export default function SubCategoriesPage() {
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48 md:w-52"
           />
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-right">
+        <div className="overflow-x-auto scrollbar-visible">
+          <table className="w-full text-sm text-right min-w-[600px]">
             <thead className="bg-gray-50 text-gray-600 font-semibold text-xs sm:text-sm">
               <tr>
                 <th className="px-2 sm:px-4 py-3">#</th>
@@ -110,7 +110,7 @@ export default function SubCategoriesPage() {
                   <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.category}</td>
                   <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.name}</td>
                   <td className="px-2 sm:px-4 py-3">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${cat.count > 0 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${cat.count > 0 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
                       {cat.count} منتج
                     </span>
                   </td>
