@@ -12,9 +12,10 @@ function forwardCookies(req: NextRequest, init: RequestInit): RequestInit {
   return { ...init, headers: { ...(init.headers as Record<string, string>), cookie } };
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const body = await req.json();
-  const res = await fetch(`${getBackend()}/api/admin/users/${params.id}`, forwardCookies(req, {
+  const res = await fetch(`${getBackend()}/api/admin/users/${id}`, forwardCookies(req, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -23,8 +24,9 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   return NextResponse.json(data, { status: res.status });
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const res = await fetch(`${getBackend()}/api/admin/users/${params.id}`, forwardCookies(req, {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const res = await fetch(`${getBackend()}/api/admin/users/${id}`, forwardCookies(req, {
     method: "DELETE",
   }));
   const data = await res.json();
