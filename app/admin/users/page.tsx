@@ -32,6 +32,7 @@ export default function UsersPage() {
   const [showEditPass, setShowEditPass] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
   const [formErrors, setFormErrors] = useState({ email: "", password: "" });
+  const [editFormErrors, setEditFormErrors] = useState({ email: "", password: "" });
 
   const arabicRegex = /[\u0600-\u06FF]/;
   const emailRegex = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
@@ -88,6 +89,10 @@ export default function UsersPage() {
 
   async function handleEdit(e: React.FormEvent) {
     e.preventDefault();
+    const emailErr = validateEmail(editForm.email);
+    const passErr = editForm.password ? validatePassword(editForm.password) : "";
+    setEditFormErrors({ email: emailErr, password: passErr });
+    if (emailErr || passErr) return;
     setEditError("");
     setEditLoading(true);
     const res = await fetch(`${API}/api/admin/users/${editAdmin!._id}`, {
@@ -154,7 +159,7 @@ export default function UsersPage() {
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => { setEditAdmin(a); setEditForm({ name: a.name, phone: a.phone, email: a.email, password: "" }); setEditError(""); }}
+                      onClick={() => { setEditAdmin(a); setEditForm({ name: a.name, phone: a.phone, email: a.email, password: "" }); setEditError(""); setEditFormErrors({ email: "", password: "" }); }}
                       className="text-blue-500 hover:text-blue-700" title="تعديل">
                       <EditIcon />
                     </button>
@@ -180,7 +185,6 @@ export default function UsersPage() {
               {[
                 { label: "الاسم", key: "name", type: "text" },
                 { label: "الهاتف", key: "phone", type: "text" },
-                { label: "البريد الإلكتروني", key: "email", type: "email" },
               ].map(({ label, key, type }) => (
                 <div key={key}>
                   <label className="block text-sm text-gray-600 mb-1">{label}</label>
@@ -194,14 +198,28 @@ export default function UsersPage() {
                 </div>
               ))}
               <div>
+                <label className="block text-sm text-gray-600 mb-1">البريد الإلكتروني</label>
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => { setEditForm({ ...editForm, email: e.target.value }); setEditFormErrors((p) => ({ ...p, email: validateEmail(e.target.value) })); }}
+                  className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 ${editFormErrors.email ? "border-red-400" : "border-gray-300"}`}
+                  required
+                  dir="ltr"
+                  placeholder="example@email.com"
+                />
+                {editFormErrors.email && <p className="text-red-500 text-xs mt-1">{editFormErrors.email}</p>}
+              </div>
+              <div>
                 <label className="block text-sm text-gray-600 mb-1">كلمة المرور (اتركها فارغة إن لم ترد تغييرها)</label>
                 <div className="relative">
                   <input
                     type={showEditPass ? "text" : "password"}
                     value={editForm.password}
-                    onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10"
+                    onChange={(e) => { setEditForm({ ...editForm, password: e.target.value }); setEditFormErrors((p) => ({ ...p, password: e.target.value ? validatePassword(e.target.value) : "" })); }}
+                    className={`w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pl-10 ${editFormErrors.password ? "border-red-400" : "border-gray-300"}`}
                     placeholder="اتركها فارغة للإبقاء كما هي"
+                    dir="ltr"
                   />
                   <button type="button" onClick={() => setShowEditPass(!showEditPass)}
                     className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -220,6 +238,7 @@ export default function UsersPage() {
                   </button>
                 </div>
               </div>
+              {editFormErrors.password && <p className="text-red-500 text-xs mt-1">{editFormErrors.password}</p>}
               {editError && <p className="text-red-500 text-sm">{editError}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="submit" disabled={editLoading}
