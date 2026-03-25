@@ -2,18 +2,30 @@
 import Image from "next/image";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const images = ["/banner1.webp", "/banner2.webp"];
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const AUTO_PLAY_MS = 4000;
 const SWIPE_THRESHOLD = 50;
 
 export default function Banner() {
+  const [images, setImages] = useState<string[]>([]);
   const [current, setCurrent] = useState(0);
   const touchStart = useRef(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const goTo = useCallback((i: number) => {
-    setCurrent((i + images.length) % images.length);
+  useEffect(() => {
+    fetch(`${API}/api/admin/banners`)
+      .then((r) => r.json())
+      .then((data: { url: string; active: boolean }[]) => {
+        if (Array.isArray(data))
+          setImages(data.filter((b) => b.url && b.active).map((b) => `${API}${b.url}`));
+      })
+      .catch(() => setImages(["/banner1.webp", "/banner2.webp"]));
   }, []);
+
+  const goTo = useCallback((i: number) => {
+    if (!images.length) return;
+    setCurrent((i + images.length) % images.length);
+  }, [images]);
 
   const resetAutoPlay = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -21,17 +33,18 @@ export default function Banner() {
   }, [current, goTo]);
 
   useEffect(() => {
+    if (!images.length) return;
     resetAutoPlay();
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [resetAutoPlay]);
+  }, [resetAutoPlay, images]);
 
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.touches[0].clientX; };
   const onTouchEnd = (e: React.TouchEvent) => {
     const diff = touchStart.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > SWIPE_THRESHOLD) {
-      goTo(current + (diff > 0 ? 1 : -1));
-    }
+    if (Math.abs(diff) > SWIPE_THRESHOLD) goTo(current + (diff > 0 ? 1 : -1));
   };
+
+  if (!images.length) return null;
 
   return (
     <section className="w-full flex justify-center py-6 px-4">
@@ -44,11 +57,10 @@ export default function Banner() {
         >
           {images.map((src, i) => (
             <div key={i} className="min-w-full relative aspect-[1.8/1]">
-              <Image src={src} alt={`banner ${i + 1}`} fill className="object-cover" priority loading="eager" />
+              <Image src={src} alt={`banner ${i + 1}`} fill className="object-cover" priority={i === 0} unoptimized />
             </div>
           ))}
         </div>
-        {/* Dots */}
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
           {images.map((_, i) => (
             <button
