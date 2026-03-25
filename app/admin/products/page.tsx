@@ -2,8 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API } from "../../lib/api";
 
 type Product = {
   _id: string;

@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API } from "../../lib/api";
 const PAGE_SIZE = 10;
 
 interface Review {

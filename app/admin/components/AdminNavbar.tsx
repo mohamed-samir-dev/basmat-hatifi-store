@@ -4,8 +4,7 @@ import { Bell, LogOut, Menu } from "lucide-react";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useCompanyStore } from "../../store/companyStore";
-
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API } from "../../lib/api";
 
 export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
   const router = useRouter();
