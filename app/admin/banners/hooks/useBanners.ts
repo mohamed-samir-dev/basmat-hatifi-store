@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
-import { API } from "../constants";
 import type { BannerItem } from "../types";
+
+const BASE = "/api/admin/banners";
 
 export function useBanners() {
   const [banners, setBanners] = useState<BannerItem[]>([]);
@@ -11,7 +12,7 @@ export function useBanners() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    fetch(`${API}/api/admin/banners`, { credentials: "include" })
+    fetch(BASE, { credentials: "include" })
       .then((r) => r.json())
       .then((data) => Array.isArray(data) && setBanners(data));
   }, []);
@@ -21,7 +22,7 @@ export function useBanners() {
     const form = new FormData();
     form.append("image", file);
     try {
-      const res = await fetch(`${API}/api/admin/banners/upload/${index}`, {
+      const res = await fetch(`${BASE}/upload/${index}`, {
         method: "POST", credentials: "include", body: form,
       });
       const data = await res.json();
@@ -38,7 +39,7 @@ export function useBanners() {
   const handleDeleteImage = async (index: number) => {
     setLoading(index);
     try {
-      const res = await fetch(`${API}/api/admin/banners/${index}/image`, {
+      const res = await fetch(`${BASE}/${index}/image`, {
         method: "DELETE", credentials: "include",
       });
       if (!res.ok) throw new Error("فشل الحذف");
@@ -54,7 +55,7 @@ export function useBanners() {
   const handleDeleteSlot = async (index: number) => {
     setLoading(index);
     try {
-      const res = await fetch(`${API}/api/admin/banners/${index}`, {
+      const res = await fetch(`${BASE}/${index}`, {
         method: "DELETE", credentials: "include",
       });
       if (!res.ok) throw new Error("فشل الحذف");
@@ -70,7 +71,7 @@ export function useBanners() {
   const handleToggle = async (index: number) => {
     setLoading(index);
     try {
-      const res = await fetch(`${API}/api/admin/banners/toggle/${index}`, {
+      const res = await fetch(`${BASE}/toggle/${index}`, {
         method: "PATCH", credentials: "include",
       });
       const data = await res.json();
@@ -87,7 +88,7 @@ export function useBanners() {
   const handleAddBanner = async () => {
     setAddingBanner(true);
     try {
-      const res = await fetch(`${API}/api/admin/banners/add`, {
+      const res = await fetch(`${BASE}/add`, {
         method: "POST", credentials: "include",
       });
       const data = await res.json();
