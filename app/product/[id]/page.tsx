@@ -32,7 +32,10 @@ export default function ProductPage() {
   if (!product)
     return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-400 text-lg">المنتج غير موجود</p></div>;
 
-  const allImages = product.images?.length ? product.images : product.image ? [product.image] : [];
+  const resolveImg = (src: string) =>
+    src.startsWith("http") ? src : `${API}${src}`;
+
+  const allImages = (product.images?.length ? product.images : product.image ? [product.image] : []).map(resolveImg);
 
   return (
     <main className="min-h-screen bg-gray-50 pb-16" dir="rtl">

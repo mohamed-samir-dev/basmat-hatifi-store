@@ -14,7 +14,7 @@ interface ProductInfoProps {
 
 export default function ProductInfo({ product, addedToCart, onAddToCart }: ProductInfoProps) {
   const router = useRouter();
-  const { name, brand, color, storage, network, salePrice, taxIncluded, installment, freeDelivery, deliveryTime, warrantyYears, inStock } = product;
+  const { name, brand, color, storage, network, salePrice, taxIncluded, installment, freeDelivery, deliveryTime, inStock } = product;
   const originalPrice = product.originalPrice ?? product.price ?? 0;
   const hasDiscount = salePrice && salePrice < originalPrice;
 
