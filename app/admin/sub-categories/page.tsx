@@ -25,7 +25,6 @@ export default function SubCategoriesPage() {
   const [editName, setEditName] = useState("");
   const [editCategory, setEditCategory] = useState("");
   const [editLoading, setEditLoading] = useState(false);
-  const allCategories = [...new Set(items.map((i) => i.category).filter(Boolean))];
   const allSubCategories = [...new Set(items.map((i) => i.name).filter(Boolean))];
   const [confirmDelete, setConfirmDelete] = useState<SubCat | null>(null);
 
