@@ -25,7 +25,7 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
           <Menu size={22} />
         </button>
         <div className="h-16 w-20 sm:w-36 relative shrink-0">
-          {logo && <Image src={logo} alt="Logo" fill className="object-contain object-right" unoptimized />}
+          {logo && <Image src={logo} alt="Logo" fill className="object-contain object-right" unoptimized priority />}
         </div>
       </div>
 

@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API } from "../../lib/api";
 
 type SubCat = { name: string; category: string; count: number };
 
