@@ -74,13 +74,13 @@ export default function SubCategoriesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">التصنيفات الفرعية</h1>
+      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
+        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">التصنيفات الفرعية</h1>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-          <span className="text-sm text-gray-500">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-gray-100">
+          <span className="text-xs sm:text-sm text-gray-500">
             إجمالي التصنيفات: <span className="font-bold text-gray-700">{items.length}</span>
           </span>
           <input
@@ -88,64 +88,66 @@ export default function SubCategoriesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="ابحث عن تصنيف..."
-            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48 md:w-52"
           />
         </div>
-        <table className="w-full text-sm text-right">
-          <thead className="bg-gray-50 text-gray-600 font-semibold text-base">
-            <tr>
-              <th className="px-4 py-3">#</th>
-              <th className="px-4 py-3">الاسم</th>
-              <th className="px-4 py-3">النوع</th>
-              <th className="px-4 py-3">عدد المنتجات</th>
-              <th className="px-4 py-3 text-center">عرض في الرئيسية</th>
-              <th className="px-4 py-3">إجراء</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filtered.map((cat, i) => (
-              <tr key={`${cat.category}-${cat.name}`} className="hover:bg-gray-50 text-base">
-                <td className="px-4 py-3 text-gray-400 font-medium">{i + 1}</td>
-                <td className="px-4 py-3 font-medium text-gray-800">{cat.category}</td>
-                <td className="px-4 py-3 font-medium text-gray-800">{cat.name}</td>
-                <td className="px-4 py-3">
-                  <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${cat.count > 0 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
-                    {cat.count} منتج
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <input type="checkbox" className="w-4 h-4 accent-blue-600 cursor-pointer" />
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => { setEditItem(cat); setEditName(cat.name); setEditCategory(cat.category); }}
-                      className="text-blue-500 hover:text-blue-700" title="تعديل"
-                    >
-                      <EditIcon />
-                    </button>
-                    <button
-                      onClick={() => setConfirmDelete(cat)}
-                      className="text-red-500 hover:text-red-700" title="حذف"
-                    >
-                      <TrashIcon />
-                    </button>
-                  </div>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-right">
+            <thead className="bg-gray-50 text-gray-600 font-semibold text-xs sm:text-sm">
+              <tr>
+                <th className="px-2 sm:px-4 py-3">#</th>
+                <th className="px-2 sm:px-4 py-3">الاسم</th>
+                <th className="px-2 sm:px-4 py-3">النوع</th>
+                <th className="px-2 sm:px-4 py-3">عدد المنتجات</th>
+                <th className="px-2 sm:px-4 py-3 text-center">عرض في الرئيسية</th>
+                <th className="px-2 sm:px-4 py-3">إجراء</th>
               </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-400">لا توجد تصنيفات فرعية</td></tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filtered.map((cat, i) => (
+                <tr key={`${cat.category}-${cat.name}`} className="hover:bg-gray-50">
+                  <td className="px-2 sm:px-4 py-3 text-gray-400 font-medium text-xs sm:text-sm">{i + 1}</td>
+                  <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.category}</td>
+                  <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.name}</td>
+                  <td className="px-2 sm:px-4 py-3">
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold ${cat.count > 0 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                      {cat.count} منتج
+                    </span>
+                  </td>
+                  <td className="px-2 sm:px-4 py-3 text-center">
+                    <input type="checkbox" className="w-4 h-4 accent-blue-600 cursor-pointer" />
+                  </td>
+                  <td className="px-2 sm:px-4 py-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <button
+                        onClick={() => { setEditItem(cat); setEditName(cat.name); setEditCategory(cat.category); }}
+                        className="text-blue-500 hover:text-blue-700" title="تعديل"
+                      >
+                        <EditIcon />
+                      </button>
+                      <button
+                        onClick={() => setConfirmDelete(cat)}
+                        className="text-red-500 hover:text-red-700" title="حذف"
+                      >
+                        <TrashIcon />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400 text-sm">لا توجد تصنيفات فرعية</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Edit Modal */}
       {editItem && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-            <h2 className="text-lg font-bold text-gray-800 mb-4">تعديل: {editItem.name}</h2>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-xl p-5 sm:p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-4">تعديل: {editItem.name}</h2>
             {editItem.count > 0 && (
               <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
                 ⚠️ سيتم تغيير التصنيف في <span className="font-bold">{editItem.count} منتج</span>
@@ -153,7 +155,7 @@ export default function SubCategoriesPage() {
             )}
             <form onSubmit={handleEdit} className="space-y-3">
               <div>
-                <label className="block text-sm text-gray-600 mb-1">الاسم (التصنيف الرئيسي)</label>
+                <label className="block text-xs sm:text-sm text-gray-600 mb-1">الاسم (التصنيف الرئيسي)</label>
                 <input
                   type="text"
                   value={editCategory}
@@ -163,7 +165,7 @@ export default function SubCategoriesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-600 mb-1">النوع (التصنيف الفرعي)</label>
+                <label className="block text-xs sm:text-sm text-gray-600 mb-1">النوع (التصنيف الفرعي)</label>
                 <select
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
@@ -190,20 +192,20 @@ export default function SubCategoriesPage() {
 
       {/* Confirm Delete */}
       {confirmDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" dir="rtl">
-          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm text-center">
-            <div className="text-4xl mb-3">🗑️</div>
-            <h2 className="text-lg font-bold text-gray-800 mb-1">تأكيد الحذف</h2>
-            <p className="text-sm text-gray-500 mb-1">هتحذف التصنيف</p>
-            <p className="text-base font-bold text-red-600 mb-2">« {confirmDelete.name} »</p>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4" dir="rtl">
+          <div className="bg-white rounded-xl shadow-xl p-5 sm:p-6 w-full max-w-sm text-center">
+            <div className="text-3xl sm:text-4xl mb-3">🗑️</div>
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-1">تأكيد الحذف</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mb-1">هتحذف التصنيف</p>
+            <p className="text-sm sm:text-base font-bold text-red-600 mb-2">« {confirmDelete.name} »</p>
             <p className="text-xs text-gray-400 mb-4">سيتم إزالة هذا التصنيف من جميع المنتجات المرتبطة به</p>
             <div className="flex gap-3 justify-center">
               <button onClick={handleDelete}
-                className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold px-6 py-2 rounded-lg transition-colors">
+                className="bg-red-500 hover:bg-red-600 text-white text-xs sm:text-sm font-bold px-5 sm:px-6 py-2 rounded-lg transition-colors">
                 نعم، احذف
               </button>
               <button onClick={() => setConfirmDelete(null)}
-                className="border border-gray-300 text-gray-700 text-sm font-bold px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                className="border border-gray-300 text-gray-700 text-xs sm:text-sm font-bold px-5 sm:px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                 إلغاء
               </button>
             </div>

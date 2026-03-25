@@ -26,8 +26,7 @@ export default function AdminSidebar({ open, onClose }: { open: boolean; onClose
 
   return (
     <aside
-      className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-64 bg-white border-l border-gray-200 overflow-y-auto z-40 transition-transform duration-300
-        ${open ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
+      className={`fixed top-16 right-0 h-[calc(100vh-4rem)] w-64 bg-white border-l border-gray-200 overflow-y-auto z-40 transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"} md:translate-x-0`}
       dir="rtl"
     >
       <div className="flex items-center justify-between px-4 pt-3 md:hidden">

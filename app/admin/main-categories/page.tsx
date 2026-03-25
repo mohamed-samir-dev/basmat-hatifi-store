@@ -15,11 +15,11 @@ export default function MainCategoriesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">التصنيفات الرئيسية</h1>
+      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
+        <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">التصنيفات الرئيسية</h1>
         <button
           onClick={() => { setShowModal(true); }}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium"
+          className="bg-blue-600 text-white px-3 py-2 sm:px-4 rounded-lg hover:bg-blue-700 text-xs sm:text-sm font-medium whitespace-nowrap"
         >
           + إضافة تصنيف
         </button>

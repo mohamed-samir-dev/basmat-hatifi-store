@@ -25,46 +25,48 @@ interface CategoriesTableProps {
 export default function CategoriesTable({ categories, filtered, search, onSearchChange, onEdit, onDelete }: CategoriesTableProps) {
   return (
     <div className="bg-white rounded-xl shadow overflow-hidden">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <span className="text-sm text-gray-500">إجمالي التصنيفات: <span className="font-bold text-gray-700">{categories.length}</span></span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-gray-100">
+        <span className="text-xs sm:text-sm text-gray-500">إجمالي التصنيفات: <span className="font-bold text-gray-700">{categories.length}</span></span>
         <input
           type="text"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="ابحث عن تصنيف..."
-          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+          className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48 md:w-52"
         />
       </div>
-      <table className="w-full text-sm text-right">
-        <thead className="bg-gray-50 text-gray-600 font-semibold text-base">
-          <tr>
-            <th className="px-4 py-3">#</th>
-            <th className="px-4 py-3">اسم التصنيف</th>
-            <th className="px-4 py-3">إجراء</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {filtered.map((cat, i) => (
-            <tr key={cat.name} className="hover:bg-gray-50 text-base">
-              <td className="px-4 py-3 text-gray-400 font-medium">{i + 1}</td>
-              <td className="px-4 py-3 font-medium text-gray-800">{cat.name}</td>
-              <td className="px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <button onClick={() => onEdit(cat)} className="text-blue-500 hover:text-blue-700" title="تعديل">
-                    <EditIcon />
-                  </button>
-                  <button onClick={() => onDelete(cat.name)} className="text-red-500 hover:text-red-700" title="حذف">
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm text-right">
+          <thead className="bg-gray-50 text-gray-600 font-semibold text-xs sm:text-sm">
+            <tr>
+              <th className="px-3 sm:px-4 py-3">#</th>
+              <th className="px-3 sm:px-4 py-3">اسم التصنيف</th>
+              <th className="px-3 sm:px-4 py-3">إجراء</th>
             </tr>
-          ))}
-          {filtered.length === 0 && (
-            <tr><td colSpan={3} className="px-4 py-8 text-center text-gray-400">لا توجد تصنيفات</td></tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {filtered.map((cat, i) => (
+              <tr key={cat.name} className="hover:bg-gray-50">
+                <td className="px-3 sm:px-4 py-3 text-gray-400 font-medium text-xs sm:text-sm">{i + 1}</td>
+                <td className="px-3 sm:px-4 py-3 font-medium text-gray-800 text-sm sm:text-base">{cat.name}</td>
+                <td className="px-3 sm:px-4 py-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <button onClick={() => onEdit(cat)} className="text-blue-500 hover:text-blue-700" title="تعديل">
+                      <EditIcon />
+                    </button>
+                    <button onClick={() => onDelete(cat.name)} className="text-red-500 hover:text-red-700" title="حذف">
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {filtered.length === 0 && (
+              <tr><td colSpan={3} className="px-4 py-8 text-center text-gray-400 text-sm">لا توجد تصنيفات</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

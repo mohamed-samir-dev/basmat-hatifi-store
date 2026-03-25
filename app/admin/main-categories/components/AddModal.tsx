@@ -11,12 +11,12 @@ interface AddModalProps {
 
 export default function AddModal({ name, error, loading, onNameChange, onSubmit, onClose }: AddModalProps) {
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">إضافة تصنيف جديد</h2>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl p-5 sm:p-6 w-full max-w-md shadow-xl">
+        <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-4">إضافة تصنيف جديد</h2>
         <form onSubmit={onSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">اسم التصنيف</label>
+            <label className="block text-xs sm:text-sm text-gray-600 mb-1">اسم التصنيف</label>
             <input
               type="text"
               value={name}
@@ -26,7 +26,7 @@ export default function AddModal({ name, error, loading, onNameChange, onSubmit,
               required
             />
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-xs sm:text-sm">{error}</p>}
           <div className="flex gap-2 pt-2">
             <button type="submit" disabled={loading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-60">

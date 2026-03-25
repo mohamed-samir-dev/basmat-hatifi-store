@@ -19,12 +19,12 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
   };
 
   return (
-    <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 fixed top-0 left-0 right-0 z-50" dir="rtl">
+    <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 fixed top-0 left-0 right-0 md:right-64 z-50" dir="rtl">
       <div className="flex items-center gap-3">
         <button onClick={onMenuClick} className="md:hidden p-2 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
           <Menu size={22} />
         </button>
-        <div className="h-16 w-36 relative shrink-0">
+        <div className="h-16 w-20 sm:w-36 relative shrink-0">
           <Image src={logo} alt="Logo" fill className="object-contain object-right" unoptimized />
         </div>
       </div>

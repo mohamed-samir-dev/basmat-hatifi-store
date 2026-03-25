@@ -13,9 +13,9 @@ interface EditModalProps {
 
 export default function EditModal({ editCat, editName, editError, editLoading, onNameChange, onSubmit, onClose }: EditModalProps) {
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">تعديل: {editCat.name}</h2>
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+      <div className="bg-white rounded-xl p-5 sm:p-6 w-full max-w-md shadow-xl">
+        <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-4">تعديل: {editCat.name}</h2>
         {editCat.count > 0 && (
           <p className="text-xs text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
             ⚠️ سيتم تغيير اسم التصنيف في <span className="font-bold">{editCat.count} منتج</span>
@@ -23,7 +23,7 @@ export default function EditModal({ editCat, editName, editError, editLoading, o
         )}
         <form onSubmit={onSubmit} className="space-y-3">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">اسم التصنيف</label>
+            <label className="block text-xs sm:text-sm text-gray-600 mb-1">اسم التصنيف</label>
             <input
               type="text"
               value={editName}
@@ -32,7 +32,7 @@ export default function EditModal({ editCat, editName, editError, editLoading, o
               required
             />
           </div>
-          {editError && <p className="text-red-500 text-sm">{editError}</p>}
+          {editError && <p className="text-red-500 text-xs sm:text-sm">{editError}</p>}
           <div className="flex gap-2 pt-2">
             <button type="submit" disabled={editLoading}
               className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-60">
