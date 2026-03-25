@@ -15,7 +15,7 @@ function filterProducts(products: Product[], slug: string): Product[] {
   const { brand, category, nameIncludes } = config.filters;
   return products.filter((p) => {
     const matchBrand = brand ? p.brand?.toLowerCase() === brand.toLowerCase() : true;
-    const matchCategory = category ? p.category?.toLowerCase().includes(category.toLowerCase()) : true;
+    const matchCategory = category ? p.category === category : true;
     const matchName = nameIncludes?.length
       ? nameIncludes.some((kw) => p.name?.toLowerCase().includes(kw.toLowerCase()))
       : true;
