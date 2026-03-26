@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 const ALLOWED_BACKENDS = [
   "http://localhost:5000",
   "https://pasmthatfee.com",
+  "https://api.pasmthatfee.com",
   "https://backend-for-bsmastore-public-production.up.railway.app",
 ];
 

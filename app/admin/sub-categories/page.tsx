@@ -38,7 +38,7 @@ export default function SubCategoriesPage() {
     const [res1, res2, res3] = await Promise.all([
       apiFetch("/api/admin/sub-categories", { credentials: "include" }),
       apiFetch("/api/admin/sub-categories/settings", { credentials: "include" }),
-      apiFetch("/api/admin/sub-categories/settings/max", { credentials: "include" }),
+      apiFetch("/api/admin/sub-categories/max", { credentials: "include" }),
     ]);
     if (res1.ok) setItems(await res1.json());
     if (res2.ok) setSettings(await res2.json());

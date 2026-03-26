@@ -37,6 +37,7 @@ export function useCompany() {
     try {
       const res = await fetch(`/api/admin/company/upload/${key}`, {
         method: "POST",
+        credentials: "include",
         body: formData,
       });
       const json = await res.json();
