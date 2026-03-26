@@ -63,10 +63,8 @@ export default function InstallmentContract({ orderId, onClose }: { orderId: str
 
   const productNames = order.items.map((i) => i.name).join("، ");
 
-  function handlePrint() {
-    const win = window.open("", "_blank", "width=800,height=900");
-    if (!win) return;
-    win.document.write(`<!DOCTYPE html>
+  function getHtmlContent(): string {
+    const html = `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8"/>
@@ -121,7 +119,25 @@ export default function InstallmentContract({ orderId, onClose }: { orderId: str
     </div>
   </div>
 </body>
-</html>`);
+</html>`;
+    return html;
+  }
+
+  function handlePrint() {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      const blob = new Blob([getHtmlContent()], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `عقد-تقسيط-${order.orderId}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+    const win = window.open("", "_blank", "width=800,height=900");
+    if (!win) return;
+    win.document.write(getHtmlContent());
     win.document.close();
     win.focus();
     setTimeout(() => { win.print(); win.close(); }, 600);

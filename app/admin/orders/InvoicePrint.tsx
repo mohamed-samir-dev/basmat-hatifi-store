@@ -40,9 +40,7 @@ export default function InvoicePrint({ orderId, onClose }: { orderId: string; on
     hour: "2-digit", minute: "2-digit",
   }).format(new Date(order.createdAt));
 
-  function handlePrint() {
-    const win = window.open("", "_blank", "width=800,height=900");
-    if (!win) return;
+  function getHtmlContent() {
     const items = order.items.map(item =>
       `<div class="product-item">
         <div class="product-name">${item.name}</div>
@@ -71,7 +69,7 @@ export default function InvoicePrint({ orderId, onClose }: { orderId: string; on
       img1Html,
     ].join("");
 
-    win.document.write(`<!DOCTYPE html>
+    return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head>
   <meta charset="UTF-8" />
@@ -151,7 +149,24 @@ export default function InvoicePrint({ orderId, onClose }: { orderId: string; on
     ${qrImages}
   </div>
 </body>
-</html>`);
+</html>`;
+  }
+
+  function handlePrint() {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      const blob = new Blob([getHtmlContent()], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `فاتورة-${order.orderId}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+    const win = window.open("", "_blank", "width=800,height=900");
+    if (!win) return;
+    win.document.write(getHtmlContent());
     win.document.close();
     win.focus();
     setTimeout(() => { win.print(); win.close(); }, 600);

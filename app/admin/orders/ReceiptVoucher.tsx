@@ -72,10 +72,8 @@ export default function ReceiptVoucher({ orderId, onClose }: { orderId: string; 
   const amountWords = toArabicWords(amount) + " فقط لا غير";
   const aboutText = `قيمة ${order.installmentType === "installment" ? "دفعة من " : ""}ثمن جهاز/أجهزة: ${productNames}`;
 
-  function handlePrint() {
-    const win = window.open("", "_blank", "width=760,height=620");
-    if (!win) return;
-    win.document.write(`<!DOCTYPE html>
+  function getHtmlContent() {
+    return `<!DOCTYPE html>
 <html dir="rtl" lang="ar">
 <head><meta charset="UTF-8"/><title>سند قبض - ${order.orderId}</title>
 <style>${PRINT_STYLE}</style></head>
@@ -116,7 +114,24 @@ export default function ReceiptVoucher({ orderId, onClose }: { orderId: string; 
       <div class="sign-box"><div class="sign-line">توقيع المستلم</div></div>
     </div>
   </div>
-</body></html>`);
+</body></html>`;
+  }
+
+  function handlePrint() {
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    if (isMobile) {
+      const blob = new Blob([getHtmlContent()], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `سند-قبض-${order.orderId}.html`;
+      a.click();
+      URL.revokeObjectURL(url);
+      return;
+    }
+    const win = window.open("", "_blank", "width=760,height=620");
+    if (!win) return;
+    win.document.write(getHtmlContent());
     win.document.close();
     win.focus();
     setTimeout(() => { win.print(); win.close(); }, 600);
