@@ -8,9 +8,8 @@ export default async function ConditionalLayout({ children }: { children: React.
   const isAdmin = pathname.startsWith("/admin");
 
   return (
-    <ClientLayout>
+    <ClientLayout footer={!isAdmin ? <Footer /> : null}>
       {children}
-      {!isAdmin && <Footer />}
     </ClientLayout>
   );
 }
