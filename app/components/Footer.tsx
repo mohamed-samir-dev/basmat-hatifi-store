@@ -52,7 +52,7 @@ export default async function Footer() {
         <div>
           <h3 className="text-blue-500 font-bold text-xl mb-3">من نحن</h3>
           <p className="text-sm leading-relaxed text-gray-500">
-            بصمة هاتفي المعتمد هو اختيارك الأول لشراء أجهزتك بالأقساط داخل السعودية، ضمان موثوق وخدمة محلية.
+            {c.details || "بصمة هاتفي المعتمد هو اختيارك الأول لشراء أجهزتك بالأقساط داخل السعودية، ضمان موثوق وخدمة محلية."}
           </p>
         </div>
 

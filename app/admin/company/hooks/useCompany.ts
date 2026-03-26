@@ -76,6 +76,7 @@ export function useCompany() {
         body: JSON.stringify(data),
       });
       if (!res.ok) throw new Error();
+      await fetch("/api/revalidate?tag=company", { method: "POST" });
       toast.success("تم حفظ بيانات الشركة");
     } catch {
       toast.error("فشل الحفظ");

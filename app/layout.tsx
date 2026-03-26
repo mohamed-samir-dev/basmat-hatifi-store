@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import ConditionalLayout from "./components/ConditionalLayout";
+import ClientLayout from "./components/ClientLayout";
+import Footer from "./components/Footer";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
 const SITE_URL = "https://www.pasmthatfee.com";
 
 async function getCompany() {
   try {
-    const r = await fetch(`${BACKEND}/api/admin/company`, { next: { revalidate: 3600 } });
+    const r = await fetch(`${BACKEND}/api/admin/company`, { next: { revalidate: 60, tags: ["company"] } });
     return r.ok ? r.json() : {};
   } catch {
     return {};
@@ -84,7 +85,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body className="antialiased" suppressHydrationWarning>
-        <ConditionalLayout>{children}</ConditionalLayout>
+        <ClientLayout footer={<Footer />}>{children}</ClientLayout>
       </body>
     </html>
   );

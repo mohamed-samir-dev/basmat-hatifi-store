@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "./navbar";
 import WhatsappButton from "./WhatsappButton";
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+export default function ClientLayout({ children, footer }: { children: React.ReactNode; footer: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
@@ -11,6 +11,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     <>
       {!isAdmin && <Navbar />}
       {children}
+      {!isAdmin && footer}
       {!isAdmin && <WhatsappButton />}
     </>
   );
