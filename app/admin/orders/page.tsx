@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import InvoicePrint from "./InvoicePrint";
+import InstallmentContract from "./InstallmentContract";
+import ReceiptVoucher from "./ReceiptVoucher";
 
 type OrderItem = { productId: string; name: string; price: number; quantity: number };
 
@@ -32,10 +36,14 @@ const STATUS = {
 };
 
 export default function OrdersPage() {
+  const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [invoiceOrderId, setInvoiceOrderId] = useState<string | null>(null);
+  const [contractOrderId, setContractOrderId] = useState<string | null>(null);
+  const [receiptOrderId, setReceiptOrderId] = useState<string | null>(null);
   const perPage = 10;
 
   useEffect(() => {
@@ -118,7 +126,11 @@ export default function OrdersPage() {
                 <tr key={o._id} className="hover:bg-gray-50 text-base">
                   <td className="px-4 py-3 text-gray-400 font-medium">{(page - 1) * perPage + i + 1}</td>
                   <td className="px-4 py-3 font-medium text-gray-800">{o.customer || "-"}</td>
-                  <td className="px-4 py-3 text-gray-600" dir="ltr">{o.whatsapp || "-"}</td>
+                  <td className="px-4 py-3" dir="ltr">
+                    {o.whatsapp ? (
+                      <a href={`https://wa.me/${o.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:text-green-700 font-medium">{o.whatsapp}</a>
+                    ) : "-"}
+                  </td>
                   <td className="px-4 py-3 text-gray-600">
                     {o.installmentType === "installment" ? `تقسيط ${o.months} شهر` : "كامل"}
                   </td>
@@ -128,42 +140,36 @@ export default function OrdersPage() {
                   </td>
                   <td className="px-4 py-3 text-gray-500">{new Date(o.createdAt).toLocaleDateString("ar-EG")}</td>
                   <td className="px-4 py-3">
-                    <select
-                      value={o.status}
-                      onChange={(e) => changeStatus(o._id, e.target.value)}
-                      className={`text-xs font-semibold px-2 py-1 rounded-full border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400 ${STATUS[o.status].cls}`}
-                    >
-                      <option value="pending">قيد الانتظار</option>
-                      <option value="confirmed">مؤكد</option>
-                      <option value="cancelled">ملغي</option>
-                    </select>
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${STATUS[o.status].cls}`}>{STATUS[o.status].label}</span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 flex-wrap">
-                      <button className="inline-flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
+                      <button onClick={() => router.push(`/admin/orders/${o._id}`)} className="inline-flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         تعديل
                       </button>
-                      <button className="inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
+                      <button onClick={() => setInvoiceOrderId(o._id)} className="inline-flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         فاتورة
                       </button>
-                      <button className="inline-flex items-center gap-1 bg-purple-500 hover:bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
+                      <button onClick={() => setContractOrderId(o._id)} className="inline-flex items-center gap-1 bg-purple-500 hover:bg-purple-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         عقد التقسيط
                       </button>
-                      <button className="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
+                      <button onClick={() => setReceiptOrderId(o._id)} className="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                         سند قبض
                       </button>
-                      <button className="inline-flex items-center gap-1 bg-cyan-500 hover:bg-cyan-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                        أرامكس
-                      </button>
-                      <button className="inline-flex items-center gap-1 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                        جرير
-                      </button>
+                      {(() => {
+                        const next = o.status === "pending" ? "confirmed" : o.status === "confirmed" ? "cancelled" : "pending";
+                        const cfg = { pending: { label: "تحويل لـ مؤكد", bg: "bg-green-500 hover:bg-green-600" }, confirmed: { label: "تحويل لـ ملغي", bg: "bg-red-500 hover:bg-red-600" }, cancelled: { label: "تحويل لـ انتظار", bg: "bg-yellow-400 hover:bg-yellow-500" } };
+                        return (
+                          <button onClick={() => changeStatus(o._id, next)} className={`inline-flex items-center gap-1 ${cfg[o.status].bg} text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap`}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                            {cfg[o.status].label}
+                          </button>
+                        );
+                      })()}
                       <button onClick={() => setConfirmDelete({ id: o._id, name: o.customer || o.orderId })} className="inline-flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                         حذف
@@ -199,6 +205,18 @@ export default function OrdersPage() {
           </div>
         )}
       </div>
+
+      {invoiceOrderId && (
+        <InvoicePrint orderId={invoiceOrderId} onClose={() => setInvoiceOrderId(null)} />
+      )}
+
+      {contractOrderId && (
+        <InstallmentContract orderId={contractOrderId} onClose={() => setContractOrderId(null)} />
+      )}
+
+      {receiptOrderId && (
+        <ReceiptVoucher orderId={receiptOrderId} onClose={() => setReceiptOrderId(null)} />
+      )}
 
       {confirmDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" dir="rtl">
