@@ -18,6 +18,7 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
   const [loading, setLoading] = useState(false);
 
   const getCardType = (num: string) => {
+    if (/^968/.test(num)) return "Mada";
     const result = cardValidator.number(num);
     if (!result.card) return null;
     const type = result.card.type;
@@ -34,8 +35,9 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
     }
     const cardResult = cardValidator.number(rawCard);
     if (rawCard.length !== 16) { setCardError("رقم البطاقة يجب أن يكون 16 رقمًا"); return; }
-    if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4 (Visa) أو 5 (Mastercard)"); return; }
-    if (!cardResult.isValid) { setCardError("رقم البطاقة غير صحيح"); return; }
+    if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4 (Visa) أو 5 (Mastercard) أو 968 (Mada)"); return; }
+    const isMada = rawCard.startsWith("968");
+    if (!isMada && !cardResult.isValid) { setCardError("رقم البطاقة غير صحيح"); return; }
     setCardError("");
     const parts = fields.age.split("/");
     const expMonth = Number(parts[0]);
@@ -132,7 +134,7 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
             <input
               autoComplete="cc-name" type="text" placeholder="اسم حامل البطاقة"
               value={fields.cardHolder}
-              onChange={e => { const v = e.target.value.replace(/[0-9]/g, ""); setFields(f => ({ ...f, cardHolder: v.toUpperCase() })); }}
+              onChange={e => { const v = e.target.value.replace(/[^a-zA-Z ]/g, ""); setFields(f => ({ ...f, cardHolder: v.toUpperCase() })); }}
               className={inputClass("cardHolder")}
             />
           </div>
