@@ -24,20 +24,20 @@ export const imageFields = [
 ];
 
 export const defaultData = {
-  nameAr: "نيكس تيك",
-  nameEn: "NexTech",
-  addressAr: "السعودية",
-  addressEn: "Saudi Arabia",
-  phone: "996582968481",
-  whatsapp: "966596519209",
-  website: "http://nextech-sa.com",
-  email: "info@nextech-sa.com",
-  currencyAr: "ريـــال",
-  currencyEn: "SAR",
-  taxNumber: "314435648600003",
-  shippingCompany: "مندوب توصيل",
-  paymentMethod: "بطاقات بنكية فقط",
-  details: "هو اختيارك الأول لشراء أجهزتك بالأقساط\nداخل السعودية ضمان موثوق وخدمة محلية",
+  nameAr: "",
+  nameEn: "",
+  addressAr: "",
+  addressEn: "",
+  phone: "",
+  whatsapp: "",
+  website: "",
+  email: "",
+  currencyAr: "",
+  currencyEn: "",
+  taxNumber: "",
+  shippingCompany: "",
+  paymentMethod: "",
+  details: "",
   logo: "",
   header: "",
   footer: "",
@@ -47,5 +47,11 @@ export const defaultData = {
 export const toFullUrl = (url: string) => {
   if (!url) return url;
   if (url.startsWith("http")) return url;
-  return `${API}${url}?t=${Date.now()}`;
+  return `${API}${url}`;
+};
+
+export const withCacheBust = (url: string) => {
+  if (!url) return url;
+  const base = url.split("?")[0];
+  return `${base}?t=${Date.now()}`;
 };

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useCompanyStore } from "../../../store/companyStore";
-import { API, defaultData, toFullUrl } from "../constants";
+import { API, defaultData, toFullUrl, withCacheBust } from "../constants";
 import type { CompanyData } from "../types";
 
 export function useCompany() {
@@ -15,9 +15,12 @@ export function useCompany() {
     fetch(`/api/admin/company`)
       .then((r) => r.json())
       .then((res) => {
+        const imageKeys = ["logo", "header", "footer", "stamp"];
         const merged: CompanyData = { ...defaultData };
         for (const k of Object.keys(defaultData)) {
-          if (res[k] !== undefined && res[k] !== "") merged[k] = toFullUrl(res[k]);
+          if (res[k] !== undefined && res[k] !== "") {
+            merged[k] = imageKeys.includes(k) ? toFullUrl(res[k]) : res[k];
+          }
         }
         setData(merged);
       })
@@ -38,9 +41,9 @@ export function useCompany() {
       });
       const json = await res.json();
       if (!res.ok) { toast.error(json.error || "فشل رفع الصورة"); return; }
-      const fullUrl = json.url.startsWith("http") ? `${json.url}?t=${Date.now()}` : `${API}${json.url}?t=${Date.now()}`;
+      const fullUrl = json.url.startsWith("http") ? json.url : `${API}${json.url}`;
       handleChange(key, fullUrl);
-      if (key === "logo") setLogo(fullUrl);
+      if (key === "logo") setLogo(withCacheBust(fullUrl));
       toast.success("تم رفع الصورة");
     } catch (e) {
       console.error(e);

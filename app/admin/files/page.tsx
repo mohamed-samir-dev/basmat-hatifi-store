@@ -29,9 +29,9 @@ export default function FilesPage() {
       .then((r) => r.json())
       .then((d) => {
         const normalize = (item: Partial<FooterItem>): FooterItem => ({ image: item.image || "", linkType: item.linkType || "link", link: item.link || "", file: item.file || "" });
-        const items = d.footerItems && d.footerItems.length > 0
-          ? d.footerItems.map(normalize)
-          : [normalize({}), normalize({}), normalize({})];
+        const items = (d.footerItems && d.footerItems.length > 0
+          ? d.footerItems
+          : [{}, {}, {}]).map(normalize);
         setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", img1: d.img1 || "", link1: d.link1 || "", linkType1: d.linkType1 || "link", file1: d.file1 || "", img2: d.img2 || "", link2: d.link2 || "", linkType2: d.linkType2 || "link", file2: d.file2 || "", footerItems: items });
       });
   }, []);
@@ -242,7 +242,7 @@ export default function FilesPage() {
                     {["link", "file"].map((t) => (
                       <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                         <input type="radio" name={`type-${i}`} value={t}
-                          checked={item.linkType === t}
+                          checked={(item.linkType ?? "link") === t}
                           onChange={() => updateItem(i, "linkType", t)}
                           className="accent-blue-600" />
                         {t === "link" ? "رابط" : "ملف"}
@@ -250,8 +250,8 @@ export default function FilesPage() {
                     ))}
                   </div>
 
-                  {item.linkType === "link" ? (
-                    <div className="flex items-center gap-2">
+                  {(item.linkType ?? "link") === "link" ? (
+                    <div key="link-input" className="flex items-center gap-2">
                       <FiLink className="text-gray-400 shrink-0" size={15} />
                       <input type="text" value={item.link ?? ""}
                         onChange={(e) => updateItem(i, "link", e.target.value)}
@@ -259,7 +259,7 @@ export default function FilesPage() {
                         className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-3">
+                    <div key="file-input" className="flex items-center gap-3">
                       <button onClick={() => fileRefs.current[i]?.click()}
                         disabled={uploading === `file-${i}`}
                         className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
@@ -321,14 +321,14 @@ export default function FilesPage() {
               {["link", "file"].map((t) => (
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                   <input type="radio" name="type-1" value={t}
-                    checked={data.linkType1 === t}
+                    checked={(data.linkType1 || "link") === t}
                     onChange={() => setData((p) => ({ ...p, linkType1: t }))}
                     className="accent-blue-600" />
                   {t === "link" ? "رابط" : "ملف"}
                 </label>
               ))}
             </div>
-            {data.linkType1 === "link" ? (
+            {(data.linkType1 || "link") === "link" ? (
               <div className="flex items-center gap-2">
                 <FiLink className="text-gray-400 shrink-0" size={15} />
                 <input type="text" value={data.link1 ?? ""}
@@ -392,14 +392,14 @@ export default function FilesPage() {
               {["link", "file"].map((t) => (
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                   <input type="radio" name="type-2" value={t}
-                    checked={data.linkType2 === t}
+                    checked={(data.linkType2 || "link") === t}
                     onChange={() => setData((p) => ({ ...p, linkType2: t }))}
                     className="accent-blue-600" />
                   {t === "link" ? "رابط" : "ملف"}
                 </label>
               ))}
             </div>
-            {data.linkType2 === "link" ? (
+            {(data.linkType2 || "link") === "link" ? (
               <div className="flex items-center gap-2">
                 <FiLink className="text-gray-400 shrink-0" size={15} />
                 <input type="text" value={data.link2 ?? ""}
