@@ -28,20 +28,22 @@ interface CustomerFormProps {
 }
 
 export default function CustomerForm({ total, itemCount, initialData, onSubmit }: CustomerFormProps) {
-  const DOWN_PAYMENT = itemCount * 1000;
+  const DOWN_PAYMENT_OPTIONS = [500, 1000, 1500, 2000];
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");
   const [address, setAddress] = useState(initialData?.address ?? "");
   const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "full");
   const [months, setMonths] = useState(initialData?.months ?? 3);
+  const [downPayment, setDownPayment] = useState<number | "full">(initialData?.downPayment ?? 1000);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const effectiveDown = downPayment === "full" ? total : downPayment;
   const monthlyPayment = useMemo(() => {
-    if (installmentType === "full") return 0;
-    const remaining = total - DOWN_PAYMENT;
+    if (installmentType === "full" || downPayment === "full") return 0;
+    const remaining = total - downPayment;
     return remaining > 0 ? Math.ceil(remaining / months) : 0;
-  }, [total, months, installmentType]);
+  }, [total, months, installmentType, downPayment]);
 
   const schedule = useMemo(() => {
     const now = new Date();
@@ -67,10 +69,11 @@ export default function CustomerForm({ total, itemCount, initialData, onSubmit }
     if (!name.trim()) newErrors.name = "مطلوب";
     if (!nationalId.trim()) newErrors.nationalId = "مطلوب";
     if (!whatsapp.trim()) newErrors.whatsapp = "مطلوب";
+    else if (!/^05\d{8}$/.test(whatsapp.trim())) newErrors.whatsapp = "رقم غير صحيح، يجب أن يبدأ بـ 05 ويتكون من 10 أرقام";
     if (!address.trim()) newErrors.address = "مطلوب";
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
-      onSubmit({ name, nationalId, whatsapp, address, installmentType, months });
+      onSubmit({ name, nationalId, whatsapp, address, installmentType, months, downPayment: effectiveDown });
     }
   };
 
@@ -84,7 +87,11 @@ export default function CustomerForm({ total, itemCount, initialData, onSubmit }
           <input value={nationalId} onChange={(e) => { setNationalId(e.target.value); setErrors((p) => ({ ...p, nationalId: "" })); }} placeholder="10XXXXXXXX" className={inputClass("nationalId")} />
         </InlineField>
         <InlineField label="رقم الواتساب" error={errors.whatsapp}>
-          <input type="tel" value={whatsapp} onChange={(e) => { setWhatsapp(e.target.value); setErrors((p) => ({ ...p, whatsapp: "" })); }} placeholder="05XXXXXXXX" className={inputClass("whatsapp")} />
+          <input type="tel" value={whatsapp} onChange={(e) => {
+              const val = e.target.value.replace(/[^0-9]/g, "").slice(0, 10);
+              setWhatsapp(val);
+              setErrors((p) => ({ ...p, whatsapp: "" }));
+            }} placeholder="05XXXXXXXX" className={inputClass("whatsapp")} />
         </InlineField>
         <InlineField label="العنوان" error={errors.address}>
           <input value={address} onChange={(e) => { setAddress(e.target.value); setErrors((p) => ({ ...p, address: "" })); }} placeholder="المدينة - الحي - الشارع" className={inputClass("address")} />
@@ -92,7 +99,7 @@ export default function CustomerForm({ total, itemCount, initialData, onSubmit }
 
         <div className="border-t border-gray-200 pt-3" />
 
-        <InlineField label="آلية التقسيط">
+        <InlineField label=" الدفع/التقسيط علي ">
           <select
             value={installmentType === "full" ? "full" : String(months)}
             onChange={(e) => {
@@ -115,9 +122,16 @@ export default function CustomerForm({ total, itemCount, initialData, onSubmit }
         {installmentType === "installment" && (
           <>
             <InlineField label="الدفعة الأولى">
-              <div className="w-full bg-gray-100 border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-900">
-                {fmt(DOWN_PAYMENT)} ر.س
-              </div>
+              <select
+                value={downPayment === "full" ? "full" : String(downPayment)}
+                onChange={(e) => setDownPayment(e.target.value === "full" ? "full" : Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-900 bg-white focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400/20 transition cursor-pointer"
+              >
+                <option value="full">الدفع بالكامل ({fmt(total)} ر.س)</option>
+                {DOWN_PAYMENT_OPTIONS.map((v) => (
+                  <option key={v} value={v}>{fmt(v)} ر.س</option>
+                ))}
+              </select>
             </InlineField>
             <InlineField label="القسط الشهري">
               <div className="w-full bg-teal-50 border border-teal-200 rounded-xl px-3 py-2.5 text-sm font-extrabold text-teal-800">

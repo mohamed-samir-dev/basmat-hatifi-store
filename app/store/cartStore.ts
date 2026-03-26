@@ -14,6 +14,7 @@ export interface CustomerInfo {
   address: string;
   installmentType: "full" | "installment";
   months: number;
+  downPayment: number;
 }
 
 interface CartState {

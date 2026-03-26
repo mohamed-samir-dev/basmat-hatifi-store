@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IoCartOutline, IoChevronBack } from "react-icons/io5";
@@ -14,7 +14,9 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 export default function CartPage() {
   const router = useRouter();
   const { items, removeItem, updateQty, totalPrice, totalItems, setCustomer, customer } = useCartStore();
-  const [mounted] = useState(() => typeof window !== "undefined");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const total = mounted ? totalPrice() : 0;
   const count = mounted ? totalItems() : 0;

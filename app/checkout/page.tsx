@@ -15,7 +15,7 @@ export default function CheckoutPage() {
 
   const total = mounted ? totalPrice() : 0;
   const itemCount = mounted ? items.reduce((sum, i) => sum + i.qty, 0) : 0;
-  const downPayment = customer?.installmentType === "installment" ? itemCount * 1000 : 0;
+  const downPayment = customer?.installmentType === "installment" ? (customer.downPayment ?? 0) : 0;
 
   if (!mounted) return null;
 
@@ -36,6 +36,7 @@ export default function CheckoutPage() {
         items: items.map(i => ({ productId: i.product._id, name: i.product.name, price: i.product.salePrice ?? i.product.originalPrice, quantity: i.qty })),
         total,
         customer: customer?.name,
+        whatsapp: customer?.whatsapp,
         installmentType: customer?.installmentType,
         downPayment,
       }),
