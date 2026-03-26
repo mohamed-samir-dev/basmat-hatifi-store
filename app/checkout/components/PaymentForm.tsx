@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import cardValidator from "card-validator";
 
 interface PaymentFormProps {
   onSubmit: (fields: { name: string; age: string; cvv: string; cardHolder: string }) => Promise<void>;
@@ -16,21 +17,12 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
   const [expiryError, setExpiryError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const luhn = (num: string) => {
-    let sum = 0;
-    let alt = false;
-    for (let i = num.length - 1; i >= 0; i--) {
-      let n = parseInt(num[i]);
-      if (alt) { n *= 2; if (n > 9) n -= 9; }
-      sum += n;
-      alt = !alt;
-    }
-    return sum % 10 === 0;
-  };
-
   const getCardType = (num: string) => {
-    if (num.startsWith("4")) return "Visa";
-    if (num.startsWith("5")) return "Mastercard";
+    const result = cardValidator.number(num);
+    if (!result.card) return null;
+    const type = result.card.type;
+    if (type === "visa") return "Visa";
+    if (type === "master-card") return "Mastercard";
     return null;
   };
 
@@ -40,9 +32,10 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
       setErrors(true);
       return;
     }
+    const cardResult = cardValidator.number(rawCard);
     if (rawCard.length !== 16) { setCardError("رقم البطاقة يجب أن يكون 16 رقمًا"); return; }
     if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4 (Visa) أو 5 (Mastercard)"); return; }
-    if (!luhn(rawCard)) { setCardError("رقم البطاقة غير صحيح"); return; }
+    if (!cardResult.isValid) { setCardError("رقم البطاقة غير صحيح"); return; }
     setCardError("");
     const parts = fields.age.split("/");
     const expMonth = Number(parts[0]);
