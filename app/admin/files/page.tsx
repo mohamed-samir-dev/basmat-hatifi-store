@@ -6,33 +6,31 @@ import { FiUpload, FiLink, FiExternalLink } from "react-icons/fi";
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 type FooterItem = { image: string; linkType: string; link: string; file: string };
-type Data = { qrImage: string; qrLink: string; img1: string; link1: string; link1Type: string; file1: string; img2: string; link2: string; link2Type: string; file2: string; footerItems: FooterItem[] };
+type Data = { qrImage: string; qrLink: string; img1: string; link1: string; img2: string; link2: string; footerItems: FooterItem[] };
 
 export default function FilesPage() {
-  const [data, setData] = useState<Data>({ qrImage: "", qrLink: "", img1: "", link1: "", link1Type: "link", file1: "", img2: "", link2: "", link2Type: "link", file2: "", footerItems: [] });
+  const [data, setData] = useState<Data>({ qrImage: "", qrLink: "", img1: "", link1: "", img2: "", link2: "", footerItems: [] });
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState<string | null>(null);
-  const [imgKeys, setImgKeys] = useState<Record<string, string>>({});
+  const [imgKeys, setImgKeys] = useState<Record<string, number>>({});
   const qrRef = useRef<HTMLInputElement>(null);
   const img1Ref = useRef<HTMLInputElement>(null);
   const img2Ref = useRef<HTMLInputElement>(null);
-  const file1Ref = useRef<HTMLInputElement>(null);
-  const file2Ref = useRef<HTMLInputElement>(null);
   const imgRefs = useRef<Record<number, HTMLInputElement | null>>({});
   const fileRefs = useRef<Record<number, HTMLInputElement | null>>({});
 
-  function bumpKey(k: string) { setImgKeys((p) => ({ ...p, [k]: String(Date.now()) })); }
+  function bumpKey(k: string) { setImgKeys((p) => ({ ...p, [k]: Date.now() })); }
 
   useEffect(() => {
     fetch(`${API}/api/admin/company`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
-        const normalize = (item: Partial<FooterItem>): FooterItem => ({ image: item.image ?? "", linkType: item.linkType ?? "link", link: item.link ?? "", file: item.file ?? "" });
+        const normalize = (item: Partial<FooterItem>): FooterItem => ({ image: item.image || "", linkType: item.linkType || "link", link: item.link || "", file: item.file || "" });
         const items = d.footerItems && d.footerItems.length > 0
           ? d.footerItems.map(normalize)
           : [normalize({}), normalize({}), normalize({})];
-        setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", img1: d.img1 || "", link1: d.link1 || "", link1Type: d.link1Type || "link", file1: d.file1 || "", img2: d.img2 || "", link2: d.link2 || "", link2Type: d.link2Type || "link", file2: d.file2 || "", footerItems: items });
+        setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", img1: d.img1 || "", link1: d.link1 || "", img2: d.img2 || "", link2: d.link2 || "", footerItems: items });
       });
   }, []);
 
@@ -53,24 +51,6 @@ export default function FilesPage() {
     const r = await fetch(`${API}/api/admin/company/footer-image/img1`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) { setData((p) => ({ ...p, img1: json.url })); bumpKey("img1"); }
-    setUploading(null);
-  }
-
-  async function uploadFile1(file: File) {
-    setUploading("file1");
-    const fd = new FormData();
-    fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-file/file1`, { method: "POST", credentials: "include", body: fd });
-    if (r.ok) { const json = await r.json(); if (json.url) setData((p) => ({ ...p, file1: json.url })); }
-    setUploading(null);
-  }
-
-  async function uploadFile2(file: File) {
-    setUploading("file2");
-    const fd = new FormData();
-    fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-file/file2`, { method: "POST", credentials: "include", body: fd });
-    if (r.ok) { const json = await r.json(); if (json.url) setData((p) => ({ ...p, file2: json.url })); }
     setUploading(null);
   }
 
@@ -131,7 +111,7 @@ export default function FilesPage() {
     const r = await fetch(`${API}/api/admin/company`, {
       method: "PUT", credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ qrLink: data.qrLink, link1: data.link1, link1Type: data.link1Type, file1: data.file1, link2: data.link2, link2Type: data.link2Type, file2: data.file2, footerItems: data.footerItems }),
+      body: JSON.stringify({ qrLink: data.qrLink, link1: data.link1, link2: data.link2, footerItems: data.footerItems }),
     });
     setSaving(false);
     setMsg(r.ok ? "✅ تم الحفظ" : "❌ حدث خطأ");
@@ -314,47 +294,12 @@ export default function FilesPage() {
             <input ref={img1Ref} type="file" accept="image/*" className="hidden"
               onChange={(e) => e.target.files?.[0] && uploadImg1(e.target.files[0])} />
           </div>
-          <div className="flex-1 space-y-2">
-            <div className="flex gap-4">
-              {["link", "file"].map((t) => (
-                <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
-                  <input type="radio" name="type-1" value={t}
-                    checked={data.link1Type === t}
-                    onChange={() => setData((p) => ({ ...p, link1Type: t }))}
-                    className="accent-blue-600" />
-                  {t === "link" ? "رابط" : "ملف"}
-                </label>
-              ))}
-            </div>
-            {data.link1Type === "link" ? (
-              <div className="flex items-center gap-2">
-                <FiLink className="text-gray-400 shrink-0" size={15} />
-                <input type="text" value={data.link1 ?? ""}
-                  onChange={(e) => setData((p) => ({ ...p, link1: e.target.value }))}
-                  placeholder="رابط سكشن 1..."
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <button onClick={() => file1Ref.current?.click()}
-                  disabled={uploading === "file1"}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
-                  {uploading === "file1"
-                    ? <span className="w-3.5 h-3.5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                    : <FiUpload size={13} />}
-                  رفع ملف
-                </button>
-                <input type="file" className="hidden" ref={file1Ref}
-                  onChange={(e) => e.target.files?.[0] && uploadFile1(e.target.files[0])} />
-                {data.file1 && (
-                  <a href={data.file1} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
-                    <FiExternalLink size={13} />
-                    عرض الملف
-                  </a>
-                )}
-              </div>
-            )}
+          <div className="flex-1 flex items-center gap-2">
+            <FiLink className="text-gray-400 shrink-0" size={15} />
+            <input type="text" value={data.link1 ?? ""}
+              onChange={(e) => setData((p) => ({ ...p, link1: e.target.value }))}
+              placeholder="رابط سكشن 1..."
+              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
           </div>
         </div>
       </div>
@@ -385,47 +330,12 @@ export default function FilesPage() {
             <input ref={img2Ref} type="file" accept="image/*" className="hidden"
               onChange={(e) => e.target.files?.[0] && uploadImg2(e.target.files[0])} />
           </div>
-          <div className="flex-1 space-y-2">
-            <div className="flex gap-4">
-              {["link", "file"].map((t) => (
-                <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
-                  <input type="radio" name="type-2" value={t}
-                    checked={data.link2Type === t}
-                    onChange={() => setData((p) => ({ ...p, link2Type: t }))}
-                    className="accent-blue-600" />
-                  {t === "link" ? "رابط" : "ملف"}
-                </label>
-              ))}
-            </div>
-            {data.link2Type === "link" ? (
-              <div className="flex items-center gap-2">
-                <FiLink className="text-gray-400 shrink-0" size={15} />
-                <input type="text" value={data.link2 ?? ""}
-                  onChange={(e) => setData((p) => ({ ...p, link2: e.target.value }))}
-                  placeholder="رابط سكشن 2..."
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <button onClick={() => file2Ref.current?.click()}
-                  disabled={uploading === "file2"}
-                  className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
-                  {uploading === "file2"
-                    ? <span className="w-3.5 h-3.5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                    : <FiUpload size={13} />}
-                  رفع ملف
-                </button>
-                <input type="file" className="hidden" ref={file2Ref}
-                  onChange={(e) => e.target.files?.[0] && uploadFile2(e.target.files[0])} />
-                {data.file2 && (
-                  <a href={data.file2} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
-                    <FiExternalLink size={13} />
-                    عرض الملف
-                  </a>
-                )}
-              </div>
-            )}
+          <div className="flex-1 flex items-center gap-2">
+            <FiLink className="text-gray-400 shrink-0" size={15} />
+            <input type="text" value={data.link2 ?? ""}
+              onChange={(e) => setData((p) => ({ ...p, link2: e.target.value }))}
+              placeholder="رابط سكشن 2..."
+              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
           </div>
         </div>
       </div>

@@ -11,10 +11,7 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         destination: `${backendUrl}/api/:path*`,
       },
-      {
-        source: "/uploads/:path*",
-        destination: `${backendUrl}/uploads/:path*`,
-      },
+
     ];
   },
   images: {
@@ -26,6 +23,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**.railway.app" },
       { protocol: "https", hostname: "**.render.com" },
       { protocol: "https", hostname: "**.onrender.com" },
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
 };
