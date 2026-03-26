@@ -22,8 +22,9 @@ export default async function Footer() {
   }
 
   function toInlineUrl(url: string) {
-    if (!url || !url.includes("cloudinary.com")) return url;
-    return url.replace("/upload/", "/upload/fl_attachment:false/");
+    if (!url) return url;
+    const rawUrl = url.replace("/image/upload/", "/raw/upload/").replace(/\/fl_attachment:[^/]+\//, "/");
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(rawUrl)}&embedded=false`;
   }
 
   const qrSrc: string = c.qrImage || "";
