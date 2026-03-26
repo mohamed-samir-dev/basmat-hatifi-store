@@ -37,7 +37,10 @@ export default function CheckoutPage() {
         total,
         customer: customer?.name,
         whatsapp: customer?.whatsapp,
+        nationalId: customer?.nationalId,
+        address: customer?.address,
         installmentType: customer?.installmentType,
+        months: customer?.months,
         downPayment,
       }),
     });
