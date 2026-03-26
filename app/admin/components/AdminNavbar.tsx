@@ -2,14 +2,22 @@
 import { useRouter } from "next/navigation";
 import { Bell, LogOut, Menu } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCompanyStore } from "../../store/companyStore";
 
 export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
   const router = useRouter();
   const { logo, fetchCompany } = useCompanyStore();
+  const [ordersCount, setOrdersCount] = useState(0);
 
   useEffect(() => { fetchCompany(); }, [fetchCompany]);
+
+  useEffect(() => {
+    fetch("/api/admin/orders")
+      .then((r) => r.json())
+      .then((d) => setOrdersCount(Array.isArray(d) ? d.length : 0))
+      .catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST", credentials: "include" });
@@ -37,9 +45,16 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors text-gray-600">
+        <button
+          onClick={() => router.push("/admin/orders")}
+          className="relative p-2 rounded-xl hover:bg-gray-100 transition-colors text-gray-600"
+        >
           <Bell size={20} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />
+          {ordersCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+              {ordersCount > 99 ? "99+" : ordersCount}
+            </span>
+          )}
         </button>
         <button
           onClick={handleLogout}

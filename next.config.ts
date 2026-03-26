@@ -6,24 +6,12 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     return {
       beforeFiles: [
-        {
-          source: "/sitemap.xml",
-          destination: "/sitemap.xml",
-        },
-        {
-          source: "/robots.txt",
-          destination: "/robots.txt",
-        },
+        { source: "/sitemap.xml", destination: "/sitemap.xml" },
+        { source: "/robots.txt", destination: "/robots.txt" },
       ],
-      afterFiles: [
-        {
-          source: "/api/:path*",
-          destination: `${backendUrl}/api/:path*`,
-        },
-      ],
+      afterFiles: [],
       fallback: [],
     };
   },
