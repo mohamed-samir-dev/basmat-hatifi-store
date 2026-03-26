@@ -55,6 +55,7 @@ export function useCompany() {
     try {
       const res = await fetch(`/api/admin/company/image/${key}`, {
         method: "DELETE",
+        credentials: "include",
       });
       if (!res.ok) { toast.error("فشل حذف الصورة"); return; }
       handleChange(key, "");

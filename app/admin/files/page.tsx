@@ -15,7 +15,9 @@ export default function FilesPage() {
   const [uploading, setUploading] = useState<string | null>(null);
 
   function openFile(url: string) {
-    window.open(url, "_blank", "noopener,noreferrer");
+    const rawUrl = url.replace("/image/upload/", "/raw/upload/").replace(/\/fl_attachment:[^/]+\//, "/");
+    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(rawUrl)}&embedded=false`;
+    window.open(viewerUrl, "_blank", "noopener,noreferrer");
   }
   const [imgKeys, setImgKeys] = useState<Record<string, number>>({});
   const qrRef = useRef<HTMLInputElement>(null);
