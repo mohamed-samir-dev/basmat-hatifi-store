@@ -97,8 +97,9 @@ export default function ProductGrid() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     Promise.all([
-      fetch("/api/products").then((r) => r.json()),
+      fetch(`${API}/api/products`).then((r) => r.json()),
       fetch("/api/sub-categories-home").then((r) => r.json()).catch(() => ({ settings: [], max: 4 })),
     ])
       .then(([prods, config]) => {
