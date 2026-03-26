@@ -9,12 +9,14 @@ interface CompanyFieldsProps {
 
 const inputClass = "w-full border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500";
 
+const ltrFields = ["phone", "whatsapp", "website", "email", "taxNumber"];
+
 function FieldInput({ fieldKey, data, onChange }: { fieldKey: string; data: CompanyData; onChange: (k: string, v: string) => void }) {
   const label = fields.find((f) => f.key === fieldKey)?.label;
   return (
     <div>
       <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-1">{label}</label>
-      <input value={data[fieldKey] || ""} onChange={(e) => onChange(fieldKey, e.target.value)} className={inputClass} />
+      <input value={data[fieldKey] || ""} onChange={(e) => onChange(fieldKey, e.target.value)} className={inputClass} dir={ltrFields.includes(fieldKey) ? "ltr" : undefined} />
     </div>
   );
 }

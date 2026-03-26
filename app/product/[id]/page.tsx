@@ -1,64 +1,122 @@
-"use client";
+import type { Metadata } from "next";
+import ProductPageClient from "./ProductPageClient";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { IoArrowForward } from "react-icons/io5";
-import type { Product } from "../../components/products/types";
-import { useCartStore } from "../../store/cartStore";
-import ProductImages from "./components/ProductImages";
-import ProductInfo from "./components/ProductInfo";
-import ProductDetails from "./components/ProductDetails";
+const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
+const SITE_URL = "https://www.pasmthatfee.com";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+async function getProduct(id: string) {
+  try {
+    const r = await fetch(`${BACKEND}/api/products/${id}`, { next: { revalidate: 3600 } });
+    return r.ok ? r.json() : null;
+  } catch {
+    return null;
+  }
+}
 
-export default function ProductPage() {
-  const { id } = useParams();
-  const router = useRouter();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [addedToCart, setAddedToCart] = useState(false);
-  const addItem = useCartStore((s) => s.addItem);
+async function getCompany() {
+  try {
+    const r = await fetch(`${BACKEND}/api/admin/company`, { next: { revalidate: 3600 } });
+    return r.ok ? r.json() : {};
+  } catch {
+    return {};
+  }
+}
 
-  useEffect(() => {
-    fetch(`${API}/api/products/${id}`)
-      .then((r) => r.json())
-      .then(setProduct)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [id]);
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const [product, company] = await Promise.all([getProduct(id), getCompany()]);
 
-  if (loading)
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-400 text-lg">جاري التحميل...</p></div>;
-  if (!product)
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-gray-400 text-lg">المنتج غير موجود</p></div>;
+  if (!product) {
+    return { title: "المنتج غير موجود" };
+  }
 
-  const resolveImg = (src: string) =>
-    src.startsWith("http") ? src : src.startsWith("/uploads") ? src : `${API}${src}`;
+  const siteName = company.nameAr || "بصمة هاتفي المعتمد";
+  const title = product.name;
 
-  const allImages = (product.images?.length ? product.images : product.image ? [product.image] : []).map(resolveImg);
+  const parts: string[] = [];
+  if (product.brand) parts.push(product.brand);
+  if (product.storage) parts.push(product.storage);
+  if (product.color) parts.push(product.color);
+  if (product.salePrice || product.price) {
+    const price = product.salePrice || product.price;
+    parts.push(`${price} ريال`);
+  }
+  if (product.installment?.available) parts.push("بالأقساط");
+
+  const description = product.description
+    ? product.description.slice(0, 160)
+    : `${title}${parts.length ? " - " + parts.join(" | ") : ""} - متوفر في ${siteName}`;
+
+  const rawImg = product.images?.[0] || product.image || "";
+  const imageUrl = rawImg.startsWith("http") ? rawImg : rawImg ? `${BACKEND}${rawImg}` : "";
+
+  return {
+    title,
+    description,
+    keywords: [
+      product.name,
+      product.brand || "",
+      product.category || "",
+      "أقساط", "شراء", siteName,
+    ].filter(Boolean),
+    openGraph: {
+      type: "website",
+      url: `${SITE_URL}/product/${id}`,
+      title: `${title} | ${siteName}`,
+      description,
+      images: imageUrl ? [{ url: imageUrl, width: 800, height: 800, alt: title }] : [],
+      siteName,
+      locale: "ar_SA",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | ${siteName}`,
+      description,
+      images: imageUrl ? [imageUrl] : [],
+    },
+    alternates: {
+      canonical: `${SITE_URL}/product/${id}`,
+    },
+  };
+}
+
+export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const [product, company] = await Promise.all([getProduct(id), getCompany()]);
+
+  const siteName = company.nameAr || "بصمة هاتفي المعتمد";
+  const price = product?.salePrice || product?.price || 0;
+  const rawImg = product?.images?.[0] || product?.image || "";
+  const imageUrl = rawImg.startsWith("http") ? rawImg : rawImg ? `${BACKEND}${rawImg}` : "";
+
+  const jsonLd = product ? {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description || product.name,
+    image: imageUrl,
+    brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
+    offers: {
+      "@type": "Offer",
+      url: `${SITE_URL}/product/${id}`,
+      priceCurrency: "SAR",
+      price: price,
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      seller: { "@type": "Organization", name: siteName },
+    },
+  } : null;
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-16" dir="rtl">
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center gap-2 sm:gap-3">
-          <button onClick={() => router.back()} className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-600 shrink-0">
-            <IoArrowForward size={20} />
-          </button>
-          <h1 className="text-xs sm:text-sm font-semibold text-gray-600 truncate">{product.name}</h1>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 pt-4 sm:pt-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-          <ProductImages images={allImages} name={product.name} discountPercent={product.discountPercent} />
-          <ProductInfo
-            product={product}
-            addedToCart={addedToCart}
-            onAddToCart={() => { addItem(product); setAddedToCart(true); }}
-          />
-        </div>
-        <ProductDetails installment={product.installment} description={product.description} specs={product.specs} />
-      </div>
-    </main>
+    <>
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+      <ProductPageClient id={id} />
+    </>
   );
 }

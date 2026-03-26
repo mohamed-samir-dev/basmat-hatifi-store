@@ -36,7 +36,7 @@ export default function ProductCard({ product }: { product: Product }) {
     <Link href={`/product/${product._id}`} className="relative bg-white rounded-xl sm:rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full" dir="rtl">
       {/* Discount Badge */}
       {discountPercent > 0 && (
-        <span className="absolute z-10 top-2 right-2 bg-red-500 text-white text-[9px] sm:text-xs md:text-sm font-bold px-1.5 sm:px-2.5 md:px-3 py-0.5 rounded-full">
+        <span className="absolute z-10 top-2 right-2 bg-red-600 text-white text-[9px] sm:text-xs md:text-sm font-bold px-1.5 sm:px-2.5 md:px-3 py-0.5 rounded-full">
           {discountPercent}%-
         </span>
       )}
@@ -59,7 +59,7 @@ export default function ProductCard({ product }: { product: Product }) {
         <div className="flex flex-col gap-0.5 mt-auto">
           {hasDiscount ? (
             <>
-              <span className="text-[10px] sm:text-xs md:text-sm text-gray-400 line-through">{fmt(originalPrice)} ر.س</span>
+              <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through">{fmt(originalPrice)} ر.س</span>
               <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(salePrice)} ر.س</span>
             </>
           ) : (

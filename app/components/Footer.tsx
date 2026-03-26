@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FaWhatsapp, FaMobileAlt, FaPhone, FaEnvelope } from "react-icons/fa";
+import { FaWhatsapp, FaMobileAlt, FaEnvelope } from "react-icons/fa";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -50,7 +50,7 @@ export default async function Footer() {
 
         {/* من نحن */}
         <div>
-          <h3 className="text-gray-700 font-bold text-xl mb-3">من نحن</h3>
+          <h3 className="text-blue-500 font-bold text-xl mb-3">من نحن</h3>
           <p className="text-sm leading-relaxed text-gray-500">
             بصمة هاتفي المعتمد هو اختيارك الأول لشراء أجهزتك بالأقساط داخل السعودية، ضمان موثوق وخدمة محلية.
           </p>
@@ -78,23 +78,25 @@ export default async function Footer() {
         {/* تواصل معنا */}
         <div>
           <h3 className="text-blue-500 font-bold text-xl mb-4">تواصل معنا</h3>
-          <ul className="flex flex-wrap gap-x-6 gap-y-3 text-sm mb-5">
-            <li className="flex items-center gap-2">
-              <FaWhatsapp className="text-emerald-500 shrink-0" size={16} />
-              <span>واتساب</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <FaMobileAlt className="text-emerald-500 shrink-0" size={16} />
-              <span>جوال</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <FaPhone className="text-emerald-500 shrink-0" size={16} />
-              <span>هاتف</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <FaEnvelope className="text-emerald-500 shrink-0" size={16} />
-              <span>ايميل</span>
-            </li>
+          <ul className="space-y-2.5 text-sm mb-5">
+            {c.whatsapp && (
+              <li className="flex items-center gap-2">
+                <FaWhatsapp className="text-emerald-500 shrink-0" size={16} />
+                <a href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-emerald-500 transition-colors" dir="ltr">{c.whatsapp}</a>
+              </li>
+            )}
+            {c.phone && (
+              <li className="flex items-center gap-2">
+                <FaMobileAlt className="text-emerald-500 shrink-0" size={16} />
+                <a href={`tel:${c.phone}`} className="hover:text-emerald-500 transition-colors" dir="ltr">{c.phone}</a>
+              </li>
+            )}
+            {c.email && (
+              <li className="flex items-center gap-2">
+                <FaEnvelope className="text-emerald-500 shrink-0" size={16} />
+                <a href={`mailto:${c.email}`} className="hover:text-emerald-500 transition-colors" dir="ltr">{c.email}</a>
+              </li>
+            )}
           </ul>
 
           <div className="flex gap-3 flex-wrap items-center">

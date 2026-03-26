@@ -45,6 +45,8 @@ export default function BannerSlider({ images }: { images: string[] }) {
             <button
               key={i}
               onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              aria-current={i === current ? "true" : undefined}
               className={`w-2.5 h-2.5 rounded-full transition-colors ${i === current ? "bg-white" : "bg-white/50"}`}
             />
           ))}

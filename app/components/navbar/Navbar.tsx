@@ -14,9 +14,9 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const mounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const itemCount = useCartStore((s) => s.items.reduce((sum, i) => sum + i.qty, 0));
-  const { logo, fetchLogo } = useCompanyStore();
+  const { logo, fetchCompany } = useCompanyStore();
 
-  useEffect(() => { fetchLogo(); }, [fetchLogo]);
+  useEffect(() => { fetchCompany(); }, [fetchCompany]);
 
   // Close mobile menu on resize to desktop
   useEffect(() => {

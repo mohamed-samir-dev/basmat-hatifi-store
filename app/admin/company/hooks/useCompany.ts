@@ -44,7 +44,7 @@ export function useCompany() {
       if (!res.ok) { toast.error(json.error || "فشل رفع الصورة"); return; }
       const fullUrl = json.url.startsWith("http") ? json.url : `${API}${json.url}`;
       handleChange(key, fullUrl);
-      if (key === "logo") setLogo(withCacheBust(fullUrl));
+      if (key === "logo") { setLogo(withCacheBust(fullUrl)); }
       toast.success("تم رفع الصورة");
     } catch (e) {
       console.error(e);

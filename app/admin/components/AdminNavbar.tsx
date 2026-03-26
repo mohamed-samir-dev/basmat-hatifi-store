@@ -7,9 +7,9 @@ import { useCompanyStore } from "../../store/companyStore";
 
 export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }) {
   const router = useRouter();
-  const { logo, fetchLogo } = useCompanyStore();
+  const { logo, fetchCompany } = useCompanyStore();
 
-  useEffect(() => { fetchLogo(); }, [fetchLogo]);
+  useEffect(() => { fetchCompany(); }, [fetchCompany]);
 
   const handleLogout = async () => {
     await fetch("/api/admin/logout", { method: "POST", credentials: "include" });

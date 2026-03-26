@@ -8,8 +8,13 @@ type Data = { qrImage: string; qrLink: string; img1: string; link1: string; link
 
 export default function FilesPage() {
   const [data, setData] = useState<Data>({ qrImage: "", qrLink: "", img1: "", link1: "", linkType1: "link", file1: "", img2: "", link2: "", linkType2: "link", file2: "", footerItems: [] });
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [savingSection, setSavingSection] = useState<string | null>(null);
+  const [msgs, setMsgs] = useState<Record<string, string>>({});
+
+  function showMsg(section: string, text: string) {
+    setMsgs((p) => ({ ...p, [section]: text }));
+    setTimeout(() => setMsgs((p) => ({ ...p, [section]: "" })), 3000);
+  }
   const [uploading, setUploading] = useState<string | null>(null);
 
   function openFile(url: string) {
@@ -32,11 +37,11 @@ export default function FilesPage() {
     fetch(`/api/admin/company`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
-        const normalize = (item: Partial<FooterItem>): FooterItem => ({ image: item.image || "", linkType: item.linkType || "link", link: item.link || "", file: item.file || "" });
+        const normalize = (item: Partial<FooterItem>): FooterItem => ({ image: item.image || "", linkType: item.linkType || (item.file ? "file" : "link"), link: item.link || "", file: item.file || "" });
         const items = (d.footerItems && d.footerItems.length > 0
           ? d.footerItems
           : [{}, {}, {}]).map(normalize);
-        setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", img1: d.img1 || "", link1: d.link1 || "", linkType1: d.linkType1 || "link", file1: d.file1 || "", img2: d.img2 || "", link2: d.link2 || "", linkType2: d.linkType2 || "link", file2: d.file2 || "", footerItems: items });
+        setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", img1: d.img1 || "", link1: d.link1 || "", linkType1: d.linkType1 || (d.file1 ? "file" : "link"), file1: d.file1 || "", img2: d.img2 || "", link2: d.link2 || "", linkType2: d.linkType2 || (d.file2 ? "file" : "link"), file2: d.file2 || "", footerItems: items });
       });
   }, []);
 
@@ -137,45 +142,38 @@ export default function FilesPage() {
     });
   }
 
-  async function save() {
-    setSaving(true);
+  async function saveSection(section: string, body: object) {
+    setSavingSection(section);
     const r = await fetch(`/api/admin/company`, {
       method: "PUT", credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ qrLink: data.qrLink, link1: data.link1, link1Type: data.linkType1, file1: data.file1, link2: data.link2, link2Type: data.linkType2, file2: data.file2, footerItems: data.footerItems }),
+      body: JSON.stringify(body),
     });
-    setSaving(false);
-    setMsg(r.ok ? "✅ تم الحفظ" : "❌ حدث خطأ");
-    setTimeout(() => setMsg(""), 3000);
+    setSavingSection(null);
+    showMsg(section, r.ok ? "✅ تم الحفظ" : "❌ حدث خطأ");
   }
 
   return (
-    <div className="w-full space-y-6" dir="rtl">
-
-
+    <div className="w-full space-y-4 sm:space-y-6" dir="rtl">
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-gray-800">الملفات والصور</h1>
-        <div className="flex items-center gap-3">
-          {msg && (
-            <span className={`text-sm px-3 py-1.5 rounded-lg font-medium ${msg.includes("✅") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>
-              {msg}
-            </span>
-          )}
-          <button onClick={save} disabled={saving}
-            className="px-5 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors">
-            {saving ? "جاري الحفظ..." : "حفظ التغييرات"}
-          </button>
-        </div>
+      <div>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">الملفات والصور</h1>
       </div>
 
       {/* QR */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600">الكيو آر</h2>
+          <div className="flex items-center gap-2">
+            {msgs["qr"] && <span className={`text-xs px-2 py-1 rounded-lg font-medium ${msgs["qr"].includes("✅") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>{msgs["qr"]}</span>}
+            <button onClick={() => saveSection("qr", { qrLink: data.qrLink })} disabled={savingSection === "qr"}
+              className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+              {savingSection === "qr" ? "جاري..." : "حفظ"}
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 sm:px-5 sm:py-4">
           {/* صورة QR */}
           <div onClick={() => qrRef.current?.click()}
             className="relative w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group overflow-hidden shrink-0">
@@ -198,12 +196,12 @@ export default function FilesPage() {
               onChange={(e) => e.target.files?.[0] && uploadQr(e.target.files[0])} />
           </div>
           {/* رابط QR */}
-          <div className="flex-1 flex items-center gap-2">
+          <div className="flex-1 min-w-0 w-full flex items-center gap-2">
             <FiLink className="text-gray-400 shrink-0" size={15} />
             <input type="text" value={data.qrLink ?? ""}
               onChange={(e) => setData((p) => ({ ...p, qrLink: e.target.value }))}
               placeholder="رابط عند الضغط على الكيو آر..."
-              className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
+              className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
           </div>
         </div>
       </div>
@@ -212,7 +210,13 @@ export default function FilesPage() {
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600">معروف</h2>
-       
+          <div className="flex items-center gap-2">
+            {msgs["items"] && <span className={`text-xs px-2 py-1 rounded-lg font-medium ${msgs["items"].includes("✅") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>{msgs["items"]}</span>}
+            <button onClick={() => saveSection("items", { footerItems: data.footerItems })} disabled={savingSection === "items"}
+              className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+              {savingSection === "items" ? "جاري..." : "حفظ"}
+            </button>
+          </div>
         </div>
 
         {data.footerItems.length === 0 ? (
@@ -222,7 +226,7 @@ export default function FilesPage() {
         ) : (
           <div className="divide-y divide-gray-100">
             {data.footerItems.map((item, i) => (
-              <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
+              <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 sm:px-5 sm:py-4">
 
                 {/* صورة */}
                 <div onClick={() => imgRefs.current[i]?.click()}
@@ -248,7 +252,7 @@ export default function FilesPage() {
                 </div>
 
                 {/* رابط أو ملف */}
-                <div className="flex-1 space-y-2">
+                <div className="flex-1 min-w-0 w-full space-y-2">
                   <div className="flex gap-4">
                     {["link", "file"].map((t) => (
                       <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
@@ -261,16 +265,21 @@ export default function FilesPage() {
                     ))}
                   </div>
 
+                  <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-xs w-full">
+                    <span className="shrink-0">⚠️</span>
+                    <span>مسموح برابط واحد أو ملف واحد فقط — لا يمكن الجمع بينهما</span>
+                  </div>
+
                   {(item.linkType ?? "link") === "link" ? (
-                    <div key={`link-input-${i}`} className="flex items-center gap-2">
+                    <div key={`link-input-${i}`} className="flex items-center gap-2 w-full">
                       <FiLink className="text-gray-400 shrink-0" size={15} />
                       <input type="text" value={item.link ?? ""}
                         onChange={(e) => updateItem(i, "link", e.target.value)}
                         placeholder="https://..."
-                        className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
+                        className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
                     </div>
                   ) : (
-                    <div key={`file-input-${i}`} className="flex items-center gap-3">
+                    <div key={`file-input-${i}`} className="flex flex-wrap items-center gap-2">
                       <button onClick={() => fileRefs.current[i]?.click()}
                         disabled={uploading === `file-${i}`}
                         className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
@@ -309,10 +318,17 @@ export default function FilesPage() {
 
       {/* Section 1 */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600"> مركز الاعمال السعودي</h2>
+          <div className="flex items-center gap-2">
+            {msgs["s1"] && <span className={`text-xs px-2 py-1 rounded-lg font-medium ${msgs["s1"].includes("✅") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>{msgs["s1"]}</span>}
+            <button onClick={() => saveSection("s1", { link1: data.link1, linkType1: data.linkType1, file1: data.file1 })} disabled={savingSection === "s1"}
+              className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+              {savingSection === "s1" ? "جاري..." : "حفظ"}
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 sm:px-5 sm:py-4">
           <div onClick={() => img1Ref.current?.click()}
             className="relative w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group overflow-hidden shrink-0">
             {uploading === "img1" ? (
@@ -333,7 +349,7 @@ export default function FilesPage() {
             <input ref={img1Ref} type="file" accept="image/*" className="hidden"
               onChange={(e) => e.target.files?.[0] && uploadImg1(e.target.files[0])} />
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 min-w-0 w-full space-y-2">
             <div className="flex gap-4">
               {["link", "file"].map((t) => (
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
@@ -345,16 +361,21 @@ export default function FilesPage() {
                 </label>
               ))}
             </div>
+            <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-xs w-full">
+              <span className="shrink-0">⚠️</span>
+              <span>مسموح برابط واحد أو ملف واحد فقط — لا يمكن الجمع بينهما</span>
+            </div>
+
             {(data.linkType1 || "link") === "link" ? (
-              <div key="s1-link" className="flex items-center gap-2">
+              <div key="s1-link" className="flex items-center gap-2 w-full">
                 <FiLink className="text-gray-400 shrink-0" size={15} />
                 <input type="text" value={data.link1 ?? ""}
                   onChange={(e) => setData((p) => ({ ...p, link1: e.target.value }))}
                   placeholder="رابط سكشن 1..."
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
+                  className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
               </div>
             ) : (
-              <div key="s1-file" className="flex items-center gap-3">
+              <div key="s1-file" className="flex flex-wrap items-center gap-2">
                 <button onClick={() => fileRef1.current?.click()}
                   disabled={uploading === "file1"}
                   className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
@@ -386,10 +407,17 @@ export default function FilesPage() {
 
       {/* Section 2 */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+        <div className="px-5 py-3 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-600"> ضريبه القيمه المضافه</h2>
+          <div className="flex items-center gap-2">
+            {msgs["s2"] && <span className={`text-xs px-2 py-1 rounded-lg font-medium ${msgs["s2"].includes("✅") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>{msgs["s2"]}</span>}
+            <button onClick={() => saveSection("s2", { link2: data.link2, linkType2: data.linkType2, file2: data.file2 })} disabled={savingSection === "s2"}
+              className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors">
+              {savingSection === "s2" ? "جاري..." : "حفظ"}
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 sm:px-5 sm:py-4">
           <div onClick={() => img2Ref.current?.click()}
             className="relative w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group overflow-hidden shrink-0">
             {uploading === "img2" ? (
@@ -410,7 +438,7 @@ export default function FilesPage() {
             <input ref={img2Ref} type="file" accept="image/*" className="hidden"
               onChange={(e) => e.target.files?.[0] && uploadImg2(e.target.files[0])} />
           </div>
-          <div className="flex-1 space-y-2">
+          <div className="flex-1 min-w-0 w-full space-y-2">
             <div className="flex gap-4">
               {["link", "file"].map((t) => (
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
@@ -422,16 +450,21 @@ export default function FilesPage() {
                 </label>
               ))}
             </div>
+            <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-xs w-full">
+              <span className="shrink-0">⚠️</span>
+              <span>مسموح برابط واحد أو ملف واحد فقط — لا يمكن الجمع بينهما</span>
+            </div>
+
             {(data.linkType2 || "link") === "link" ? (
-              <div key="s2-link" className="flex items-center gap-2">
+              <div key="s2-link" className="flex items-center gap-2 w-full">
                 <FiLink className="text-gray-400 shrink-0" size={15} />
                 <input type="text" value={data.link2 ?? ""}
                   onChange={(e) => setData((p) => ({ ...p, link2: e.target.value }))}
                   placeholder="رابط سكشن 2..."
-                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
+                  className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
               </div>
             ) : (
-              <div key="s2-file" className="flex items-center gap-3">
+              <div key="s2-file" className="flex flex-wrap items-center gap-2">
                 <button onClick={() => fileRef2.current?.click()}
                   disabled={uploading === "file2"}
                   className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
