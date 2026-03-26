@@ -50,7 +50,7 @@ export default function BannerCard({
         {hasImage ? (
           <>
             <Image
-              src={`${API}${banner.url}`}
+              src={banner.url.startsWith("http") ? banner.url : `${API}${banner.url}`}
               alt={LABELS[index] || `بانر ${index + 1}`}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-90"
