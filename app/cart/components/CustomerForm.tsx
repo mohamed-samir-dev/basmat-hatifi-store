@@ -27,8 +27,8 @@ interface CustomerFormProps {
   onSubmit: (info: CustomerInfo) => void;
 }
 
-export default function CustomerForm({ total, itemCount, initialData, onSubmit }: CustomerFormProps) {
-  const DOWN_PAYMENT_OPTIONS = [500, 1000, 1500, 2000];
+export default function CustomerForm({ total, initialData, onSubmit }: CustomerFormProps) {
+  const DOWN_PAYMENT_OPTIONS = [1000, 1500, 2000];
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");
