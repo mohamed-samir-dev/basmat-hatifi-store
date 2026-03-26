@@ -44,5 +44,8 @@ export const defaultData = {
   stamp: "",
 };
 
-export const toFullUrl = (url: string) =>
-  url && url.startsWith("/uploads") ? `${API}${url}?t=${Date.now()}` : url;
+export const toFullUrl = (url: string) => {
+  if (!url) return url;
+  if (url.startsWith("http")) return url;
+  return `${API}${url}?t=${Date.now()}`;
+};
