@@ -3,8 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { FiUpload, FiLink, FiExternalLink } from "react-icons/fi";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
 type FooterItem = { image: string; linkType: string; link: string; file: string };
 type Data = { qrImage: string; qrLink: string; img1: string; link1: string; linkType1: string; file1: string; img2: string; link2: string; linkType2: string; file2: string; footerItems: FooterItem[] };
 
@@ -31,7 +29,7 @@ export default function FilesPage() {
   function bumpKey(k: string) { setImgKeys((p) => ({ ...p, [k]: Date.now() })); }
 
   useEffect(() => {
-    fetch(`${API}/api/admin/company`, { credentials: "include" })
+    fetch(`/api/admin/company`, { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
         const normalize = (item: Partial<FooterItem>): FooterItem => ({ image: item.image || "", linkType: item.linkType || "link", link: item.link || "", file: item.file || "" });
@@ -46,7 +44,7 @@ export default function FilesPage() {
     setUploading("qr");
     const fd = new FormData();
     fd.append("image", file);
-    const r = await fetch(`${API}/api/admin/company/footer-image/qrImage`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-image/qrImage`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) { setData((p) => ({ ...p, qrImage: json.url })); bumpKey("qr"); }
     setUploading(null);
@@ -56,7 +54,7 @@ export default function FilesPage() {
     setUploading("img1");
     const fd = new FormData();
     fd.append("image", file);
-    const r = await fetch(`${API}/api/admin/company/footer-image/img1`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-image/img1`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) { setData((p) => ({ ...p, img1: json.url })); bumpKey("img1"); }
     setUploading(null);
@@ -66,7 +64,7 @@ export default function FilesPage() {
     setUploading("img2");
     const fd = new FormData();
     fd.append("image", file);
-    const r = await fetch(`${API}/api/admin/company/footer-image/img2`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-image/img2`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) { setData((p) => ({ ...p, img2: json.url })); bumpKey("img2"); }
     setUploading(null);
@@ -76,7 +74,7 @@ export default function FilesPage() {
     setUploading("file1");
     const fd = new FormData();
     fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-file/file1`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-file/file1`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) setData((p) => ({ ...p, file1: json.url }));
     setUploading(null);
@@ -86,7 +84,7 @@ export default function FilesPage() {
     setUploading("file2");
     const fd = new FormData();
     fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-file/file2`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-file/file2`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) setData((p) => ({ ...p, file2: json.url }));
     setUploading(null);
@@ -96,7 +94,7 @@ export default function FilesPage() {
     setUploading(`img-${index}`);
     const fd = new FormData();
     fd.append("image", file);
-    const r = await fetch(`${API}/api/admin/company/footer-items/image/${index}`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-items/image/${index}`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) {
       setData((p) => {
@@ -113,7 +111,7 @@ export default function FilesPage() {
     setUploading(`file-${index}`);
     const fd = new FormData();
     fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-items/file/${index}`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`/api/admin/company/footer-items/file/${index}`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) setData((p) => {
       const items = [...p.footerItems];
@@ -141,7 +139,7 @@ export default function FilesPage() {
 
   async function save() {
     setSaving(true);
-    const r = await fetch(`${API}/api/admin/company`, {
+    const r = await fetch(`/api/admin/company`, {
       method: "PUT", credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ qrLink: data.qrLink, link1: data.link1, link1Type: data.linkType1, file1: data.file1, link2: data.link2, link2Type: data.linkType2, file2: data.file2, footerItems: data.footerItems }),
