@@ -9,16 +9,19 @@ async function safeJson(res: Response) {
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const res = await fetch(`${getBackend()}/api/checkout/${id}/status`, {
+  const res = await fetch(`${getBackend()}/api/admin/orders/${id}/status`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", cookie: req.headers.get("cookie") || "" },
     body: JSON.stringify(body),
   });
   return NextResponse.json(await safeJson(res), { status: res.status });
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const res = await fetch(`${getBackend()}/api/checkout/${id}`, { method: "DELETE" });
+  const res = await fetch(`${getBackend()}/api/admin/orders/${id}`, {
+    method: "DELETE",
+    headers: { cookie: req.headers.get("cookie") || "" },
+  });
   return NextResponse.json(await safeJson(res), { status: res.status });
 }
