@@ -34,7 +34,8 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50" dir="rtl">
       <div className="max-w-7xl mx-auto px-2 sm:px-4">
-        <div className="flex items-center justify-between h-14 sm:h-16">
+        {/* Row 1: Logo + Icons (mobile: same row with hamburger) */}
+        <div className="flex items-center justify-between h-12 sm:h-14 lg:h-20">
           {/* Logo + Hamburger */}
           <div className="flex items-center gap-1">
             <button
@@ -45,25 +46,26 @@ export default function Navbar() {
               {mobileOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
             <Link href="/" className="shrink-0">
-              <div className="relative w-[120px] sm:w-[150px] md:w-[180px] h-10 sm:h-12">
-                {logo && (
-                  <Image
-                    src={logo}
-                    unoptimized
-                    alt="Logo"
-                    fill
-                    className="object-contain object-right-top"
-                    priority
-                    loading="eager"
-                  />
-                )}
-              </div>
+              {logo && (
+                <Image
+                  src={logo}
+                  unoptimized
+                  alt="Logo"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  className="h-20 sm:h-20 lg:h-35 w-auto"
+                  priority
+                  loading="eager"
+                />
+              )}
             </Link>
           </div>
 
-          <DesktopNav items={navItems} />
+          {/* Desktop nav hidden here, shown in row 2 */}
+          <div className="hidden lg:block" />
 
-          {/* Icons - responsive gap and size */}
+          {/* Icons */}
           <div className="flex items-center gap-0.5 sm:gap-2 md:gap-3">
             <button aria-label="بحث" className="p-1 sm:p-2 text-gray-600 hover:text-purple-700 hover:bg-purple-50 rounded-full transition-colors">
               <SearchIcon />
@@ -77,6 +79,11 @@ export default function Navbar() {
               )}
             </Link>
           </div>
+        </div>
+
+        {/* Row 2: Desktop nav links (desktop only) */}
+        <div className="hidden lg:flex justify-center border-t border-gray-100 py-1">
+          <DesktopNav items={navItems} />
         </div>
       </div>
 
