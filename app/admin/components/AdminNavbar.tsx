@@ -22,9 +22,18 @@ export default function AdminNavbar({ onMenuClick }: { onMenuClick: () => void }
         <button onClick={onMenuClick} className="md:hidden p-2 rounded-xl hover:bg-gray-100 text-gray-600 transition-colors">
           <Menu size={22} />
         </button>
-        <div className="h-16 w-20 sm:w-36 relative shrink-0">
-          {logo && logo.startsWith("http") && <Image src={logo} alt="Logo" fill className="object-contain object-right" unoptimized priority />}
-        </div>
+        {logo && logo.startsWith("http") && (
+          <Image
+            src={logo}
+            alt="Logo"
+            width={0}
+            height={0}
+            sizes="100vw"
+            className="h-20 sm:h-20 lg:h-30 w-auto"
+            unoptimized
+            priority
+          />
+        )}
       </div>
 
       <div className="flex items-center gap-2">
