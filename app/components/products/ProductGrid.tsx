@@ -88,14 +88,23 @@ function CategoryRow({ category, items }: { category: string; items: Product[] }
   );
 }
 
+type HomeSettings = { category: string; subCategory: string; showInHome: boolean; order: number };
+type HomeConfig = { settings: HomeSettings[]; max: number };
+
 export default function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [homeConfig, setHomeConfig] = useState<HomeConfig | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/products")
-      .then((r) => r.json())
-      .then(setProducts)
+    Promise.all([
+      fetch("/api/products").then((r) => r.json()),
+      fetch("/api/sub-categories-home").then((r) => r.json()).catch(() => ({ settings: [], max: 4 })),
+    ])
+      .then(([prods, config]) => {
+        setProducts(prods);
+        setHomeConfig(Array.isArray(config) ? { settings: config, max: 4 } : config);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -108,6 +117,21 @@ export default function ProductGrid() {
     });
     return map;
   }, [products]);
+
+  // If no settings configured yet, show all. Otherwise filter & sort by settings.
+  const orderedCategories = useMemo(() => {
+    const allCats = Object.keys(grouped);
+    if (!homeConfig) return allCats;
+    const { settings, max } = homeConfig;
+    const visibleSettings = settings.filter((s) => s.showInHome);
+    if (visibleSettings.length === 0) return allCats;
+    return visibleSettings
+      .sort((a, b) => a.order - b.order)
+      .slice(0, max)
+      .map((s) => s.category)
+      .filter((c, idx, arr) => arr.indexOf(c) === idx)
+      .filter((c) => allCats.includes(c));
+  }, [grouped, homeConfig]);
 
   if (loading) return (
     <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
@@ -138,8 +162,8 @@ export default function ProductGrid() {
 
   return (
     <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 overflow-hidden">
-      {Object.entries(grouped).map(([category, items]) => (
-        <CategoryRow key={category} category={category} items={items} />
+      {orderedCategories.map((category) => (
+        <CategoryRow key={category} category={category} items={grouped[category]} />
       ))}
     </section>
   );

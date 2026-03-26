@@ -13,6 +13,10 @@ export default function FilesPage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState<string | null>(null);
+
+  function openFile(url: string) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
   const [imgKeys, setImgKeys] = useState<Record<string, number>>({});
   const qrRef = useRef<HTMLInputElement>(null);
   const img1Ref = useRef<HTMLInputElement>(null);
@@ -70,7 +74,7 @@ export default function FilesPage() {
     setUploading("file1");
     const fd = new FormData();
     fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-image/file1`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`${API}/api/admin/company/footer-file/file1`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) setData((p) => ({ ...p, file1: json.url }));
     setUploading(null);
@@ -80,7 +84,7 @@ export default function FilesPage() {
     setUploading("file2");
     const fd = new FormData();
     fd.append("file", file);
-    const r = await fetch(`${API}/api/admin/company/footer-image/file2`, { method: "POST", credentials: "include", body: fd });
+    const r = await fetch(`${API}/api/admin/company/footer-file/file2`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) setData((p) => ({ ...p, file2: json.url }));
     setUploading(null);
@@ -123,7 +127,12 @@ export default function FilesPage() {
   function updateItem(index: number, field: keyof FooterItem, value: string) {
     setData((p) => {
       const items = [...p.footerItems];
-      items[index] = { ...items[index], [field]: value };
+      const updated = { ...items[index], [field]: value };
+      if (field === "linkType") {
+        if (value === "link") updated.file = "";
+        else updated.link = "";
+      }
+      items[index] = updated;
       return { ...p, footerItems: items };
     });
   }
@@ -133,7 +142,7 @@ export default function FilesPage() {
     const r = await fetch(`${API}/api/admin/company`, {
       method: "PUT", credentials: "include",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ qrLink: data.qrLink, link1: data.link1, linkType1: data.linkType1, file1: data.file1, link2: data.link2, linkType2: data.linkType2, file2: data.file2, footerItems: data.footerItems }),
+      body: JSON.stringify({ qrLink: data.qrLink, link1: data.link1, link1Type: data.linkType1, file1: data.file1, link2: data.link2, link2Type: data.linkType2, file2: data.file2, footerItems: data.footerItems }),
     });
     setSaving(false);
     setMsg(r.ok ? "✅ تم الحفظ" : "❌ حدث خطأ");
@@ -143,8 +152,10 @@ export default function FilesPage() {
   return (
     <div className="w-full space-y-6" dir="rtl">
 
+
+
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h1 className="text-2xl font-bold text-gray-800">الملفات والصور</h1>
         <div className="flex items-center gap-3">
           {msg && (
@@ -164,7 +175,7 @@ export default function FilesPage() {
         <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
           <h2 className="text-sm font-semibold text-gray-600">الكيو آر</h2>
         </div>
-        <div className="flex items-center gap-5 px-5 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
           {/* صورة QR */}
           <div onClick={() => qrRef.current?.click()}
             className="relative w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group overflow-hidden shrink-0">
@@ -172,7 +183,7 @@ export default function FilesPage() {
               <span className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
             ) : data.qrImage ? (
               <>
-                <Image key={imgKeys["qr"] || data.qrImage} src={data.qrImage} alt="qr" fill className="object-contain p-1" />
+                <Image key={imgKeys["qr"] || data.qrImage} src={data.qrImage} alt="qr" fill sizes="80px" className="object-contain p-1" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <FiUpload className="text-white" size={16} />
                 </div>
@@ -211,7 +222,7 @@ export default function FilesPage() {
         ) : (
           <div className="divide-y divide-gray-100">
             {data.footerItems.map((item, i) => (
-              <div key={i} className="flex items-center gap-5 px-5 py-4">
+              <div key={i} className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
 
                 {/* صورة */}
                 <div onClick={() => imgRefs.current[i]?.click()}
@@ -220,7 +231,7 @@ export default function FilesPage() {
                     <span className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   ) : item.image ? (
                     <>
-                      <Image key={imgKeys[`img-${i}`] || item.image} src={item.image} alt="preview" fill className="object-contain p-1" />
+                      <Image key={imgKeys[`img-${i}`] || item.image} src={item.image} alt="preview" fill sizes="80px" className="object-contain p-1" />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <FiUpload className="text-white" size={16} />
                       </div>
@@ -251,7 +262,7 @@ export default function FilesPage() {
                   </div>
 
                   {(item.linkType ?? "link") === "link" ? (
-                    <div key="link-input" className="flex items-center gap-2">
+                    <div key={`link-input-${i}`} className="flex items-center gap-2">
                       <FiLink className="text-gray-400 shrink-0" size={15} />
                       <input type="text" value={item.link ?? ""}
                         onChange={(e) => updateItem(i, "link", e.target.value)}
@@ -259,7 +270,7 @@ export default function FilesPage() {
                         className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
                     </div>
                   ) : (
-                    <div key="file-input" className="flex items-center gap-3">
+                    <div key={`file-input-${i}`} className="flex items-center gap-3">
                       <button onClick={() => fileRefs.current[i]?.click()}
                         disabled={uploading === `file-${i}`}
                         className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
@@ -272,11 +283,17 @@ export default function FilesPage() {
                         ref={(el) => { fileRefs.current[i] = el; }}
                         onChange={(e) => e.target.files?.[0] && uploadItemFile(i, e.target.files[0])} />
                       {item.file && (
-                        <a href={item.file} target="_blank" rel="noreferrer"
-                          className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
-                          <FiExternalLink size={13} />
-                          عرض الملف
-                        </a>
+                        <>
+                          <button onClick={() => openFile(item.file)}
+                            className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
+                            <FiExternalLink size={13} />
+                            عرض الملف
+                          </button>
+                          <button onClick={() => updateItem(i, "file", "")}
+                            className="text-red-400 hover:text-red-600 text-xs hover:underline">
+                            حذف
+                          </button>
+                        </>
                       )}
                     </div>
                   )}
@@ -295,14 +312,14 @@ export default function FilesPage() {
         <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
           <h2 className="text-sm font-semibold text-gray-600"> مركز الاعمال السعودي</h2>
         </div>
-        <div className="flex items-center gap-5 px-5 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
           <div onClick={() => img1Ref.current?.click()}
             className="relative w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group overflow-hidden shrink-0">
             {uploading === "img1" ? (
               <span className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
             ) : data.img1 ? (
               <>
-                <Image key={imgKeys["img1"] || data.img1} src={data.img1} alt="img1" fill className="object-contain p-1" />
+                <Image key={imgKeys["img1"] || data.img1} src={data.img1} alt="img1" fill sizes="80px" className="object-contain p-1" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <FiUpload className="text-white" size={16} />
                 </div>
@@ -322,14 +339,14 @@ export default function FilesPage() {
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                   <input type="radio" name="type-1" value={t}
                     checked={(data.linkType1 || "link") === t}
-                    onChange={() => setData((p) => ({ ...p, linkType1: t }))}
+                    onChange={() => setData((p) => ({ ...p, linkType1: t, ...(t === "link" ? { file1: "" } : { link1: "" }) }))}
                     className="accent-blue-600" />
                   {t === "link" ? "رابط" : "ملف"}
                 </label>
               ))}
             </div>
             {(data.linkType1 || "link") === "link" ? (
-              <div className="flex items-center gap-2">
+              <div key="s1-link" className="flex items-center gap-2">
                 <FiLink className="text-gray-400 shrink-0" size={15} />
                 <input type="text" value={data.link1 ?? ""}
                   onChange={(e) => setData((p) => ({ ...p, link1: e.target.value }))}
@@ -337,7 +354,7 @@ export default function FilesPage() {
                   className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div key="s1-file" className="flex items-center gap-3">
                 <button onClick={() => fileRef1.current?.click()}
                   disabled={uploading === "file1"}
                   className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
@@ -349,11 +366,17 @@ export default function FilesPage() {
                 <input type="file" className="hidden" ref={fileRef1}
                   onChange={(e) => e.target.files?.[0] && uploadFile1(e.target.files[0])} />
                 {data.file1 && (
-                  <a href={data.file1} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
-                    <FiExternalLink size={13} />
-                    عرض الملف
-                  </a>
+                  <>
+                    <button onClick={() => openFile(data.file1)}
+                      className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
+                      <FiExternalLink size={13} />
+                      عرض الملف
+                    </button>
+                    <button onClick={() => setData((p) => ({ ...p, file1: "" }))}
+                      className="text-red-400 hover:text-red-600 text-xs hover:underline">
+                      حذف
+                    </button>
+                  </>
                 )}
               </div>
             )}
@@ -366,14 +389,14 @@ export default function FilesPage() {
         <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
           <h2 className="text-sm font-semibold text-gray-600"> ضريبه القيمه المضافه</h2>
         </div>
-        <div className="flex items-center gap-5 px-5 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 px-5 py-4">
           <div onClick={() => img2Ref.current?.click()}
             className="relative w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 bg-white flex items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all group overflow-hidden shrink-0">
             {uploading === "img2" ? (
               <span className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
             ) : data.img2 ? (
               <>
-                <Image key={imgKeys["img2"] || data.img2} src={data.img2} alt="img2" fill className="object-contain p-1" />
+                <Image key={imgKeys["img2"] || data.img2} src={data.img2} alt="img2" fill sizes="80px" className="object-contain p-1" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <FiUpload className="text-white" size={16} />
                 </div>
@@ -393,14 +416,14 @@ export default function FilesPage() {
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                   <input type="radio" name="type-2" value={t}
                     checked={(data.linkType2 || "link") === t}
-                    onChange={() => setData((p) => ({ ...p, linkType2: t }))}
+                    onChange={() => setData((p) => ({ ...p, linkType2: t, ...(t === "link" ? { file2: "" } : { link2: "" }) }))}
                     className="accent-blue-600" />
                   {t === "link" ? "رابط" : "ملف"}
                 </label>
               ))}
             </div>
             {(data.linkType2 || "link") === "link" ? (
-              <div className="flex items-center gap-2">
+              <div key="s2-link" className="flex items-center gap-2">
                 <FiLink className="text-gray-400 shrink-0" size={15} />
                 <input type="text" value={data.link2 ?? ""}
                   onChange={(e) => setData((p) => ({ ...p, link2: e.target.value }))}
@@ -408,7 +431,7 @@ export default function FilesPage() {
                   className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div key="s2-file" className="flex items-center gap-3">
                 <button onClick={() => fileRef2.current?.click()}
                   disabled={uploading === "file2"}
                   className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
@@ -420,11 +443,17 @@ export default function FilesPage() {
                 <input type="file" className="hidden" ref={fileRef2}
                   onChange={(e) => e.target.files?.[0] && uploadFile2(e.target.files[0])} />
                 {data.file2 && (
-                  <a href={data.file2} target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
-                    <FiExternalLink size={13} />
-                    عرض الملف
-                  </a>
+                  <>
+                    <button onClick={() => openFile(data.file2)}
+                      className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
+                      <FiExternalLink size={13} />
+                      عرض الملف
+                    </button>
+                    <button onClick={() => setData((p) => ({ ...p, file2: "" }))}
+                      className="text-red-400 hover:text-red-600 text-xs hover:underline">
+                      حذف
+                    </button>
+                  </>
                 )}
               </div>
             )}

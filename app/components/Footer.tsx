@@ -16,14 +16,31 @@ async function getCompany() {
 export default async function Footer() {
   const c = await getCompany();
 
+  function ensureAbsolute(url: string) {
+    if (!url) return "";
+    return url.startsWith("http://") || url.startsWith("https://") ? url : `https://${url}`;
+  }
+
+  function toInlineUrl(url: string) {
+    if (!url || !url.includes("cloudinary.com")) return url;
+    return url.replace("/upload/", "/upload/fl_attachment:false/");
+  }
+
   const qrSrc: string = c.qrImage || "";
-  const qrLink: string = c.qrLink || "";
+  const qrLink: string = ensureAbsolute(c.qrLink || "");
 
   const footerItems: { image: string; linkType: string; link: string; file: string }[] =
     (c.footerItems || []).filter((item: { image: string }) => item.image);
 
+  const img1: string = c.img1 || "";
+  const linkType1: string = c.linkType1 || c.link1Type || "link";
+  const link1: string = linkType1 === "file" ? toInlineUrl(c.file1 || "") : ensureAbsolute(c.link1 || "");
+  const img2: string = c.img2 || "";
+  const linkType2: string = c.linkType2 || c.link2Type || "link";
+  const link2: string = linkType2 === "file" ? toInlineUrl(c.file2 || "") : ensureAbsolute(c.link2 || "");
+
   function getHref(item: { linkType: string; link: string; file: string }) {
-    return item.linkType === "link" ? item.link : item.file;
+    return item.linkType === "link" ? ensureAbsolute(item.link) : toInlineUrl(item.file);
   }
 
   return (
@@ -97,9 +114,27 @@ export default async function Footer() {
                   className="object-contain rounded" style={{ width: 60, height: 40 }} />
               );
               return href
-                ? <a key={i} href={href} target="_blank" rel="noreferrer" download={item.linkType === "file" ? true : undefined}>{el}</a>
+                ? <a key={i} href={href} target="_blank" rel="noreferrer">{el}</a>
                 : <span key={i}>{el}</span>;
             })}
+
+            {/* img1 */}
+            {img1 && (
+              link1
+                ? <a href={link1} target="_blank" rel="noreferrer">
+                    <Image src={img1} alt="img1" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+                  </a>
+                : <Image src={img1} alt="img1" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+            )}
+
+            {/* img2 */}
+            {img2 && (
+              link2
+                ? <a href={link2} target="_blank" rel="noreferrer">
+                    <Image src={img2} alt="img2" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+                  </a>
+                : <Image src={img2} alt="img2" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+            )}
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { apiFetch } from "../../lib/api";
 
 type SubCat = { name: string; category: string; count: number };
+type Settings = { category: string; subCategory: string; showInHome: boolean; order: number };
 
 const TrashIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -19,6 +20,7 @@ const EditIcon = () => (
 
 export default function SubCategoriesPage() {
   const [items, setItems] = useState<SubCat[]>([]);
+  const [settings, setSettings] = useState<Settings[]>([]);
   const [search, setSearch] = useState("");
   const [editItem, setEditItem] = useState<SubCat | null>(null);
   const [editName, setEditName] = useState("");
@@ -26,17 +28,61 @@ export default function SubCategoriesPage() {
   const [editLoading, setEditLoading] = useState(false);
   const allSubCategories = [...new Set(items.map((i) => i.name).filter(Boolean))];
   const [confirmDelete, setConfirmDelete] = useState<SubCat | null>(null);
+  const [max, setMax] = useState(4);
 
-  async function fetchData() {
-    const res = await apiFetch("/api/admin/sub-categories", { credentials: "include" });
-    if (res.ok) setItems(await res.json());
+  function getSetting(cat: SubCat): Settings | undefined {
+    return settings.find((s) => s.category === cat.category && s.subCategory === cat.name);
   }
 
-  useEffect(() => {
-    apiFetch("/api/admin/sub-categories", { credentials: "include" })
-      .then((res) => res.ok ? res.json() : null)
-      .then((data) => { if (data) setItems(data); });
-  }, []);
+  async function fetchData() {
+    const [res1, res2, res3] = await Promise.all([
+      apiFetch("/api/admin/sub-categories", { credentials: "include" }),
+      apiFetch("/api/admin/sub-categories/settings", { credentials: "include" }),
+      apiFetch("/api/admin/sub-categories/settings/max", { credentials: "include" }),
+    ]);
+    if (res1.ok) setItems(await res1.json());
+    if (res2.ok) setSettings(await res2.json());
+    if (res3.ok) { const d = await res3.json(); setMax(d?.max ?? 4); }
+  }
+
+  useEffect(() => { fetchData(); }, []);
+
+  const visibleCount = settings.filter((s) => s.showInHome && s.category !== "__config__").length;
+
+  async function handleToggleHome(cat: SubCat) {
+    const setting = getSetting(cat);
+    if (!setting?.showInHome && visibleCount >= max) {
+      return toast.error(`الحد الأقصى ${max} تصنيفات في الرئيسية`);
+    }
+    const res = await apiFetch("/api/admin/sub-categories/settings/toggle", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ category: cat.category, subCategory: cat.name }),
+    });
+    if (!res.ok) return toast.error("حدث خطأ");
+    const { showInHome } = await res.json();
+    setSettings((prev) => {
+      const exists = prev.find((s) => s.category === cat.category && s.subCategory === cat.name);
+      if (exists) return prev.map((s) => s.category === cat.category && s.subCategory === cat.name ? { ...s, showInHome } : s);
+      return [...prev, { category: cat.category, subCategory: cat.name, showInHome, order: 0 }];
+    });
+    toast.success(showInHome ? "سيظهر في الرئيسية ✅" : "تم الإخفاء من الرئيسية");
+  }
+
+  async function handleOrderChange(cat: SubCat, order: number) {
+    await apiFetch("/api/admin/sub-categories/settings/order", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ category: cat.category, subCategory: cat.name, order }),
+    });
+    setSettings((prev) => {
+      const exists = prev.find((s) => s.category === cat.category && s.subCategory === cat.name);
+      if (exists) return prev.map((s) => s.category === cat.category && s.subCategory === cat.name ? { ...s, order } : s);
+      return [...prev, { category: cat.category, subCategory: cat.name, showInHome: false, order }];
+    });
+  }
 
   async function handleEdit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,9 +125,14 @@ export default function SubCategoriesPage() {
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-gray-100">
-          <span className="text-xs sm:text-sm text-gray-500">
-            إجمالي التصنيفات: <span className="font-bold text-gray-700">{items.length}</span>
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="text-xs sm:text-sm text-gray-500">
+              إجمالي التصنيفات: <span className="font-bold text-gray-700">{items.length}</span>
+            </span>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${visibleCount >= max ? "bg-red-100 text-red-600" : "bg-green-100 text-green-600"}`}>
+              الرئيسية: {visibleCount}/{max}
+            </span>
+          </div>
           <input
             type="text"
             value={search}
@@ -91,7 +142,7 @@ export default function SubCategoriesPage() {
           />
         </div>
         <div className="overflow-x-auto scrollbar-visible">
-          <table className="w-full text-sm text-right min-w-[600px]">
+          <table className="w-full text-sm text-right min-w-[650px]">
             <thead className="bg-gray-50 text-gray-600 font-semibold text-xs sm:text-sm">
               <tr>
                 <th className="px-2 sm:px-4 py-3">#</th>
@@ -99,43 +150,63 @@ export default function SubCategoriesPage() {
                 <th className="px-2 sm:px-4 py-3">النوع</th>
                 <th className="px-2 sm:px-4 py-3">عدد المنتجات</th>
                 <th className="px-2 sm:px-4 py-3 text-center">عرض في الرئيسية</th>
+                <th className="px-2 sm:px-4 py-3 text-center">الترتيب</th>
                 <th className="px-2 sm:px-4 py-3">إجراء</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((cat, i) => (
-                <tr key={`${cat.category}-${cat.name}`} className="hover:bg-gray-50">
-                  <td className="px-2 sm:px-4 py-3 text-gray-400 font-medium text-xs sm:text-sm">{i + 1}</td>
-                  <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.category}</td>
-                  <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.name}</td>
-                  <td className="px-2 sm:px-4 py-3">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${cat.count > 0 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
-                      {cat.count} منتج
-                    </span>
-                  </td>
-                  <td className="px-2 sm:px-4 py-3 text-center">
-                    <input type="checkbox" className="w-4 h-4 accent-blue-600 cursor-pointer" />
-                  </td>
-                  <td className="px-2 sm:px-4 py-3">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <button
-                        onClick={() => { setEditItem(cat); setEditName(cat.name); setEditCategory(cat.category); }}
-                        className="text-blue-500 hover:text-blue-700" title="تعديل"
-                      >
-                        <EditIcon />
-                      </button>
-                      <button
-                        onClick={() => setConfirmDelete(cat)}
-                        className="text-red-500 hover:text-red-700" title="حذف"
-                      >
-                        <TrashIcon />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((cat, i) => {
+                const setting = getSetting(cat);
+                return (
+                  <tr key={`${cat.category}-${cat.name}`} className="hover:bg-gray-50">
+                    <td className="px-2 sm:px-4 py-3 text-gray-400 font-medium text-xs sm:text-sm">{i + 1}</td>
+                    <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.category}</td>
+                    <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.name}</td>
+                    <td className="px-2 sm:px-4 py-3">
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold whitespace-nowrap ${cat.count > 0 ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-500"}`}>
+                        {cat.count} منتج
+                      </span>
+                    </td>
+                    <td className="px-2 sm:px-4 py-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={setting?.showInHome ?? false}
+                        onChange={() => handleToggleHome(cat)}
+                        disabled={!setting?.showInHome && visibleCount >= max}
+                        className="w-4 h-4 accent-blue-600 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                      />
+                    </td>
+                    <td className="px-2 sm:px-4 py-3 text-center">
+                      <input
+                        type="number"
+                        min={0}
+                        defaultValue={setting?.order ?? 0}
+                        onBlur={(e) => handleOrderChange(cat, parseInt(e.target.value) || 0)}
+                        disabled={!setting?.showInHome}
+                        className="w-16 border border-gray-300 rounded px-2 py-1 text-xs text-center focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                      />
+                    </td>
+                    <td className="px-2 sm:px-4 py-3">
+                      <div className="flex items-center gap-2 sm:gap-3">
+                        <button
+                          onClick={() => { setEditItem(cat); setEditName(cat.name); setEditCategory(cat.category); }}
+                          className="text-blue-500 hover:text-blue-700" title="تعديل"
+                        >
+                          <EditIcon />
+                        </button>
+                        <button
+                          onClick={() => setConfirmDelete(cat)}
+                          className="text-red-500 hover:text-red-700" title="حذف"
+                        >
+                          <TrashIcon />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
               {filtered.length === 0 && (
-                <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-400 text-sm">لا توجد تصنيفات فرعية</td></tr>
+                <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400 text-sm">لا توجد تصنيفات فرعية</td></tr>
               )}
             </tbody>
           </table>
