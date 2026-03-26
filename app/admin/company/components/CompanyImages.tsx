@@ -1,5 +1,5 @@
 "use client";
-import { imageFields, toFullUrl } from "../constants";
+import { imageFields } from "../constants";
 import type { CompanyData } from "../types";
 
 interface CompanyImagesProps {
@@ -16,7 +16,7 @@ export default function CompanyImages({ data, onImageChange, onImageDelete }: Co
           <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1">{label}</label>
           {data[key] && (
             <div className="relative inline-block mb-2">
-              <img src={toFullUrl(data[key])} alt={label} className="h-14 object-contain rounded border" />
+              <img src={data[key]} alt={label} className="h-14 object-contain rounded border" />
               <button
                 type="button"
                 onClick={() => onImageDelete(key)}

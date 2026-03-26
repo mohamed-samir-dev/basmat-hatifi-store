@@ -38,8 +38,8 @@ export function useCompany() {
       });
       const json = await res.json();
       if (!res.ok) { toast.error(json.error || "فشل رفع الصورة"); return; }
-      const fullUrl = `${API}${json.url}?t=${Date.now()}`;
-      handleChange(key, json.url);
+      const fullUrl = json.url.startsWith("http") ? `${json.url}?t=${Date.now()}` : `${API}${json.url}?t=${Date.now()}`;
+      handleChange(key, fullUrl);
       if (key === "logo") setLogo(fullUrl);
       toast.success("تم رفع الصورة");
     } catch (e) {
