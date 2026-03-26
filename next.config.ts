@@ -7,7 +7,16 @@ const nextConfig: NextConfig = {
   async rewrites() {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     return {
-      beforeFiles: [],
+      beforeFiles: [
+        {
+          source: "/sitemap.xml",
+          destination: "/sitemap.xml",
+        },
+        {
+          source: "/robots.txt",
+          destination: "/robots.txt",
+        },
+      ],
       afterFiles: [
         {
           source: "/api/:path*",
