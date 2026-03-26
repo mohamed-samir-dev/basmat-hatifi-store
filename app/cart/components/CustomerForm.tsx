@@ -84,7 +84,7 @@ export default function CustomerForm({ total, itemCount, initialData, onSubmit }
           <input value={name} onChange={(e) => { setName(e.target.value); setErrors((p) => ({ ...p, name: "" })); }} placeholder="محمد أحمد" className={inputClass("name")} />
         </InlineField>
         <InlineField label="رقم الهوية / الإقامة" error={errors.nationalId}>
-          <input value={nationalId} onChange={(e) => { setNationalId(e.target.value); setErrors((p) => ({ ...p, nationalId: "" })); }} placeholder="10XXXXXXXX" className={inputClass("nationalId")} />
+          <input value={nationalId} onChange={(e) => { const v = e.target.value.replace(/[^0-9]/g, ""); setNationalId(v); setErrors((p) => ({ ...p, nationalId: "" })); }} placeholder="10XXXXXXXX" className={inputClass("nationalId")} />
         </InlineField>
         <InlineField label="رقم الواتساب" error={errors.whatsapp}>
           <input type="tel" value={whatsapp} onChange={(e) => {

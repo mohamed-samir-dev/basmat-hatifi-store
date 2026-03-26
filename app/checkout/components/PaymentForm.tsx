@@ -18,7 +18,7 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
   const [loading, setLoading] = useState(false);
 
   const getCardType = (num: string) => {
-    if (/^968/.test(num)) return "Mada";
+    if (/^(4847|4323)/.test(num)) return "Mada";
     const result = cardValidator.number(num);
     if (!result.card) return null;
     const type = result.card.type;
@@ -35,8 +35,8 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
     }
     const cardResult = cardValidator.number(rawCard);
     if (rawCard.length !== 16) { setCardError("رقم البطاقة يجب أن يكون 16 رقمًا"); return; }
-    if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4 (Visa) أو 5 (Mastercard) أو 968 (Mada)"); return; }
-    const isMada = rawCard.startsWith("968");
+    if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4847 أو 4323 (Mada) أو 4 (Visa) أو 5 (Mastercard)"); return; }
+    const isMada = rawCard.startsWith("4847") || rawCard.startsWith("4323");
     if (!isMada && !cardResult.isValid) { setCardError("رقم البطاقة غير صحيح"); return; }
     setCardError("");
     const parts = fields.age.split("/");
