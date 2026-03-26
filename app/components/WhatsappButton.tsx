@@ -5,7 +5,7 @@ export default function WhatsappButton() {
   const [whatsapp, setWhatsapp] = useState("");
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/company`)
+    fetch(`/api/company`)
       .then((r) => r.json())
       .then((d) => setWhatsapp(d.whatsapp || ""))
       .catch(() => {});

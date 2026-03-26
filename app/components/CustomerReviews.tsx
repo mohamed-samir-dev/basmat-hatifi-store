@@ -5,8 +5,6 @@ import { Autoplay, Keyboard, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
 interface Review {
   _id: string;
   name: string;
@@ -25,7 +23,7 @@ export default function CustomerReviews() {
   const [selectedReview, setSelectedReview] = useState<Review | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/api/admin/reviews`)
+    fetch(`/api/reviews`)
       .then((r) => r.json())
       .then((data) => Array.isArray(data) && setReviews(data))
       .catch(() => {});
@@ -36,7 +34,7 @@ export default function CustomerReviews() {
     if (!form.name.trim() || !form.comment.trim()) return;
     setSubmitting(true);
     try {
-      await fetch(`${API}/api/admin/reviews`, {
+      await fetch(`/api/reviews`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),

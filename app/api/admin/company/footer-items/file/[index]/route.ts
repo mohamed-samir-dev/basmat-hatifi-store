@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getBackend, forwardCookies } from "../../../../../_lib";
+import { getBackend, forwardCookies } from "../../../../_lib";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ index: string }> }) {
   const { index } = await params;
