@@ -227,11 +227,12 @@ export default function EditProductPage() {
           </Field>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="السعر">
-              <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" />
-            </Field>
+           
             <Field label="السعر القديم">
               <input type="number" value={form.salePrice} onChange={(e) => set("salePrice", e.target.value)} className={inputCls} min="0" step="0.01" placeholder="0.00" />
+            </Field>
+            <Field label="السعر الجديد">
+              <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" />
             </Field>
           </div>
 

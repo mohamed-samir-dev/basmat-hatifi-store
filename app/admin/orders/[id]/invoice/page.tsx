@@ -77,7 +77,7 @@ export default function InvoicePrintPage() {
           src={company.stamp}
           alt="stamp"
           style={{
-            position: "fixed",
+            position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
