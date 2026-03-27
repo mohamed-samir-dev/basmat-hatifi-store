@@ -33,9 +33,23 @@ export default function PrintOrderPage() {
 
   const style = `
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    @media print { body { margin: 0; } }
     thead { display: table-header-group; }
     tfoot { display: table-row-group; }
+    .print-two-col td { width: 50%; }
+    .installments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .table-scroll { overflow-x: auto; }
+    @media (max-width: 600px) {
+      .print-two-col { display: block; }
+      .print-two-col tr { display: block; }
+      .print-two-col td { display: block; width: 100% !important; border-right: none !important; border-bottom: 1px solid #e5e7eb; }
+      .installments-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      @page { size: A4; margin: 10mm; }
+      body { font-size: 11px !important; }
+      td, th { padding: 4px 6px !important; }
+      img[alt="header"], img[alt="footer"] { width: 100% !important; max-height: none !important; }
+    }
   `;
 
   const fin = { total: order.total, downPayment: order.downPayment, months: order.months, monthlyPayment: order.monthlyPayment };
@@ -52,7 +66,8 @@ export default function PrintOrderPage() {
       </div>
 
       {/* رسالة الترحيب */}
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16 }}>
+      <div className="table-scroll">
+      <table className="print-two-col" style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16 }}>
         <tbody>
           <tr>
             <td style={{ padding: 12, borderRight: "2px solid black", fontSize: 13, lineHeight: 2 }}>
@@ -70,9 +85,11 @@ export default function PrintOrderPage() {
           </tr>
         </tbody>
       </table>
+      </div>
 
       {/* بيانات العميل */}
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16, fontSize: 13 }}>
+      <div className="table-scroll">
+      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16, fontSize: 13, minWidth: 400 }}>
         <thead>
           <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
             <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>اسم العميل</th>
@@ -88,11 +105,13 @@ export default function PrintOrderPage() {
           </tr>
         </tbody>
       </table>
+      </div>
 
       <div style={{ textAlign: "center", fontWeight: "bold", marginBottom: 8, fontSize: 14 }}>تفاصيل الفاتورة</div>
 
       {/* جدول المنتجات */}
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16, fontSize: 13 }}>
+      <div className="table-scroll">
+      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16, fontSize: 13, minWidth: 400 }}>
         <thead>
           <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
             <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>اسم الجهاز</th>
@@ -124,9 +143,11 @@ export default function PrintOrderPage() {
           )}
         </tfoot>
       </table>
+      </div>
 
       {/* الشروط */}
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", fontSize: 13, marginBottom: 16 }}>
+      <div className="table-scroll">
+      <table className="print-two-col" style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", fontSize: 13, marginBottom: 16 }}>
         <tbody>
           <tr>
             <td style={{ padding: 12, borderRight: "2px solid black", textAlign: "right", direction: "rtl", lineHeight: 2 }}>
@@ -140,6 +161,7 @@ export default function PrintOrderPage() {
           </tr>
         </tbody>
       </table>
+      </div>
 
       {/* جدول الأقساط */}
       {order.installmentType === "installment" && fin.months > 0 && (() => {
@@ -155,7 +177,7 @@ export default function PrintOrderPage() {
         const remaining = (fin.total - fin.downPayment).toFixed(2);
         return (
           <div style={{ border: "2px solid #9ca3af", borderRadius: 8, padding: 12, backgroundColor: "#f3f4f6" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div className="installments-grid">
               {chunks.map((chunk, ci) => (
                 <table key={ci} style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #d1d5db", fontSize: 13 }}>
                   <thead>

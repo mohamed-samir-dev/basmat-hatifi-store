@@ -54,14 +54,29 @@ export default function ReceiptPrintPage() {
 
   const style = `
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { font-family: Arial, sans-serif; background: #fff; direction: rtl; padding: 24px; }
-    @media print { body { padding: 0; } }
+    body { font-family: Arial, sans-serif; background: #fff; direction: rtl; padding: 12px; }
     ul { list-style: disc; padding-right: 20px !important; margin-top: 4px !important; }
     li { list-style: disc; }
+    .receipt-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    .receipt-table td { border: 1px solid #aaa; padding: 6px 10px; word-break: break-word; }
+    .receipt-label { text-align: center; background-color: #808080; color: #000; font-weight: bold; white-space: nowrap; width: 1%; }
+    .receipt-value { text-align: center; }
+    .receipt-header-row { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 4px; }
+    .receipt-no { font-size: 14px; font-weight: bold; color: #990431; position: absolute; left: 0; }
+    @media (max-width: 600px) {
+      .receipt-table { font-size: 13px; }
+      .receipt-table td { padding: 5px 7px; }
+      .receipt-no { font-size: 12px; }
+    }
+    @media print {
+      @page { size: A4; margin: 10mm; }
+      body { padding: 0; }
+      img[alt="header"], img[alt="footer"] { width: 100% !important; max-height: none !important; }
+    }
   `;
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: 24, maxWidth: 700, margin: "0 auto" }} dir="rtl">
+    <div style={{ fontFamily: "Arial, sans-serif", padding: "12px", maxWidth: 700, width: "100%", margin: "0 auto" }} dir="rtl">
       <style>{style}</style>
 {/* header image*/}
       {company.header && (
@@ -70,35 +85,35 @@ export default function ReceiptPrintPage() {
 
       {/* receipt box */}
       <div style={{ border: "2px solid #808080", borderRadius: 8, marginBottom: 16, position: "relative" }}>
-        <div style={{ display: "flex", justifyContent: "center" }}>
+        <div className="receipt-header-row">
           <div style={{ backgroundColor: "#808080", padding: "1px 50px", borderRadius: "0 0 6px 6px" }}>
             <span style={{ fontSize: 20, fontWeight: "bold", color: "#000000" }}>سند قبض</span>
           </div>
+          <span className="receipt-no">No. #{order.orderId}</span>
         </div>
-        <span style={{ position: "absolute", top: 10, left: 16, fontSize: 16, fontWeight: "bold",color:"#990431" }}>No. #{order.orderId}</span>
         <div style={{ padding: "16px 20px" }}>
-          <table style={{ borderCollapse: "collapse", fontSize: 15, width: "100%" }}>
+          <table className="receipt-table">
             <tbody>
               <tr>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", backgroundColor: "#808080",color:"#000000", fontWeight: "bold", whiteSpace: "nowrap" }}>المبلغ</td>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", whiteSpace: "nowrap" }}>{amount}</td>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", whiteSpace: "nowrap" }}>{currency}</td>
+                <td className="receipt-label">المبلغ</td>
+                <td className="receipt-value">{amount}</td>
+                <td className="receipt-value">{currency}</td>
               </tr>
               <tr>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", backgroundColor: "#808080",color:"#000000", fontWeight: "bold", whiteSpace: "nowrap" }}>استلمت من السيد</td>
-                <td colSpan={2} style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", whiteSpace: "nowrap" }}>{order.customer}</td>
+                <td className="receipt-label">استلمت من السيد</td>
+                <td colSpan={2} className="receipt-value">{order.customer}</td>
               </tr>
               <tr>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", backgroundColor: "#808080",color:"#000000", fontWeight: "bold", whiteSpace: "nowrap" }}>رقم الجوال</td>
-                <td colSpan={2} style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", whiteSpace: "nowrap" }}>{order.whatsapp}</td>
+                <td className="receipt-label">رقم الجوال</td>
+                <td colSpan={2} className="receipt-value">{order.whatsapp}</td>
               </tr>
               <tr>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", backgroundColor: "#808080",color:"#000000", fontWeight: "bold", whiteSpace: "nowrap" }}>العنوان</td>
-                <td colSpan={2} style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", whiteSpace: "nowrap" }}>{order.address}</td>
+                <td className="receipt-label">العنوان</td>
+                <td colSpan={2} className="receipt-value">{order.address}</td>
               </tr>
               <tr>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", backgroundColor: "#808080",color:"#000000", fontWeight: "bold", whiteSpace: "nowrap" }}>وذلك عن</td>
-                <td colSpan={2} style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center" }}>
+                <td className="receipt-label">وذلك عن</td>
+                <td colSpan={2} className="receipt-value">
                   {aboutPrefix}
                   <ul style={{ margin: "4px 0 0 0", paddingRight: 20, textAlign: "right" }}>
                     {aboutItems.map((name: string, idx: number) => (
@@ -108,13 +123,13 @@ export default function ReceiptPrintPage() {
                 </td>
               </tr>
               <tr>
-                <td style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center", backgroundColor: "#808080",color:"#000000", fontWeight: "bold", whiteSpace: "nowrap" }}>المبلغ بالحروف</td>
-                <td colSpan={2} style={{ border: "1px solid #aaa", padding: "2px 12px", textAlign: "center" }}>{amountWords}</td>
+                <td className="receipt-label">المبلغ بالحروف</td>
+                <td colSpan={2} className="receipt-value">{amountWords}</td>
               </tr>
             </tbody>
           </table>
 
-          <div style={{ border: "1px solid #aaa", borderRadius: 6, marginTop: 24, display: "flex", justifyContent: "space-between", padding: "12px 24px", minHeight: 80 }}>
+          <div style={{ border: "1px solid #aaa", borderRadius: 6, marginTop: 24, display: "flex", justifyContent: "space-between", padding: "12px 16px", minHeight: 80, flexWrap: "wrap", gap: 16 }}>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontWeight: "bold", marginBottom: 8 }}>توقيع المستلم</div>
               <div style={{ borderBottom: "1px solid #aaa", width: 120, marginTop: 32 }}></div>

@@ -76,6 +76,11 @@ export default function InvoicePrintPage() {
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         thead { display: table-header-group; }
         tfoot { display: table-row-group; }
+        .invoice-flex-row { display: flex; gap: 12px; margin-bottom: 16px; }
+        .invoice-table-wrap { overflow-x: auto; margin-bottom: 16px; }
+        @media (max-width: 600px) {
+          .invoice-flex-row { flex-direction: column; }
+        }
       `}</style>
 
       {/* header */}
@@ -88,7 +93,7 @@ export default function InvoicePrintPage() {
       </div>
 
       {/* مصدرة من / مصدرة إلى */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+      <div className="invoice-flex-row">
         <div style={infoBox}>
           <div style={sectionTitle("#6366f1")}>مصدرة من:</div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -114,7 +119,7 @@ export default function InvoicePrintPage() {
       </div>
 
       {/* تفاصيل الدفع والشحن */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+      <div className="invoice-flex-row">
         <div style={infoBox}>
           <div style={sectionTitle("#f59e0b")}>تفاصيل الدفع:</div>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
@@ -139,7 +144,8 @@ export default function InvoicePrintPage() {
       </div>
 
       {/* جدول المنتجات */}
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, marginBottom: 16 }}>
+      <div className="invoice-table-wrap">
+      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14, minWidth: 500 }}>
         <thead>
           <tr>
             <th style={th}>الصورة</th>
@@ -185,6 +191,7 @@ export default function InvoicePrintPage() {
         </tfoot>
       </table>
 
+      </div>
       {/* footer */}
       {company.footer && <img src={company.footer} alt="footer" style={{ width: "100%" }} />}
     </div>

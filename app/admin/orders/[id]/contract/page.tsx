@@ -59,7 +59,15 @@ export default function ContractPage() {
   const style = `
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: Arial, sans-serif; direction: rtl; }
-    @media print { body { margin: 0; padding: 0; } }
+    .sig-row { display: flex; justify-content: space-between; margin-top: 40px; font-size: 13px; }
+    @media (max-width: 500px) {
+      .sig-row { flex-direction: column; align-items: center; gap: 24px; }
+    }
+    @media print {
+      @page { size: A4; margin: 10mm; }
+      body { margin: 0; padding: 0; }
+      img[alt="header"], img[alt="footer"] { width: 100% !important; max-height: none !important; }
+    }
   `;
 
 
@@ -105,7 +113,7 @@ export default function ContractPage() {
       <hr style={{ border: "none", borderTop: "2px solid #1a1a1a", marginBottom: 32 }} />
 
       {/* التوقيع والختم */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 40, fontSize: 13 }}>
+      <div className="sig-row">
         <div style={{ textAlign: "center", width: 180 }}>
           <div style={{ borderTop: "1px solid #1a1a1a", paddingTop: 8, color: "#555" }}>التوقيع :/ ........................</div>
         </div>
