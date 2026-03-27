@@ -23,9 +23,15 @@ function toArabicWords(n: number): string {
   return result.trim();
 }
 
+interface OrderItem { name: string; }
+interface ReceiptData {
+  order: { orderId: string; installmentType: string; downPayment: number; total: number; customer: string; whatsapp: string; address: string; items: OrderItem[]; };
+  company: { currencyAr?: string; header?: string; footer?: string; stamp?: string; };
+}
+
 export default function ReceiptPrintPage() {
   const { id } = useParams<{ id: string }>();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ReceiptData | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -44,7 +50,7 @@ export default function ReceiptPrintPage() {
   const amount = order.installmentType === "installment" ? order.downPayment : order.total;
   const amountWords = toArabicWords(amount) + " فقط لا غير";
   const aboutPrefix = `قيمة ${order.installmentType === "installment" ? "دفعة من " : ""}ثمن جهاز/أجهزة:`;
-  const aboutItems = order.items.map((i: any) => i.name);
+  const aboutItems = order.items.map((i: OrderItem) => i.name);
 
   const style = `
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
