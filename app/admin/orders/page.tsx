@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import InstallmentContract from "./InstallmentContract";
-import ReceiptVoucher from "./ReceiptVoucher";
 
 type OrderItem = { productId: string; name: string; price: number; quantity: number };
 
@@ -41,7 +40,7 @@ export default function OrdersPage() {
   const [page, setPage] = useState(1);
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
   const [contractOrderId, setContractOrderId] = useState<string | null>(null);
-  const [receiptOrderId, setReceiptOrderId] = useState<string | null>(null);
+
   const perPage = 10;
 
   useEffect(() => {
@@ -154,10 +153,6 @@ export default function OrdersPage() {
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         عقد التقسيط
                       </button>
-                      <button onClick={() => setReceiptOrderId(o._id)} className="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-2 py-1 rounded-lg transition-colors whitespace-nowrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                        سند قبض
-                      </button>
                       {(() => {
                         const next = o.status === "pending" ? "confirmed" : o.status === "confirmed" ? "cancelled" : "pending";
                         const cfg = { pending: { label: "تحويل لـ مؤكد", bg: "bg-green-500 hover:bg-green-600" }, confirmed: { label: "تحويل لـ ملغي", bg: "bg-red-500 hover:bg-red-600" }, cancelled: { label: "تحويل لـ انتظار", bg: "bg-yellow-400 hover:bg-yellow-500" } };
@@ -206,10 +201,6 @@ export default function OrdersPage() {
 
       {contractOrderId && (
         <InstallmentContract orderId={contractOrderId} onClose={() => setContractOrderId(null)} />
-      )}
-
-      {receiptOrderId && (
-        <ReceiptVoucher orderId={receiptOrderId} onClose={() => setReceiptOrderId(null)} />
       )}
 
       {confirmDelete && (
