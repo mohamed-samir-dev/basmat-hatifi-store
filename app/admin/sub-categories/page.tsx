@@ -29,20 +29,44 @@ export default function SubCategoriesPage() {
   const allSubCategories = [...new Set(items.map((i) => i.name).filter(Boolean))];
   const [confirmDelete, setConfirmDelete] = useState<SubCat | null>(null);
   const [max, setMax] = useState(4);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addName, setAddName] = useState("");
+  const [addLoading, setAddLoading] = useState(false);
 
   function getSetting(cat: SubCat): Settings | undefined {
     return settings.find((s) => s.category === cat.category && s.subCategory === cat.name);
   }
 
   async function fetchData() {
-    const [res1, res2, res3] = await Promise.all([
+    const [res1, res2, res3, res4] = await Promise.all([
       apiFetch("/api/admin/sub-categories", { credentials: "include" }),
       apiFetch("/api/admin/sub-categories/settings", { credentials: "include" }),
       apiFetch("/api/admin/sub-categories/max", { credentials: "include" }),
+      apiFetch("/api/admin/sub-categories/extra", { credentials: "include" }),
     ]);
-    if (res1.ok) setItems(await res1.json());
+    const fromProducts: SubCat[] = res1.ok ? await res1.json() : [];
+    const extra: SubCat[] = res4.ok ? await res4.json() : [];
+    const names = new Set(fromProducts.map((c) => c.name));
+    setItems([...fromProducts, ...extra.filter((c) => !names.has(c.name))]);
     if (res2.ok) setSettings(await res2.json());
     if (res3.ok) { const d = await res3.json(); setMax(d?.max ?? 4); }
+  }
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setAddLoading(true);
+    const res = await apiFetch("/api/admin/sub-categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ name: addName }),
+    });
+    setAddLoading(false);
+    if (!res.ok) { const d = await res.json(); return toast.error(d.error); }
+    toast.success(`تم إضافة "${addName}" بنجاح 🎉`);
+    setShowAddModal(false);
+    setAddName("");
+    fetchData();
   }
 
   useEffect(() => { fetchData(); }, []);
@@ -121,6 +145,12 @@ export default function SubCategoriesPage() {
     <div>
       <div className="flex items-center justify-between mb-4 sm:mb-6 gap-3">
         <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">التصنيفات الفرعية</h1>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-medium"
+        >
+          <span className="text-lg leading-none">+</span> إضافة تصنيف فرعي
+        </button>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
@@ -212,6 +242,38 @@ export default function SubCategoriesPage() {
           </table>
         </div>
       </div>
+
+      {/* Add Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-xl p-5 sm:p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-base sm:text-lg font-bold text-gray-800 mb-4">إضافة تصنيف فرعي جديد</h2>
+            <form onSubmit={handleAdd} className="space-y-3">
+              <div>
+                <label className="block text-xs sm:text-sm text-gray-600 mb-1">اسم التصنيف الفرعي</label>
+                <input
+                  type="text"
+                  value={addName}
+                  onChange={(e) => setAddName(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="مثال: آيفون"
+                  required
+                />
+              </div>
+              <div className="flex gap-2 pt-2">
+                <button type="submit" disabled={addLoading}
+                  className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 text-sm font-medium disabled:opacity-60">
+                  {addLoading ? "جاري الإضافة..." : "إضافة"}
+                </button>
+                <button type="button" onClick={() => { setShowAddModal(false); setAddName(""); }}
+                  className="flex-1 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 text-sm">
+                  إلغاء
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {editItem && (

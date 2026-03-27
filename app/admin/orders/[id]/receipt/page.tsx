@@ -61,8 +61,8 @@ export default function ReceiptPrintPage() {
     .receipt-table td { border: 1px solid #aaa; padding: 6px 10px; word-break: break-word; }
     .receipt-label { text-align: center; background-color: #808080; color: #000; font-weight: bold; white-space: nowrap; width: 1%; }
     .receipt-value { text-align: center; }
-    .receipt-header-row { display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 4px; }
-    .receipt-no { font-size: 14px; font-weight: bold; color: #990431; position: absolute; left: 0; }
+    .receipt-header-row { display: flex; justify-content: center; margin-bottom: 4px; }
+    .receipt-no { font-size: 14px; font-weight: bold; color: #990431; text-align: center; margin-top: 4px; }
     @media (max-width: 600px) {
       .receipt-table { font-size: 13px; }
       .receipt-table td { padding: 5px 7px; }
@@ -86,10 +86,12 @@ export default function ReceiptPrintPage() {
       {/* receipt box */}
       <div style={{ border: "2px solid #808080", borderRadius: 8, marginBottom: 16, position: "relative" }}>
         <div className="receipt-header-row">
-          <div style={{ backgroundColor: "#808080", padding: "1px 50px", borderRadius: "0 0 6px 6px" }}>
-            <span style={{ fontSize: 20, fontWeight: "bold", color: "#000000" }}>سند قبض</span>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <div style={{ backgroundColor: "#808080", padding: "1px 50px", borderRadius: "0 0 6px 6px" }}>
+              <span style={{ fontSize: 20, fontWeight: "bold", color: "#000000" }}>سند قبض</span>
+            </div>
+            <span className="receipt-no">No. #{order.orderId}</span>
           </div>
-          <span className="receipt-no">No. #{order.orderId}</span>
         </div>
         <div style={{ padding: "16px 20px" }}>
           <table className="receipt-table">
@@ -129,14 +131,17 @@ export default function ReceiptPrintPage() {
             </tbody>
           </table>
 
-          <div style={{ border: "1px solid #aaa", borderRadius: 6, marginTop: 24, display: "flex", justifyContent: "space-between", padding: "12px 16px", minHeight: 80, flexWrap: "wrap", gap: 16 }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontWeight: "bold", marginBottom: 8 }}>توقيع المستلم</div>
-              <div style={{ borderBottom: "1px solid #aaa", width: 120, marginTop: 32 }}></div>
+          <div style={{ border: "1px solid #aaa", borderRadius: 6, marginTop: 24, display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: 100 }}>
+            <div style={{ textAlign: "center", padding: "12px 8px", borderLeft: "1px solid #aaa", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ fontWeight: "bold" }}>توقيع المستلم</div>
+              <div style={{ borderBottom: "1px solid #aaa", width: "80%" }}></div>
             </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontWeight: "bold", marginBottom: 8 }}>الختم</div>
-              {company.stamp && <img src={company.stamp} alt="ختم" style={{ maxWidth: 100, maxHeight: 80, objectFit: "contain" }} />}
+            <div style={{ textAlign: "center", padding: "12px 8px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ fontWeight: "bold" }}>الختم</div>
+              {company.stamp
+                ? <img src={company.stamp} alt="ختم" style={{ maxWidth: 90, maxHeight: 70, objectFit: "contain" }} />
+                : <div style={{ borderBottom: "1px solid #aaa", width: "80%" }}></div>
+              }
             </div>
           </div>
         </div>

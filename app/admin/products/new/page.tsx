@@ -51,21 +51,14 @@ export default function NewProductPage() {
   const [subCategories, setSubCategories] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("/api/admin/sub-categories", { credentials: "include" })
+    fetch("/api/admin/sub-categories/all", { credentials: "include" })
       .then((r) => r.json())
-      .then((data: { name: string }[]) => {
-        const unique = [...new Set(data.map((s) => s.name).filter(Boolean))];
-        setSubCategories(unique);
-      })
+      .then((data: { name: string }[]) => setSubCategories(data.map((s) => s.name).filter(Boolean)))
       .catch(() => {});
-    Promise.all([
-      fetch("/api/admin/categories", { credentials: "include" }).then((r) => r.json()).catch(() => []),
-      fetch("/api/admin/main-categories", { credentials: "include" }).then((r) => r.json()).catch(() => []),
-    ]).then(([fromProducts, fromMain]: [string[], { name: string }[]]) => {
-      const mainNames = fromMain.map((m) => m.name).filter(Boolean);
-      const merged = [...new Set([...fromProducts, ...mainNames])].sort();
-      setCategories(merged);
-    });
+    fetch("/api/admin/categories", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data: string[]) => setCategories(data.filter(Boolean).sort()))
+      .catch(() => {});
   }, []);
 
   function set(key: keyof ProductForm, value: unknown) {

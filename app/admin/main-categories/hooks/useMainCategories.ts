@@ -19,15 +19,11 @@ export function useMainCategories() {
   const [search, setSearch] = useState("");
 
   const fetchCategories = useCallback(() => {
-    Promise.all([
-      fetch(BASE, { credentials: "include" }),
-      fetch(`${BASE}/extra`, { credentials: "include" }),
-    ]).then(async ([res1, res2]) => {
-      const fromProducts: Category[] = res1.ok ? await res1.json() : [];
-      const extra: Category[] = res2.ok ? await res2.json() : [];
-      const names = new Set(fromProducts.map((c) => c.name));
-      setCategories([...fromProducts, ...extra.filter((c) => !names.has(c.name))]);
-    });
+    fetch(`${BASE}/extra`, { credentials: "include" })
+      .then(async (res) => {
+        const data: Category[] = res.ok ? await res.json() : [];
+        setCategories(data);
+      });
   }, []);
 
   useEffect(() => { fetchCategories(); }, [fetchCategories]);
