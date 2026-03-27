@@ -10,7 +10,7 @@ interface Order {
   items: OrderItem[]; status: string; cardNumber: string;
 }
 interface Company {
-  header?: string; footer?: string; nameAr?: string; nameEn?: string;
+  header?: string; footer?: string; stamp?: string; nameAr?: string; nameEn?: string;
   addressAr?: string; email?: string; taxNumber?: string; shippingCompany?: string;
   paymentMethod?: string; currencyAr?: string;
 }
@@ -71,7 +71,23 @@ export default function InvoicePrintPage() {
   const remaining = order.total - order.downPayment;
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: 24, maxWidth: 900, margin: "0 auto", direction: "rtl" }}>
+    <div style={{ fontFamily: "Arial, sans-serif", padding: 24, maxWidth: 900, margin: "0 auto", direction: "rtl", position: "relative" }}>
+      {company.stamp && (
+        <img
+          src={company.stamp}
+          alt="stamp"
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 240,
+            opacity: 0.25,
+            pointerEvents: "none",
+            zIndex: 9999,
+          }}
+        />
+      )}
       <style>{`
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         thead { display: table-header-group; }

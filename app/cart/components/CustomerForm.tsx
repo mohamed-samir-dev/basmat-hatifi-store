@@ -24,18 +24,22 @@ interface CustomerFormProps {
   total: number;
   itemCount: number;
   initialData?: CustomerInfo | null;
+  defaultDownPayment?: number;
   onSubmit: (info: CustomerInfo) => void;
 }
 
-export default function CustomerForm({ total, initialData, onSubmit }: CustomerFormProps) {
-  const DOWN_PAYMENT_OPTIONS = [1000, 1500, 2000];
+export default function CustomerForm({ total, initialData, defaultDownPayment, onSubmit }: CustomerFormProps) {
+  const BASE_OPTIONS = [1000, 1500, 2000];
+  const DOWN_PAYMENT_OPTIONS = defaultDownPayment && !BASE_OPTIONS.includes(defaultDownPayment)
+    ? [defaultDownPayment, ...BASE_OPTIONS].sort((a, b) => a - b)
+    : BASE_OPTIONS;
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");
   const [address, setAddress] = useState(initialData?.address ?? "");
   const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "full");
   const [months, setMonths] = useState(initialData?.months ?? 3);
-  const [downPayment, setDownPayment] = useState<number | "full">(initialData?.downPayment ?? 1000);
+  const [downPayment, setDownPayment] = useState<number | "full">(initialData?.downPayment ?? defaultDownPayment ?? 1000);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const effectiveDown = downPayment === "full" ? total : downPayment;
