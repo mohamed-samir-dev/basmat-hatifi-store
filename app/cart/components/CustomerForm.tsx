@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import type { CustomerInfo } from "../../store/cartStore";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
-const MONTHS_OPTIONS = Array.from({ length: 24 }, (_, i) => i + 1);
 
 function InlineField({ label, children, error }: { label: string; children: React.ReactNode; error?: string }) {
   return (
@@ -25,13 +24,15 @@ interface CustomerFormProps {
   itemCount: number;
   initialData?: CustomerInfo | null;
   defaultDownPayment?: number;
+  installmentMonths?: number;
   onSubmit: (info: CustomerInfo) => void;
 }
 
-export default function CustomerForm({ total, initialData, defaultDownPayment, onSubmit }: CustomerFormProps) {
+export default function CustomerForm({ total, initialData, defaultDownPayment, installmentMonths, onSubmit }: CustomerFormProps) {
+  const MONTHS_OPTIONS = Array.from({ length: installmentMonths ?? 24 }, (_, i) => i + 1);
   const BASE_OPTIONS = [1000, 1500, 2000];
-  const DOWN_PAYMENT_OPTIONS = defaultDownPayment && !BASE_OPTIONS.includes(defaultDownPayment)
-    ? [defaultDownPayment, ...BASE_OPTIONS].sort((a, b) => a - b)
+  const DOWN_PAYMENT_OPTIONS = defaultDownPayment
+    ? [defaultDownPayment, ...BASE_OPTIONS.filter((v) => v !== defaultDownPayment)]
     : BASE_OPTIONS;
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
@@ -39,12 +40,11 @@ export default function CustomerForm({ total, initialData, defaultDownPayment, o
   const [address, setAddress] = useState(initialData?.address ?? "");
   const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "full");
   const [months, setMonths] = useState(initialData?.months ?? 3);
-  const [downPayment, setDownPayment] = useState<number | "full">(initialData?.downPayment ?? defaultDownPayment ?? 1000);
+  const [downPayment, setDownPayment] = useState<number>(initialData?.downPayment ?? defaultDownPayment ?? 1000);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const effectiveDown = downPayment === "full" ? total : downPayment;
   const monthlyPayment = useMemo(() => {
-    if (installmentType === "full" || downPayment === "full") return 0;
+    if (installmentType === "full") return 0;
     const remaining = total - downPayment;
     return remaining > 0 ? Math.ceil(remaining / months) : 0;
   }, [total, months, installmentType, downPayment]);
@@ -77,7 +77,7 @@ export default function CustomerForm({ total, initialData, defaultDownPayment, o
     if (!address.trim()) newErrors.address = "مطلوب";
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
-      onSubmit({ name, nationalId, whatsapp, address, installmentType, months, downPayment: effectiveDown });
+      onSubmit({ name, nationalId, whatsapp, address, installmentType, months, downPayment });
     }
   };
 
@@ -127,14 +127,14 @@ export default function CustomerForm({ total, initialData, defaultDownPayment, o
           <>
             <InlineField label="الدفعة الأولى">
               <select
-                value={downPayment === "full" ? "full" : String(downPayment)}
-                onChange={(e) => setDownPayment(e.target.value === "full" ? "full" : Number(e.target.value))}
+                value={String(downPayment)}
+                onChange={(e) => setDownPayment(Number(e.target.value))}
                 className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-900 bg-white focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400/20 transition cursor-pointer"
               >
-                <option value="full">الدفع بالكامل ({fmt(total)} ر.س)</option>
                 {DOWN_PAYMENT_OPTIONS.map((v) => (
                   <option key={v} value={v}>{fmt(v)} ر.س</option>
                 ))}
+                <option value={total}>الدفع بالكامل ({fmt(total)} ر.س)</option>
               </select>
             </InlineField>
             <InlineField label="القسط الشهري">

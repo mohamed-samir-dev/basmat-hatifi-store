@@ -235,6 +235,9 @@ export default function EditProductPage() {
               <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" />
             </Field>
           </div>
+          {form.salePrice && form.originalPrice && Number(form.salePrice) >= Number(form.originalPrice) && (
+            <p className="text-red-500 text-sm">⚠️ سعر البيع يجب أن يكون أقل من السعر الأصلي</p>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="التصنيف">
