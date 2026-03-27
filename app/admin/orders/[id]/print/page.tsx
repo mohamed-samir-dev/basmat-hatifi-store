@@ -34,6 +34,8 @@ export default function PrintOrderPage() {
   const style = `
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     @media print { body { margin: 0; } }
+    thead { display: table-header-group; }
+    tfoot { display: table-row-group; }
   `;
 
   const fin = { total: order.total, downPayment: order.downPayment, months: order.months, monthlyPayment: order.monthlyPayment };
