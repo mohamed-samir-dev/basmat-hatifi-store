@@ -8,7 +8,7 @@ interface Order {
   total: number; downPayment: number; months: number; monthlyPayment: number;
   installmentType: string; items: OrderItem[];
 }
-interface Company { header?: string; footer?: string; nameEn?: string; nameAr?: string; }
+interface Company { header?: string; footer?: string; nameEn?: string; nameAr?: string; stamp?: string; }
 
 export default function PrintOrderPage() {
   const { id } = useParams<{ id: string }>();
@@ -56,7 +56,23 @@ export default function PrintOrderPage() {
   const date = new Date(order.createdAt).toLocaleDateString("en-GB");
 
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: 24, maxWidth: 900, margin: "0 auto" }}>
+    <div style={{ fontFamily: "Arial, sans-serif", padding: 24, maxWidth: 900, margin: "0 auto", position: "relative" }}>
+      {company.stamp && (
+        <img
+          src={company.stamp}
+          alt="stamp"
+          style={{
+            position: "absolute",
+            top: "60%",
+            left: "40%",
+            transform: "translate(-50%, -50%)",
+            width: 240,
+            opacity: 0.5,
+            pointerEvents: "none",
+            zIndex: 9999,
+          }}
+        />
+      )}
       <style>{style}</style>
       {company.header && <img src={company.header} alt="header" style={{ width: "100%", marginBottom: 24 }} />}
 
