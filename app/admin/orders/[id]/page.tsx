@@ -267,6 +267,17 @@ export default function OrderDetailPage() {
           </div>
         </Section>
       )}
+      {/* زرار الطباعة */}
+      <div className="pb-6 flex justify-center">
+        <button
+          onClick={() => window.open(`/admin/orders/${id}/print`, "_blank")}
+          className="px-10 py-3 bg-purple-600 hover:bg-purple-700 text-white text-base font-bold rounded-xl transition-colors flex items-center gap-2 shadow"
+        >
+          🖨️ طباعة
+        </button>
+      </div>
+
+
     </div>
   );
 }

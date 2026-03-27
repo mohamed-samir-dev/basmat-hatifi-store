@@ -9,8 +9,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isLogin = pathname === "/admin/login";
+  const isPrint = pathname.endsWith("/print");
 
-  if (isLogin) return <>{children}</>;
+  if (isLogin || isPrint) return <>{children}</>;
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">

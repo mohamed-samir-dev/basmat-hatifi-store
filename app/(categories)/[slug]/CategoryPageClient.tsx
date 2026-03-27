@@ -34,7 +34,7 @@ export default function CategoryPageClient({ slug }: { slug: string }) {
   useEffect(() => {
     if (!slug) return;
     const brand = config?.filters.brand ?? "";
-    const query = brand ? `?brand=${brand}` : "";
+    const query = brand ? `?brand=${encodeURIComponent(brand)}` : "";
     fetch(`${API}/api/products${query}`)
       .then((r) => r.json())
       .then((data: Product[]) => setProducts(filterProducts(data, slug)))

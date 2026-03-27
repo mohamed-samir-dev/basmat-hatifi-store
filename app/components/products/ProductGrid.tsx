@@ -126,12 +126,15 @@ export default function ProductGrid() {
     const { settings, max } = homeConfig;
     const visibleSettings = settings.filter((s) => s.showInHome);
     if (visibleSettings.length === 0) return allCats;
-    return visibleSettings
+    const orderedCats = visibleSettings
       .sort((a, b) => a.order - b.order)
       .slice(0, max)
       .map((s) => s.category)
       .filter((c, idx, arr) => arr.indexOf(c) === idx)
       .filter((c) => allCats.includes(c));
+    // الكاتيجوريز الجديدة اللي ما عندها setting تظهر في الآخر
+    const unconfigured = allCats.filter((c) => !settings.some((s) => s.category === c));
+    return [...orderedCats, ...unconfigured];
   }, [grouped, homeConfig]);
 
   if (loading) return (

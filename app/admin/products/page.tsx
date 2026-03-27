@@ -30,12 +30,12 @@ export default function ProductsPage() {
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
 
   async function fetchProducts() {
-    const res = await fetch("/api/products", { credentials: "include" });
+    const res = await fetch("/api/admin/products", { credentials: "include" });
     if (res.ok) setProducts(await res.json());
   }
 
   useEffect(() => {
-    fetch("/api/products", { credentials: "include" })
+    fetch("/api/admin/products", { credentials: "include" })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => { if (data) setProducts(data); });
   }, []);
@@ -44,8 +44,9 @@ export default function ProductsPage() {
     if (!confirmDelete) return;
     const { id, name } = confirmDelete;
     setConfirmDelete(null);
-    const res = await fetch(`/api/products/${id}`, { method: "DELETE", credentials: "include" });
-    const data = await res.json();
+    const res = await fetch(`/api/admin/products/${id}`, { method: "DELETE", credentials: "include" });
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
     if (!res.ok) return toast.error(data.message || "فشل الحذف");
     toast.success(`تم حذف "${name}" بنجاح ✅`);
     fetchProducts();
@@ -59,6 +60,12 @@ export default function ProductsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-800">الأصناف</h1>
+        <button
+          onClick={() => router.push("/admin/products/new")}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+        >
+          + إضافة منتج
+        </button>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
