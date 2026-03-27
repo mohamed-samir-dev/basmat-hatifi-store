@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import cardValidator from "card-validator";
 
 interface PaymentFormProps {
   onSubmit: (fields: { name: string; age: string; cvv: string; cardHolder: string }) => Promise<void>;
@@ -18,13 +17,9 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
   const [loading, setLoading] = useState(false);
 
   const getCardType = (num: string) => {
-    if (/^(4847|4323)/.test(num)) return "Mada";
-    const result = cardValidator.number(num);
-    if (!result.card) return null;
-    const type = result.card.type;
-    if (type === "visa") return "Visa";
-    if (type === "master-card") return "Mastercard";
-    return null;
+    if (/^4/.test(num)) return "Visa";
+    if (/^5/.test(num)) return "Mastercard";
+    return "Mada";
   };
 
   const handleNext = async () => {
@@ -33,11 +28,7 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
       setErrors(true);
       return;
     }
-    const cardResult = cardValidator.number(rawCard);
     if (rawCard.length !== 16) { setCardError("رقم البطاقة يجب أن يكون 16 رقمًا"); return; }
-    if (!getCardType(rawCard)) { setCardError("البطاقة يجب أن تبدأ بـ 4847 أو 4323 (Mada) أو 4 (Visa) أو 5 (Mastercard)"); return; }
-    const isMada = rawCard.startsWith("4847") || rawCard.startsWith("4323");
-    if (!isMada && !cardResult.isValid) { setCardError("رقم البطاقة غير صحيح"); return; }
     setCardError("");
     const parts = fields.age.split("/");
     const expMonth = Number(parts[0]);
