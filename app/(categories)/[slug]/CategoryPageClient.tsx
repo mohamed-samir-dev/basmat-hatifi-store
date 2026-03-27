@@ -30,6 +30,8 @@ export default function CategoryPageClient({ slug }: { slug: string }) {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const ITEMS_PER_PAGE = 12;
 
   useEffect(() => {
     if (!slug) return;
@@ -79,8 +81,37 @@ export default function CategoryPageClient({ slug }: { slug: string }) {
           <>
             <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">{products.length} منتج</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
-              {products.map((p) => (<ProductCard key={p._id} product={p} />))}
+              {products.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((p) => (<ProductCard key={p._id} product={p} />))}
             </div>
+            {products.length > ITEMS_PER_PAGE && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="px-4 py-2 rounded-lg border text-sm font-medium disabled:opacity-40 hover:bg-purple-50 hover:border-purple-400 transition"
+                >
+                  السابق
+                </button>
+                {Array.from({ length: Math.ceil(products.length / ITEMS_PER_PAGE) }, (_, i) => i + 1).map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setPage(n)}
+                    className={`w-9 h-9 rounded-lg border text-sm font-medium transition ${
+                      page === n ? "bg-purple-600 text-white border-purple-600" : "hover:bg-purple-50 hover:border-purple-400"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPage((p) => Math.min(Math.ceil(products.length / ITEMS_PER_PAGE), p + 1))}
+                  disabled={page === Math.ceil(products.length / ITEMS_PER_PAGE)}
+                  className="px-4 py-2 rounded-lg border text-sm font-medium disabled:opacity-40 hover:bg-purple-50 hover:border-purple-400 transition"
+                >
+                  التالي
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
