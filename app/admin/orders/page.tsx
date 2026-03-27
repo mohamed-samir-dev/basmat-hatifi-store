@@ -41,9 +41,13 @@ export default function OrdersPage() {
   const perPage = 10;
 
   useEffect(() => {
-    fetch("/api/admin/orders")
-      .then((r) => r.json())
-      .then((d) => setOrders(Array.isArray(d) ? d : []));
+    const load = () =>
+      fetch("/api/admin/orders")
+        .then((r) => r.json())
+        .then((d) => setOrders(Array.isArray(d) ? d : []));
+    load();
+    const interval = setInterval(load, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const filtered = orders.filter(
