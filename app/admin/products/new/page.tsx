@@ -150,11 +150,11 @@ export default function NewProductPage() {
           </Field>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="السعر الجديد (سعر البيع)">
-              <input type="number" value={form.salePrice} onChange={(e) => set("salePrice", e.target.value)} className={inputCls} min="0" step="0.01" placeholder="0.00" />
+            <Field label="السعر الأصلي (المشطوب عليه)">
+              <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" placeholder="0.00" />
             </Field>
-            <Field label="السعر القديم (المشطوب عليه)">
-              <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" />
+            <Field label="سعر البيع (بعد الخصم)">
+              <input type="number" value={form.salePrice} onChange={(e) => set("salePrice", e.target.value)} className={inputCls} min="0" step="0.01" placeholder="0.00" />
             </Field>
           </div>
           {form.salePrice && form.originalPrice && Number(form.salePrice) >= Number(form.originalPrice) && (
@@ -163,6 +163,21 @@ export default function NewProductPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="التصنيف">
+              <select value={form.category} onChange={(e) => set("category", e.target.value)} className={inputCls}>
+                <option value="">-- اختر تصنيف --</option>
+                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </Field>
+            <Field label="التصنيف الفرعي">
+              <select value={form.subCategory} onChange={(e) => set("subCategory", e.target.value)} className={inputCls}>
+                <option value="">-- اختر تصنيف فرعي --</option>
+                {subCategories.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="الماركة">
               <input type="text" value={form.brand} onChange={(e) => set("brand", e.target.value)} className={inputCls} />
             </Field>
             <Field label="اللون">

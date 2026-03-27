@@ -28,6 +28,8 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   async function fetchProducts() {
     const res = await fetch("/api/admin/products", { credentials: "include" });
@@ -55,6 +57,8 @@ export default function ProductsPage() {
   const filtered = products.filter(
     (p) => p.name?.includes(search) || p.category?.includes(search)
   );
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div>
@@ -76,7 +80,7 @@ export default function ProductsPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
             placeholder="ابحث عن منتج..."
             className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-72"
           />
@@ -94,9 +98,9 @@ export default function ProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((p, i) => (
+              {paginated.map((p, i) => (
                 <tr key={p._id} className="hover:bg-gray-50 text-base">
-                  <td className="px-5 py-3 text-gray-400 font-medium">{i + 1}</td>
+                  <td className="px-5 py-3 text-gray-400 font-medium">{(currentPage - 1) * PAGE_SIZE + i + 1}</td>
                   <td className="px-5 py-3 font-medium text-gray-800">{p.name}</td>
                   <td className="px-5 py-3 text-gray-600">{p.category || "—"}</td>
                   <td className="px-5 py-3 text-gray-700">
@@ -121,7 +125,7 @@ export default function ProductsPage() {
                   </td>
                 </tr>
               ))}
-              {filtered.length === 0 && (
+              {paginated.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-8 text-center text-gray-400">لا توجد منتجات</td>
                 </tr>
@@ -130,6 +134,38 @@ export default function ProductsPage() {
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            السابق
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-1 rounded-lg border text-sm font-medium ${
+                page === currentPage
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "border-gray-300 text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            التالي
+          </button>
+        </div>
+      )}
 
       {/* Confirm Delete */}
       {confirmDelete && (
