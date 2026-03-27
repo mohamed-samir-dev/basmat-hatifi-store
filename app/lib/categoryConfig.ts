@@ -155,7 +155,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "ساعات ابل",
     parentLabel: "ساعات ابل",
     parentHref: "/apple-watches",
-    filters: { category: "watch" },
+    filters: { category: "ساعات ابل" },
   },
 
   // ─── Audio ─────────────────────────────────────────────────

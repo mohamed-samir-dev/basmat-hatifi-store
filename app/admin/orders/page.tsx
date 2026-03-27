@@ -186,14 +186,17 @@ export default function OrdersPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 py-3 border-t border-gray-100 text-sm text-gray-500">
             <span>عرض {(page - 1) * perPage + 1}–{Math.min(page * perPage, filtered.length)} من {filtered.length}</span>
-            <div className="flex gap-1">
+            <div className="flex items-center gap-1 flex-wrap justify-center">
               <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
                 className="px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-40">السابق</button>
+              {/* على الموبايل: رقم الصفحة الحالية فقط */}
+              <span className="sm:hidden px-3 py-1 rounded-lg border bg-purple-600 text-white border-purple-600">{page} / {totalPages}</span>
+              {/* على الشاشات الكبيرة: كل الأرقام */}
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                 <button key={n} onClick={() => setPage(n)}
-                  className={`px-3 py-1 rounded-lg border ${n === page ? "bg-purple-600 text-white border-purple-600" : "border-gray-200 hover:bg-gray-50"}`}>
+                  className={`hidden sm:inline-flex px-3 py-1 rounded-lg border ${n === page ? "bg-purple-600 text-white border-purple-600" : "border-gray-200 hover:bg-gray-50"}`}>
                   {n}
                 </button>
               ))}
