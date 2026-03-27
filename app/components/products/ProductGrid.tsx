@@ -121,7 +121,7 @@ export default function ProductGrid() {
 
   // If no settings configured yet, show all. Otherwise filter & sort by settings.
   const orderedCategories = useMemo(() => {
-    const allCats = Object.keys(grouped);
+    const allCats = Object.keys(grouped).filter((c) => c !== "أخرى");
     if (!homeConfig) return allCats;
     const { settings, max } = homeConfig;
     const visibleSettings = settings.filter((s) => s.showInHome);
@@ -133,7 +133,7 @@ export default function ProductGrid() {
       .filter((c, idx, arr) => arr.indexOf(c) === idx)
       .filter((c) => allCats.includes(c));
     // الكاتيجوريز الجديدة اللي ما عندها setting تظهر في الآخر
-    const unconfigured = allCats.filter((c) => !settings.some((s) => s.category === c));
+    const unconfigured = allCats.filter((c) => !settings.some((s) => s.category === c) && c !== "أخرى");
     return [...orderedCats, ...unconfigured];
   }, [grouped, homeConfig]);
 
