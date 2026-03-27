@@ -2,10 +2,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
+interface OrderItem { name: string; price: number; quantity: number; }
+interface Order {
+  orderId: string; createdAt: string; customer: string; whatsapp: string; address: string;
+  total: number; downPayment: number; months: number; monthlyPayment: number;
+  installmentType: string; items: OrderItem[];
+}
+interface Company { header?: string; footer?: string; nameEn?: string; nameAr?: string; }
+
 export default function PrintOrderPage() {
   const { id } = useParams<{ id: string }>();
-  const [order, setOrder] = useState<any>(null);
-  const [company, setCompany] = useState<any>({});
+  const [order, setOrder] = useState<Order | null>(null);
+  const [company, setCompany] = useState<Company>({});
 
   useEffect(() => {
     Promise.all([
@@ -92,7 +100,7 @@ export default function PrintOrderPage() {
           </tr>
         </thead>
         <tbody>
-          {order.items.map((item: any, i: number) => (
+          {order.items.map((item: OrderItem, i: number) => (
             <tr key={i} style={{ borderBottom: "1px solid #e5e7eb" }}>
               <td style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{item.name}</td>
               <td style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>{item.price.toFixed(2)}</td>

@@ -6,6 +6,7 @@ interface CompanyData {
   nameAr?: string;
   nameEn?: string;
   header?: string;
+  stamp?: string;
 }
 
 interface PrintPageProps {
@@ -18,7 +19,15 @@ export default function PrintPage({ order, fin, onClose }: PrintPageProps) {
   const [company, setCompany] = useState<CompanyData>({});
 
   useEffect(() => {
-    fetch("/api/admin/company").then((r) => r.json()).then(setCompany).catch(() => {});
+    fetch("/api/admin/company").then((r) => r.json()).then((res) => {
+      console.log("company res:", res);
+      setCompany({
+        nameAr: res.nameAr,
+        nameEn: res.nameEn,
+        header: res.header || undefined,
+        stamp: res.stamp || undefined,
+      });
+    }).catch((e) => console.error("fetch error:", e));
   }, []);
 
   const date = new Date(order.createdAt).toLocaleDateString("en-GB").replace(/\//g, "/");
@@ -48,7 +57,27 @@ export default function PrintPage({ order, fin, onClose }: PrintPageProps) {
         </div>
 
         {/* محتوى الطباعة */}
-        <div id="print-content" className="px-4 py-4 [print-color-adjust:exact]">
+        <div id="print-content" className="px-4 py-4 [print-color-adjust:exact]" style={{ position: "relative", overflow: "visible" }}>
+
+        {/* العلامة المائية */}
+        {company.stamp && (
+          <img
+            src={company.stamp}
+            alt="watermark"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%) rotate(-30deg)",
+              opacity: 0.15,
+              pointerEvents: "none",
+              zIndex: 9,
+              width: "500px",
+              height: "500px",
+              objectFit: "contain",
+            }}
+          />
+        )}
 
         {/* الترويسة */}
         {company.header && (
@@ -143,11 +172,11 @@ export default function PrintPage({ order, fin, onClose }: PrintPageProps) {
         {/* مربع الشروط والمعلومات */}
         <div className="border-2 border-black rounded-lg overflow-hidden mb-4">
           <div className="grid grid-cols-2">
-            <div className="p-3 border-l-2 border-black text-right text-sm leading-7 text-black font-semibold" dir="rtl">
+            <div className="border-l-2 border-black text-right text-black font-semibold" style={{ padding: "2rem", fontSize: "0.875rem", lineHeight: "3rem", minHeight: "150px" }} dir="rtl">
               <p>سيتم اعتماد الطلب وشحنه بعد تسديد المبلغ المطلوب</p>
               <p>التوصيل مجاناً من خلال شركة. مندوب توصيل , خلال 24 ساعة من دفع الدفعة المقدمة</p>
             </div>
-            <div className="p-3 text-right text-sm leading-7 text-black font-semibold" dir="rtl">
+            <div className="text-right text-black font-semibold" style={{ padding: "2rem", fontSize: "0.875rem", lineHeight: "3rem", minHeight: "150px" }} dir="rtl">
               <p>الرقم الضريبي : 314539044300003</p>
               <p>العرض شامل الهدايا</p>
             </div>
