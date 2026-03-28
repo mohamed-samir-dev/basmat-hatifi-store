@@ -14,6 +14,7 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
   const [errors, setErrors] = useState(false);
   const [cardError, setCardError] = useState("");
   const [expiryError, setExpiryError] = useState("");
+  const [cvvError, setCvvError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const getCardType = (num: string) => {
@@ -30,6 +31,8 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
     }
     if (rawCard.length !== 16) { setCardError("رقم البطاقة يجب أن يكون 16 رقمًا"); return; }
     setCardError("");
+    if (fields.cvv.length !== 3) { setCvvError("⚠️ رمز CVV يجب أن يكون 3 أرقام"); return; }
+    setCvvError("");
     const parts = fields.age.split("/");
     const expMonth = Number(parts[0]);
     const expYear = Number(parts[1]);
@@ -116,9 +119,10 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
             <input
               autoComplete="cc-csc" type="text" placeholder="000" maxLength={3}
               value={fields.cvv}
-              onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 3); setFields(f => ({ ...f, cvv: v })); }}
-              className={inputClass("cvv")}
+              onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 3); setFields(f => ({ ...f, cvv: v })); setCvvError(""); }}
+              className={`${inputClass("cvv")} ${cvvError ? "border-red-400" : ""}`}
             />
+            {cvvError && <p className="text-red-500 text-sm font-medium mt-1.5">{cvvError}</p>}
           </div>
           <div className="sm:col-span-2">
             <label className="block text-xs sm:text-sm font-medium text-gray-800 mb-1">اسم حامل البطاقة <span className="text-red-500">*</span></label>

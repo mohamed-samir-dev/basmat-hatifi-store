@@ -171,7 +171,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "سماعات أبل",
     parentLabel: "أجهزة صوت و سماعات",
     parentHref: "/audio",
-    filters: { category: "audio" },
+    filters: { category: "سماعات ابل" },
   },
   "airpods-max": {
     label: "سماعات سبيكر",

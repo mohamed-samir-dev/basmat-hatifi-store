@@ -23,24 +23,22 @@ interface CustomerFormProps {
   total: number;
   itemCount: number;
   initialData?: CustomerInfo | null;
-  defaultDownPayment?: number;
   installmentMonths?: number;
   onSubmit: (info: CustomerInfo) => void;
 }
 
-export default function CustomerForm({ total, initialData, defaultDownPayment, installmentMonths, onSubmit }: CustomerFormProps) {
+export default function CustomerForm({ total, itemCount, initialData, installmentMonths, onSubmit }: CustomerFormProps) {
   const MONTHS_OPTIONS = Array.from({ length: installmentMonths ?? 24 }, (_, i) => i + 1);
-  const BASE_OPTIONS = [1000, 1500, 2000];
-  const DOWN_PAYMENT_OPTIONS = defaultDownPayment
-    ? [defaultDownPayment, ...BASE_OPTIONS.filter((v) => v !== defaultDownPayment)]
-    : BASE_OPTIONS;
+  const calculatedDownPayment = 1000 * (itemCount ?? 1);
+  const BASE_OPTIONS = [calculatedDownPayment, calculatedDownPayment + 500, calculatedDownPayment + 1000];
+  const DOWN_PAYMENT_OPTIONS = [...new Set(BASE_OPTIONS)];
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");
   const [address, setAddress] = useState(initialData?.address ?? "");
   const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "full");
   const [months, setMonths] = useState(initialData?.months ?? 3);
-  const [downPayment, setDownPayment] = useState<number>(initialData?.downPayment ?? defaultDownPayment ?? 1000);
+  const [downPayment, setDownPayment] = useState<number>(calculatedDownPayment);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const monthlyPayment = useMemo(() => {

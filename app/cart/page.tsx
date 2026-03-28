@@ -20,7 +20,6 @@ export default function CartPage() {
 
   const total = mounted ? totalPrice() : 0;
   const count = mounted ? totalItems() : 0;
-  const defaultDownPayment = mounted ? items.find((i) => i.product.installment?.downPayment)?.product.installment?.downPayment : undefined;
   const installmentMonths = mounted ? Math.max(...items.map((i) => i.product.installment?.months ?? 0)) || undefined : undefined;
 
   if (!mounted) return null;
@@ -89,7 +88,6 @@ export default function CartPage() {
           total={total}
           itemCount={count}
           initialData={customer}
-          defaultDownPayment={defaultDownPayment}
           installmentMonths={installmentMonths}
           onSubmit={(info: CustomerInfo) => {
             setCustomer(info);
