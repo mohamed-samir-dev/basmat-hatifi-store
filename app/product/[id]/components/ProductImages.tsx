@@ -21,7 +21,7 @@ export default function ProductImages({ images, name, discountPercent = 0 }: Pro
           </span>
         )}
         {images.length > 0 ? (
-          <Image src={images[selectedImage]} alt={name} fill className="object-contain p-3 sm:p-6" />
+          <Image src={images[selectedImage]} alt={name} fill className="object-contain p-3 sm:p-6" priority sizes="(max-width: 1024px) 100vw, 50vw" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300 text-5xl sm:text-7xl">📱</div>
         )}
