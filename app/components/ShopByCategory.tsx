@@ -79,8 +79,9 @@ export default async function ShopByCategory() {
   }));
 
   return (
-    <section className="w-full py-10 shadow-md" style={{ background: "linear-gradient(135deg, #14b8a6 0%, #2dd4bf 50%, #5eead4 100%)" }} dir="rtl">
-      <div className="max-w-6xl mx-auto px-3 sm:px-4">
+    <div className="w-full px-3 sm:px-6 py-4" dir="rtl">
+    <section className="max-w-6xl mx-auto rounded-2xl py-10 shadow-md overflow-hidden" style={{ background: "linear-gradient(135deg, #14b8a6 0%, #2dd4bf 50%, #5eead4 100%)" }} dir="rtl">
+      <div className="px-3 sm:px-4">
         <div className="flex items-center gap-3 mb-5">
           <div className="flex-1 h-px bg-teal-700/40" />
           <h2 className="text-lg sm:text-xl font-bold text-teal-900 whitespace-nowrap">تسوق حسب الأقسام</h2>
@@ -89,5 +90,6 @@ export default async function ShopByCategory() {
         <CategorySlider categories={categoriesWithHref} />
       </div>
     </section>
+    </div>
   );
 }
