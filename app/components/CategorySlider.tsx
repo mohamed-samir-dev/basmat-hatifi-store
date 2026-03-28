@@ -28,10 +28,10 @@ export default function CategorySlider({ categories }: { categories: Category[] 
           <Link
             key={`${cat.name}-${i}`}
             href={cat.href}
-            className="shrink-0 flex flex-col items-center gap-2 group mx-4"
-            style={{ width: 130 }}
+            className="shrink-0 flex flex-col items-center gap-2 group mx-3"
+            style={{ width: 90 }}
           >
-            <div className="w-32 h-32 rounded-full bg-transparent border-2 border-gray-200 group-hover:border-teal-400 overflow-hidden relative transition-all duration-200 shadow-sm group-hover:shadow-md">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-transparent border-2 border-gray-200 group-hover:border-teal-400 overflow-hidden relative transition-all duration-200 shadow-sm group-hover:shadow-md">
               {cat.image ? (
                 <Image
                   src={cat.image}
@@ -45,7 +45,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
                 <div className="w-full h-full flex items-center justify-center text-2xl">🛍️</div>
               )}
             </div>
-            <p className="text-sm font-medium text-teal-900 text-center leading-tight line-clamp-2 group-hover:text-teal-700 transition-colors w-full" dir="rtl">
+            <p className="text-xs sm:text-sm font-medium text-teal-900 text-center leading-tight line-clamp-2 group-hover:text-teal-700 transition-colors w-full" dir="rtl">
               {cat.name}
             </p>
           </Link>
