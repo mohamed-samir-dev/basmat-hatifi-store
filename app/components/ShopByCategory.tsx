@@ -47,6 +47,7 @@ const categoryPageMap: Record<string, string> = {
   "ابل ايفون 14": "/smartphones/iphone-14",
   "سامسونج جالكسي": "/smartphones/samsung-s25-ultra",
   "سامسونج جالكسي اس 23 الترا": "/smartphones/samsung-s25-ultra",
+  "سامسونج جالكسي اس 26 الترا": "/smartphones/samsung-s26-ultra",
   "ساعات ابل": "/apple-watches/se",
   "سماعات ابل": "/audio/airpods-pro",
   "بلاي ستيشن": "/playstation/ps5",
