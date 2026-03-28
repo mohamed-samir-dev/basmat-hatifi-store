@@ -69,19 +69,15 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Cart Button */}
-      <div className="border-t border-gray-100 mt-1">
+      <div className="px-2 sm:px-3 pb-2 sm:pb-3 pt-1">
         <button
           onClick={handleAddToCart}
-          className={`w-full flex items-center justify-center gap-1 sm:gap-2 py-3 sm:py-4 md:py-5 text-sm sm:text-base md:text-xl transition-colors font-semibold ${
-            added
-              ? "bg-emerald-50 text-emerald-700"
-              : "text-emerald-600 hover:bg-emerald-50"
-          }`}
+          className={`cart-btn ${added ? "added" : ""}`}
         >
           {added ? (
-            <><IoCheckmarkCircleOutline size={16} className="sm:hidden" /><IoCheckmarkCircleOutline size={20} className="hidden sm:block md:hidden" /><IoCheckmarkCircleOutline size={24} className="hidden md:block" />تمت الإضافة</>
+            <><IoCheckmarkCircleOutline size={16} className="sm:hidden" /><IoCheckmarkCircleOutline size={18} className="hidden sm:block lg:hidden" /><IoCheckmarkCircleOutline size={20} className="hidden lg:block" />تمت الإضافة</>
           ) : (
-            <><IoCartOutline size={16} className="sm:hidden" /><IoCartOutline size={20} className="hidden sm:block md:hidden" /><IoCartOutline size={24} className="hidden md:block" />أضف للسلة</>
+            <><IoCartOutline size={16} className="sm:hidden" /><IoCartOutline size={18} className="hidden sm:block lg:hidden" /><IoCartOutline size={20} className="hidden lg:block" />أضف للسلة</>
           )}
         </button>
       </div>
