@@ -45,20 +45,20 @@ export default async function Footer() {
   }
 
   return (
-    <footer className="bg-gray-50 text-gray-600 mt-16" dir="rtl">
+    <footer className="bg-gradient-to-b from-teal-700 to-teal-900 text-gray-100 mt-16" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8">
 
         {/* من نحن */}
         <div>
-          <h3 className="text-blue-500 font-bold text-xl mb-3">من نحن</h3>
-          <p className="text-sm leading-relaxed text-gray-500">
+          <h3 className="text-green-300 font-bold text-xl mb-3">من نحن</h3>
+          <p className="text-sm leading-relaxed text-green-100">
             {c.details || "بصمة هاتفي المعتمد هو اختيارك الأول لشراء أجهزتك بالأقساط داخل السعودية، ضمان موثوق وخدمة محلية."}
           </p>
         </div>
 
         {/* روابط مهمة */}
         <div>
-          <h3 className="text-blue-500 font-bold text-xl mb-4">روابط مهمة</h3>
+          <h3 className="text-green-300 font-bold text-xl mb-4">روابط مهمة</h3>
           <ul className="space-y-2.5 text-sm">
             {[
               { label: "عن بصمة هاتفي المعتمد", href: "/about" },
@@ -67,7 +67,7 @@ export default async function Footer() {
               { label: "سياسة الخصوصية واتفاقية الاستخدام", href: "/privacy" },
             ].map(({ label, href }) => (
               <li key={href}>
-                <Link href={href} className="hover:text-emerald-400 transition-colors">
+                <Link href={href} className="hover:text-green-300 transition-colors">
                   {label}
                 </Link>
               </li>
@@ -77,24 +77,24 @@ export default async function Footer() {
 
         {/* تواصل معنا */}
         <div>
-          <h3 className="text-blue-500 font-bold text-xl mb-4">تواصل معنا</h3>
+          <h3 className="text-green-300 font-bold text-xl mb-4">تواصل معنا</h3>
           <ul className="space-y-2.5 text-sm mb-5">
             {c.whatsapp && (
               <li className="flex items-center gap-2">
                 <FaWhatsapp className="text-emerald-500 shrink-0" size={16} />
-                <a href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-emerald-500 transition-colors" dir="ltr">{c.whatsapp}</a>
+                <a href={`https://wa.me/${c.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-green-300 transition-colors" dir="ltr">{c.whatsapp}</a>
               </li>
             )}
             {c.phone && (
               <li className="flex items-center gap-2">
                 <FaMobileAlt className="text-emerald-500 shrink-0" size={16} />
-                <a href={`tel:${c.phone}`} className="hover:text-emerald-500 transition-colors" dir="ltr">{c.phone}</a>
+                <a href={`tel:${c.phone}`} className="hover:text-green-300 transition-colors" dir="ltr">{c.phone}</a>
               </li>
             )}
             {c.email && (
               <li className="flex items-center gap-2">
                 <FaEnvelope className="text-emerald-500 shrink-0" size={16} />
-                <a href={`mailto:${c.email}`} className="hover:text-emerald-500 transition-colors" dir="ltr">{c.email}</a>
+                <a href={`mailto:${c.email}`} className="hover:text-green-300 transition-colors" dir="ltr">{c.email}</a>
               </li>
             )}
           </ul>
@@ -142,7 +142,7 @@ export default async function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-gray-300 flex items-center justify-between max-w-6xl mx-auto px-4 py-4 text-xs text-gray-500">
+      <div className="border-t border-green-600 flex items-center justify-between max-w-6xl mx-auto px-4 py-4 text-xs text-green-200">
         <span>الحقوق محفوظة بصمة هاتفي المعتمد © 2026</span>
         <div className="flex gap-2">
           <Image src="/cc975b.png" alt="cc" width={50} height={30} className="object-contain" style={{ width: "auto" }} />

@@ -80,7 +80,8 @@ export default async function ShopByCategory() {
   }));
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6" dir="rtl">
+    <section className="w-full bg-purple-50 py-6" dir="rtl">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4">
       {/* العنوان */}
       <div className="flex items-center gap-3 mb-5">
         <div className="flex-1 h-px bg-linear-to-l from-purple-300 to-transparent" />
@@ -110,6 +111,7 @@ export default async function ShopByCategory() {
           </a>
         ))}
       </div>
+    </div>
     </section>
   );
 }

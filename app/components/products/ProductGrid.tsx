@@ -166,7 +166,8 @@ export default function ProductGrid() {
   if (!products.length) return <p className="text-center text-gray-400 py-10">لا توجد منتجات حالياً</p>;
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 overflow-hidden">
+    <section className="w-full bg-gray-50 py-6 sm:py-8 overflow-hidden">
+    <div className="max-w-6xl mx-auto px-3 sm:px-4">
       {orderedCategories.map((category) => (
         <div key={category}>
           <div className="-mx-3 sm:-mx-4 mb-4 sm:mb-6 border-t border-gray-100 pt-4 sm:pt-6">
@@ -175,6 +176,7 @@ export default function ProductGrid() {
           <CategoryRow category={category} items={grouped[category]} />
         </div>
       ))}
+    </div>
     </section>
   );
 }
