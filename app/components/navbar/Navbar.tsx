@@ -46,7 +46,7 @@ export default function Navbar() {
     try {
       const res = await fetch(`/api/products?q=${encodeURIComponent(q.trim())}`);
       const data = await res.json();
-      setResults(Array.isArray(data) ? data.slice(0, 6) : []);
+      setResults(Array.isArray(data) ? data : []);
     } finally {
       setSearching(false);
     }
@@ -151,7 +151,7 @@ export default function Navbar() {
           </div>
 
           {results.length > 0 && (
-            <ul className="absolute right-4 left-4 bg-white border border-gray-200 rounded-xl shadow-lg mt-1 z-50 overflow-hidden">
+            <ul className="absolute right-4 left-4 bg-white border border-gray-200 rounded-xl shadow-lg mt-1 z-50 max-h-72 overflow-y-auto">
               {results.map((p) => {
                 const img = p.images?.[0] || p.image;
                 const price = p.salePrice ?? p.originalPrice ?? p.price ?? 0;
