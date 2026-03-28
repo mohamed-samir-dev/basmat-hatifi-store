@@ -3,9 +3,14 @@ import CategorySlider from "./CategorySlider";
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
 
 const categoryPageMap: Record<string, string> = {
-  smartphone: "/smartphones/apple-only",
-  smartphones: "/smartphones/apple-only",
+  smartphone: "/smartphones",
+  smartphones: "/smartphones",
+  "الهواتف الذكية": "/smartphones",
   watch: "/apple-watches/se",
+  "smart-watch": "/apple-watches/se",
+  "smartwatch": "/apple-watches/se",
+  "ساعات ذكية": "/apple-watches/se",
+  "الساعات الذكية": "/apple-watches/se",
   audio: "/audio/airpods-pro",
   speaker: "/audio/airpods-max",
   earbuds: "/audio/samsung-buds",
