@@ -153,6 +153,11 @@ export default function SubCategoriesPage() {
         </button>
       </div>
 
+      <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm mb-4">
+        <span className="shrink-0">⚠️</span>
+        <span>لعرض منتجات تصنيف فرعي في الصفحة الرئيسية، فعّل خيار <span className="font-bold">"عرض في الرئيسية"</span> بجانبه، ثم حدد <span className="font-bold">الترتيب</span> الذي تريده — الرقم الأصغر يظهر أولاً. الحد الأقصى {max} تصنيفات — لزيادة العدد اذهب لـ <a href="/admin/category-items" className="font-bold underline hover:text-amber-800">إعدادات التصنيفات</a>.</span>
+      </div>
+
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-3 sm:px-4 py-3 border-b border-gray-100">
           <div className="flex items-center gap-3">
