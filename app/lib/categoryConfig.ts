@@ -147,7 +147,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "سامسونج جالكسي اس 26 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s26 ultra", "s26 الترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s26 ultra", "s26 الترا", "s26 ألترا"] },
   },
 
   // ─── Apple Watches ─────────────────────────────────────────
