@@ -12,6 +12,7 @@ const navItems = [
   { href: "/admin/company", label: "بيانات الشركة", icon: Building2 },
   { href: "/admin/files", label: "الملفات", icon: FolderOpen },
   { href: "/admin/banners", label: "البانرات", icon: Image },
+  { href: "/admin/category-banners", label: "بانرات التصنيفات", icon: Image },
   { href: "/admin/banks", label: "البنوك", icon: Landmark },
   { href: "/admin/reviews", label: "آراء العملاء", icon: MessageSquare },
   { href: "/admin/main-categories", label: "التصنيفات الرئيسية", icon: Grid2X2 },
