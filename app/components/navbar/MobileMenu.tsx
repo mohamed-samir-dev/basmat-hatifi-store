@@ -36,6 +36,9 @@ export default function MobileMenu({ items, isOpen, onClose }: MobileMenuProps) 
         dir="rtl"
       >
         <div className="py-2">
+          <div className="px-4 py-4 text-base font-bold text-white border-b border-green-200" style={{ background: "linear-gradient(135deg, #14b8a6 0%, #22c55e 100%)" }}>
+            أقسام المتجر
+          </div>
           {items.map((item) => (
             <div key={item.label} className="border-b border-gray-50">
               {hasChildren(item) ? (
