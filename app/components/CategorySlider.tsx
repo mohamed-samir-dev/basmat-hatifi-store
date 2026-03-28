@@ -45,7 +45,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
                 <div className="w-full h-full flex items-center justify-center text-2xl">🛍️</div>
               )}
             </div>
-            <p className="text-xs sm:text-sm font-medium text-teal-900 text-center leading-tight line-clamp-2 group-hover:text-teal-700 transition-colors w-full" dir="rtl">
+            <p className="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight line-clamp-2 group-hover:text-teal-600 transition-colors w-full" dir="rtl">
               {cat.name}
             </p>
           </Link>
