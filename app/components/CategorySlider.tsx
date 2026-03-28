@@ -8,7 +8,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
   const items = [...categories, ...categories];
 
   return (
-    <div className="w-full overflow-hidden" dir="ltr">
+    <div className="w-full overflow-hidden relative" dir="ltr" style={{ maskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)", WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)" }}>
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -45,7 +45,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
                 <div className="w-full h-full flex items-center justify-center text-2xl">🛍️</div>
               )}
             </div>
-            <p className="text-xs font-medium text-gray-700 text-center leading-tight line-clamp-2 group-hover:text-teal-700 transition-colors w-full" dir="rtl">
+            <p className="text-xs font-medium text-teal-900 text-center leading-tight line-clamp-2 group-hover:text-teal-700 transition-colors w-full" dir="rtl">
               {cat.name}
             </p>
           </Link>
