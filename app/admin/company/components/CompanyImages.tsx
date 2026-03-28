@@ -10,6 +10,11 @@ interface CompanyImagesProps {
 
 export default function CompanyImages({ data, onImageChange, onImageDelete }: CompanyImagesProps) {
   return (
+    <div>
+      <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-sm w-full mb-3">
+        <span className="shrink-0">⚠️</span>
+        <span>رفع الصورة قد يستغرق بضع ثوانٍ حسب حجمها وسرعة الإنترنت — لا تنسَ الضغط على حفظ بعد الانتهاء</span>
+      </div>
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-5">
       {imageFields.map(({ key, label }) => (
         <div key={key}>
@@ -35,6 +40,7 @@ export default function CompanyImages({ data, onImageChange, onImageDelete }: Co
           />
         </div>
       ))}
+    </div>
     </div>
   );
 }
