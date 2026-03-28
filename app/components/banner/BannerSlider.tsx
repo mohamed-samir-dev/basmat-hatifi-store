@@ -36,7 +36,7 @@ export default function BannerSlider({ images }: { images: string[] }) {
         >
           {images.map((src, i) => (
             <div key={i} className="min-w-full relative aspect-[1.8/1]">
-              <Image src={src} alt={`banner ${i + 1}`} fill className="object-cover" priority={i === 0} loading={i === 0 ? "eager" : "lazy"} unoptimized />
+              <Image src={src} alt={`banner ${i + 1}`} fill className="object-cover" priority={i === 0} unoptimized />
             </div>
           ))}
         </div>

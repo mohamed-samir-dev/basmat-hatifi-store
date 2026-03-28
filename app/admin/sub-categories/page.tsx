@@ -29,6 +29,8 @@ export default function SubCategoriesPage() {
   const allSubCategories = [...new Set(items.map((i) => i.name).filter(Boolean))];
   const [confirmDelete, setConfirmDelete] = useState<SubCat | null>(null);
   const [max, setMax] = useState(4);
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [showAddModal, setShowAddModal] = useState(false);
   const [addName, setAddName] = useState("");
   const [addLoading, setAddLoading] = useState(false);
@@ -140,6 +142,8 @@ export default function SubCategoriesPage() {
   }
 
   const filtered = items.filter((c) => c.name.includes(search) || c.category?.includes(search));
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div>
@@ -171,7 +175,7 @@ export default function SubCategoriesPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
             placeholder="ابحث عن تصنيف..."
             className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-48 md:w-52"
           />
@@ -190,11 +194,11 @@ export default function SubCategoriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filtered.map((cat, i) => {
+              {paginated.map((cat, i) => {
                 const setting = getSetting(cat);
                 return (
                   <tr key={`${cat.category}-${cat.name}`} className="hover:bg-gray-50">
-                    <td className="px-2 sm:px-4 py-3 text-gray-400 font-medium text-xs sm:text-sm">{i + 1}</td>
+                    <td className="px-2 sm:px-4 py-3 text-gray-400 font-medium text-xs sm:text-sm">{(currentPage - 1) * PAGE_SIZE + i + 1}</td>
                     <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.category}</td>
                     <td className="px-2 sm:px-4 py-3 font-medium text-gray-800 text-xs sm:text-sm md:text-base">{cat.name}</td>
                     <td className="px-2 sm:px-4 py-3">
@@ -240,13 +244,45 @@ export default function SubCategoriesPage() {
                   </tr>
                 );
               })}
-              {filtered.length === 0 && (
+              {paginated.length === 0 && (
                 <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400 text-sm">لا توجد تصنيفات فرعية</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-1 mt-4 flex-wrap">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            ‹ السابق
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`px-3 py-1.5 rounded-lg border text-sm font-medium ${
+                page === currentPage
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "border-gray-300 text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            التالي ›
+          </button>
+        </div>
+      )}
 
       {/* Add Modal */}
       {showAddModal && (

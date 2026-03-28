@@ -59,7 +59,7 @@ const categoryPageMap: Record<string, string> = {
   "العاب": "/games/ps5-games",
 };
 
-function CategoryRow({ category, items }: { category: string; items: Product[] }) {
+function CategoryRow({ category, items, isFirst }: { category: string; items: Product[]; isFirst?: boolean }) {
   const visible = items.slice(0, LIMIT);
   const href = categoryPageMap[category] ?? categoryPageMap[category.toLowerCase()] ?? "#";
 
@@ -71,8 +71,8 @@ function CategoryRow({ category, items }: { category: string; items: Product[] }
         <div className="flex-1 h-px bg-gray-300" />
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        {visible.map((p) => (
-          <ProductCard key={p._id} product={p} />
+        {visible.map((p, i) => (
+          <ProductCard key={p._id} product={p} priority={isFirst && i === 0} />
         ))}
       </div>
       <div className="flex items-center gap-3 mt-6" dir="rtl">
@@ -168,12 +168,12 @@ export default function ProductGrid() {
   return (
     <section className="w-full bg-teal-50 py-6 sm:py-8 overflow-hidden">
     <div className="max-w-6xl mx-auto px-3 sm:px-4">
-      {orderedCategories.map((category) => (
+      {orderedCategories.map((category, catIdx) => (
         <div key={category}>
           <div className="-mx-3 sm:-mx-4 mb-4 sm:mb-6 border-t border-gray-100 pt-4 sm:pt-6">
             <CategoryBanner category={category} />
           </div>
-          <CategoryRow category={category} items={grouped[category]} />
+          <CategoryRow category={category} items={grouped[category]} isFirst={catIdx === 0} />
         </div>
       ))}
     </div>

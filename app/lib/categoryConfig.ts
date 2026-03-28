@@ -123,7 +123,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "سامسونج جالكسي اس 22 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s22 ultra", "s22 الترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s22 ultra", "s22 الترا", "s22 ألترا"] },
   },
   "samsung-s23-ultra": {
     label: "سامسونج جالكسي اس 23 الترا",
@@ -135,13 +135,13 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "سامسونج جالكسي اس 24 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s24 ultra", "s24 الترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s24 ultra", "s24 الترا", "s24 ألترا"] },
   },
   "samsung-s25-ultra": {
     label: "سامسونج جالكسي اس 25 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s25 ultra", "s25 الترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s25 ultra", "s25 الترا", "s25 ألترا"] },
   },
   "samsung-s26-ultra": {
     label: "سامسونج جالكسي اس 26 الترا",

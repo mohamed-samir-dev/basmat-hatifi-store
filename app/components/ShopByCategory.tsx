@@ -58,13 +58,25 @@ const categoryPageMap: Record<string, string> = {
 };
 
 type Category = { name: string; count: number; image: string };
+type Setting = { category: string; subCategory: string; showInHome: boolean; order: number };
 
 async function getCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(`${BACKEND}/api/admin/sub-categories/public`, { next: { revalidate: 300 } });
-    if (!res.ok) return [];
-    const data = await res.json();
-    return Array.isArray(data) ? data : [];
+    const [catRes, settingsRes] = await Promise.all([
+      fetch(`${BACKEND}/api/admin/sub-categories/public`, { cache: "no-store" }),
+      fetch(`${BACKEND}/api/admin/sub-categories/home-settings`, { cache: "no-store" }),
+    ]);
+    const allCats: Category[] = catRes.ok ? await catRes.json() : [];
+    const settings: Setting[] = settingsRes.ok ? await settingsRes.json() : [];
+
+    const visibleSet = new Map(
+      settings.filter((s) => s.showInHome).map((s) => [s.category, s.order])
+    );
+    if (!visibleSet.size) return allCats;
+
+    return allCats
+      .filter((c) => visibleSet.has(c.name))
+      .sort((a, b) => (visibleSet.get(a.name) ?? 0) - (visibleSet.get(b.name) ?? 0));
   } catch {
     return [];
   }

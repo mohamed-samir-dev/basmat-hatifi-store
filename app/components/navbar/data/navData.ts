@@ -58,29 +58,14 @@ export const navItems: NavItem[] = [
   {
     label: "ساعات ابل",
     href: "/apple-watches",
-    children: [
-      { label: "ساعات ابل ", href: "/apple-watches/se" },
-    ],
   },
   {
     label: "أجهزة صوت و سماعات",
     href: "/audio",
-    children: [
-      { label: "سماعات أبل", href: "/audio/airpods-pro" },
-      { label: "سماعات سبيكر", href: "/audio/airpods-max" },
-      { label: "سماعات متنوعه", href: "/audio/samsung-buds" },
-    ],
   },
   {
-    label: "أجهزة بلاي ستيشن",
+    label: "أجهزة بلاي ستيشن وملحقاتها",
     href: "/playstation",
-    children: [
-      { label: "بلاي ستيشن 5", href: "/playstation/ps5" },
-      { label: "بلاي ستيشن 4 ", href: "/playstation/ps5-slim" },
-      { label: "أكس بوكس ون", href: "/playstation/xbox-one" },
-      { label: "يد تحكم", href: "/playstation/controllers" },
-      { label: "ملحقات بلاي ستيشن ", href: "/playstation/accessories" },
-    ],
   },
   {
     label: "لابتوبات وشاشات",
