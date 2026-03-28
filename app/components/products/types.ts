@@ -38,6 +38,7 @@ export interface Product {
   };
   taxIncluded: boolean;
   category?: string;
+  subCategory?: string;
   brand?: string;
   inStock: boolean;
 }
