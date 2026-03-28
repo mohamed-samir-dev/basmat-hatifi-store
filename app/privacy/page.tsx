@@ -75,7 +75,7 @@ const sections = [
     bg: "bg-blue-50",
     iconText: "text-blue-600",
     content: [
-      "باستخدامك لهذا الموقع فإنك توافق على الالتزام بالشروط والأحكام والسياسات المعمول بها داخل مؤسسة تبارك الذكية.",
+      "باستخدامك لهذا الموقع فإنك توافق على الالتزام بالشروط والأحكام والسياسات المعمول بها داخل مؤسسة  بصمة هاتفي المعتمد .",
     ],
   },
   {
@@ -135,7 +135,7 @@ export default function PrivacyPage() {
     <main className="min-h-screen bg-[#f8f9fc] overflow-x-hidden" dir="rtl">
 
       {/* ════════ HERO ════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-bl from-[#1a3a6e] via-[#1e5fc4] to-[#4f8ef7]">
+      <section className="relative w-full overflow-hidden bg-linear-to-bl from-[#1a3a6e] via-[#1e5fc4] to-[#4f8ef7]">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-white/5 blur-[80px]" />
           <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-indigo-300/10 blur-[60px]" />
@@ -152,12 +152,12 @@ export default function PrivacyPage() {
           </div>
           <h1 {...anim(220)} className="text-3xl sm:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-5 leading-tight tracking-tight">
             سياسة الخصوصية
-            <span className="block text-transparent bg-clip-text bg-gradient-to-l from-blue-200 to-white">
+            <span className="block text-transparent bg-clip-text bg-linear-to-l from-blue-200 to-white">
               واتفاقية الاستخدام
             </span>
           </h1>
           <p {...anim(360)} className="text-blue-100/90 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
-            الشروط العامة المنظمة لاستخدام موقع مؤسسة تبارك الذكية
+            الشروط العامة المنظمة لاستخدام موقع مؤسسة بصمة هاتفي المعتمد 
           </p>
         </div>
         <div className="absolute bottom-0 left-0 w-full">
@@ -173,7 +173,7 @@ export default function PrivacyPage() {
           <FadeUp key={s.title} delay={i * 100}>
             <div className="group bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
               <div className="flex flex-col sm:flex-row">
-                <div className={`w-full h-1.5 sm:w-1.5 sm:h-auto bg-gradient-to-r sm:bg-gradient-to-b ${s.gradient} shrink-0`} />
+                <div className={`w-full h-1.5 sm:w-1.5 sm:h-auto bg-linear-to-r sm:bg-linear-to-b ${s.gradient} shrink-0`} />
                 <div className="flex-1 p-4 sm:p-7">
                   <div className="flex items-center gap-3 mb-4">
                     <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${s.bg} ${s.iconText} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
@@ -181,7 +181,7 @@ export default function PrivacyPage() {
                     </div>
                     <div>
                       <h2 className="text-base sm:text-xl font-extrabold text-gray-800">{s.title}</h2>
-                      <div className={`h-0.5 w-8 mt-1 rounded-full bg-gradient-to-l ${s.gradient}`} />
+                      <div className={`h-0.5 w-8 mt-1 rounded-full bg-linear-to-l ${s.gradient}`} />
                     </div>
                   </div>
                   <div className="space-y-2">
@@ -200,7 +200,7 @@ export default function PrivacyPage() {
           <FadeUp delay={sections.length * 100}>
             <div className="group bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
               <div className="flex flex-col sm:flex-row">
-                <div className={`w-full h-1.5 sm:w-1.5 sm:h-auto bg-gradient-to-r sm:bg-gradient-to-b ${storeInfoGradient} shrink-0`} />
+                <div className={`w-full h-1.5 sm:w-1.5 sm:h-auto bg-linear-to-r sm:bg-linear-to-b ${storeInfoGradient} shrink-0`} />
                 <div className="flex-1 p-4 sm:p-7">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
@@ -208,7 +208,7 @@ export default function PrivacyPage() {
                     </div>
                     <div>
                       <h2 className="text-base sm:text-xl font-extrabold text-gray-800">معلومات المتجر</h2>
-                      <div className={`h-0.5 w-8 mt-1 rounded-full bg-gradient-to-l ${storeInfoGradient}`} />
+                      <div className={`h-0.5 w-8 mt-1 rounded-full bg-linear-to-l ${storeInfoGradient}`} />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">

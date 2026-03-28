@@ -102,10 +102,16 @@ const sections = [
   },
 ];
 
+type Company = { whatsapp?: string; email?: string; phone?: string };
 
 export default function ReturnPolicyClient() {
   const [heroVisible, setHeroVisible] = useState(false);
+  const [company, setCompany] = useState<Company | null>(null);
+
   useEffect(() => { const t = setTimeout(() => setHeroVisible(true), 60); return () => clearTimeout(t); }, []);
+  useEffect(() => {
+    fetch("/api/admin/company").then((r) => r.json()).then(setCompany).catch(() => {});
+  }, []);
 
   const anim = (delay: number) => ({
     style: {
@@ -119,7 +125,7 @@ export default function ReturnPolicyClient() {
     <main className="min-h-screen bg-[#f8f9fc] overflow-x-hidden" dir="rtl">
 
       {/* ════════ HERO ════════ */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-bl from-[#1a3a6e] via-[#1e5fc4] to-[#4f8ef7]">
+      <section className="relative w-full overflow-hidden bg-linear-to-bl from-[#1a3a6e] via-[#1e5fc4] to-[#4f8ef7]">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-white/5 blur-[80px]" />
           <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-indigo-300/10 blur-[60px]" />
@@ -129,25 +135,21 @@ export default function ReturnPolicyClient() {
           className="pointer-events-none absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)", backgroundSize: "40px 40px" }}
         />
-
-        <div className="relative w-full px-4 sm:px-12 lg:px-20 py-14 sm:py-24 lg:py-32 text-center text-white">
+        <div className="relative w-full px-5 sm:px-12 lg:px-20 py-20 sm:py-32 text-center text-white">
           <div {...anim(100)} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs sm:text-sm font-medium text-blue-100 mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             الشروط والسياسات
           </div>
-
-          <h1 {...anim(220)} className="text-2xl sm:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-5 leading-tight tracking-tight">
+          <h1 {...anim(220)} className="text-3xl sm:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-5 leading-tight tracking-tight">
             سياسة الاستبدال
-            <span className="block text-transparent bg-clip-text bg-gradient-to-l from-blue-200 to-white">
+            <span className="block text-transparent bg-clip-text bg-linear-to-l from-blue-200 to-white">
               والاسترجاع
             </span>
           </h1>
-
-          <p {...anim(360)} className="text-blue-100/90 text-sm sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2">
-            الشروط المنظمة لطلبات الإلغاء والاستبدال والاسترجاع داخل مؤسسة تبارك الذكية
+          <p {...anim(360)} className="text-blue-100/90 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed">
+            الشروط المنظمة لطلبات الإلغاء والاستبدال والاسترجاع داخل مؤسسة  بصمة هاتفي المعتمد 
           </p>
         </div>
-
         <div className="absolute bottom-0 left-0 w-full">
           <svg viewBox="0 0 1440 70" className="w-full h-12 sm:h-16" preserveAspectRatio="none">
             <path d="M0,35 C240,70 480,0 720,35 C960,70 1200,0 1440,35 L1440,70 L0,70 Z" fill="#f8f9fc" />
@@ -156,25 +158,25 @@ export default function ReturnPolicyClient() {
       </section>
 
       {/* ════════ SECTIONS ════════ */}
-      <section className="w-full max-w-6xl mx-auto px-4 sm:px-12 lg:px-20 py-8 sm:py-14 space-y-4 sm:space-y-6">
+      <section className="w-full max-w-4xl mx-auto px-4 sm:px-8 lg:px-10 py-8 sm:py-10 space-y-4 sm:space-y-5">
         {sections.map((s, i) => (
           <FadeUp key={s.title} delay={i * 100}>
-            <div className="group bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-400">
+            <div className="group bg-white rounded-2xl sm:rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all duration-300">
               <div className="flex flex-col sm:flex-row">
-                <div className={`sm:w-2 w-full h-2 sm:h-auto bg-gradient-to-b ${s.gradient} shrink-0`} />
-                <div className="flex-1 p-4 sm:p-9">
-                  <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${s.bg} ${s.iconText} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
+                <div className={`w-full h-1.5 sm:w-1.5 sm:h-auto bg-linear-to-r sm:bg-linear-to-b ${s.gradient} shrink-0`} />
+                <div className="flex-1 p-4 sm:p-7">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${s.bg} ${s.iconText} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300`}>
                       <s.Icon />
                     </div>
                     <div>
-                      <h2 className="text-lg sm:text-2xl font-extrabold text-gray-800">{s.title}</h2>
-                      <div className={`h-0.5 w-10 mt-1.5 rounded-full bg-gradient-to-l ${s.gradient}`} />
+                      <h2 className="text-base sm:text-xl font-extrabold text-gray-800">{s.title}</h2>
+                      <div className={`h-0.5 w-8 mt-1 rounded-full bg-linear-to-l ${s.gradient}`} />
                     </div>
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-2">
                     {s.content.map((p, j) => (
-                      <p key={j} className="text-gray-600 leading-[2] text-sm sm:text-base">{p}</p>
+                      <p key={j} className="text-gray-600 leading-relaxed text-sm sm:text-base">{p}</p>
                     ))}
                   </div>
                 </div>
@@ -185,9 +187,9 @@ export default function ReturnPolicyClient() {
 
         <ContactSection
           title="التواصل بخصوص الطلبات"
-          phone="966593912790"
-          whatsapp="966593912790"
-          email="info@tabark-altijaria.com"
+          phone={company?.phone}
+          whatsapp={company?.whatsapp}
+          email={company?.email}
           fadeDelay={400}
         />
       </section>
