@@ -73,45 +73,21 @@ export default async function ShopByCategory() {
   const categories = await getCategories();
   if (!categories.length) return null;
 
-  // أضف الـ href لكل قسم
   const categoriesWithHref = categories.map((cat) => ({
     ...cat,
     href: categoryPageMap[cat.name] ?? categoryPageMap[cat.name?.toLowerCase()] ?? "#",
   }));
 
   return (
-    <section className="w-full bg-purple-50 py-6" dir="rtl">
-    <div className="max-w-6xl mx-auto px-3 sm:px-4">
-      {/* العنوان */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="flex-1 h-px bg-linear-to-l from-purple-300 to-transparent" />
-        <h2 className="text-lg sm:text-xl font-bold text-gray-800 whitespace-nowrap">تسوق حسب الأقسام</h2>
-        <div className="flex-1 h-px bg-linear-to-r from-purple-300 to-transparent" />
-      </div>
-
-      {/* موبايل: سلايدر */}
-      <div className="sm:hidden overflow-hidden">
+    <section className="w-full bg-white py-6 shadow-md" dir="rtl">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-linear-to-l from-teal-300 to-transparent" />
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 whitespace-nowrap">تسوق حسب الأقسام</h2>
+          <div className="flex-1 h-px bg-linear-to-r from-teal-300 to-transparent" />
+        </div>
         <CategorySlider categories={categoriesWithHref} />
       </div>
-
-      {/* ديسكتوب: grid */}
-      <div className="hidden sm:grid grid-cols-4 lg:grid-cols-6 gap-4">
-        {categoriesWithHref.map((cat) => (
-          <a key={cat.name} href={cat.href} className="flex flex-col items-center gap-2 group">
-            <div className="w-full aspect-square rounded-full bg-gray-100 border-2 border-gray-200 group-hover:border-purple-400 overflow-hidden relative transition-all duration-200 shadow-sm group-hover:shadow-md">
-              {cat.image ? (
-                <img src={cat.image} alt={cat.name} className="object-contain p-2 w-full h-full group-hover:scale-110 transition-transform duration-300" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-2xl">🛍️</div>
-              )}
-            </div>
-            <p className="text-xs sm:text-sm font-medium text-gray-700 text-center leading-tight line-clamp-2 group-hover:text-purple-700 transition-colors w-full">
-              {cat.name}
-            </p>
-          </a>
-        ))}
-      </div>
-    </div>
     </section>
   );
 }

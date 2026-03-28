@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { IoCartOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 import type { Product } from "./types";
 import { useCartStore } from "../../store/cartStore";
@@ -22,17 +21,25 @@ export default function ProductCard({ product }: { product: Product }) {
   const hasDiscount = salePrice && salePrice < originalPrice;
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
-
-  const router = useRouter();
+  const [toast, setToast] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addItem(product);
     setAdded(true);
-    setTimeout(() => router.push("/cart"), 800);
+    setToast(true);
+    setTimeout(() => setToast(false), 2000);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
+    <>
+      {toast && (
+        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-base font-medium animate-fade-in-down">
+          <IoCheckmarkCircleOutline size={18} />
+          تمت إضافة المنتج للسلة
+        </div>
+      )}
     <Link href={`/product/${product._id}`} className="relative bg-white rounded-xl sm:rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full" dir="rtl">
       {/* Discount Badge */}
       {discountPercent > 0 && (
@@ -82,5 +89,6 @@ export default function ProductCard({ product }: { product: Product }) {
         </button>
       </div>
     </Link>
+    </>
   );
 }
