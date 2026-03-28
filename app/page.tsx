@@ -1,6 +1,7 @@
 import { Banner } from "./components/banner";
 import { ProductGrid } from "./components/products";
 import CustomerReviews from "./components/CustomerReviews";
+import ShopByCategory from "./components/ShopByCategory";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
 const SITE_URL = "https://www.pasmthatfee.com";
@@ -80,6 +81,7 @@ export default async function Home() {
       />
       <main className="min-h-screen">
         <Banner />
+        <ShopByCategory />
         <ProductGrid />
         <CustomerReviews />
       </main>
