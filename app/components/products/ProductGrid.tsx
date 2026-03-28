@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import ProductCard from "./ProductCard";
 import type { Product } from "./types";
+import CategoryBanner from "../banner/CategoryBanner";
 
 const LIMIT = 4;
 
@@ -167,7 +168,12 @@ export default function ProductGrid() {
   return (
     <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 overflow-hidden">
       {orderedCategories.map((category) => (
-        <CategoryRow key={category} category={category} items={grouped[category]} />
+        <div key={category}>
+          <div className="-mx-3 sm:-mx-4 mb-4 sm:mb-6 border-t border-gray-100 pt-4 sm:pt-6">
+            <CategoryBanner category={category} />
+          </div>
+          <CategoryRow category={category} items={grouped[category]} />
+        </div>
       ))}
     </section>
   );
