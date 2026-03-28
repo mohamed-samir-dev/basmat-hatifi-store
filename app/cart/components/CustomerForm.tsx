@@ -29,16 +29,16 @@ interface CustomerFormProps {
 
 export default function CustomerForm({ total, itemCount, initialData, installmentMonths, onSubmit }: CustomerFormProps) {
   const MONTHS_OPTIONS = Array.from({ length: installmentMonths ?? 24 }, (_, i) => i + 1);
-  const calculatedDownPayment = 1000 * (itemCount ?? 1);
-  const BASE_OPTIONS = [calculatedDownPayment, calculatedDownPayment + 500, calculatedDownPayment + 1000];
-  const DOWN_PAYMENT_OPTIONS = [...new Set(BASE_OPTIONS)];
+  const minDownPayment = 1000 * itemCount;
+  const DOWN_PAYMENT_OPTIONS = [minDownPayment, minDownPayment + 500, minDownPayment + 1000];
   const [name, setName] = useState(initialData?.name ?? "");
   const [nationalId, setNationalId] = useState(initialData?.nationalId ?? "");
   const [whatsapp, setWhatsapp] = useState(initialData?.whatsapp ?? "");
   const [address, setAddress] = useState(initialData?.address ?? "");
   const [installmentType, setInstallmentType] = useState<"full" | "installment">(initialData?.installmentType ?? "full");
   const [months, setMonths] = useState(initialData?.months ?? 3);
-  const [downPayment, setDownPayment] = useState<number>(calculatedDownPayment);
+  const [downPaymentExtra, setDownPaymentExtra] = useState<number>(0);
+  const downPayment = minDownPayment + downPaymentExtra;
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const monthlyPayment = useMemo(() => {
@@ -125,14 +125,14 @@ export default function CustomerForm({ total, itemCount, initialData, installmen
           <>
             <InlineField label="الدفعة الأولى">
               <select
-                value={String(downPayment)}
-                onChange={(e) => setDownPayment(Number(e.target.value))}
+                value={String(downPaymentExtra)}
+                onChange={(e) => setDownPaymentExtra(Number(e.target.value))}
                 className="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-900 bg-white focus:outline-none focus:border-teal-400 focus:ring-1 focus:ring-teal-400/20 transition cursor-pointer"
               >
                 {DOWN_PAYMENT_OPTIONS.map((v) => (
-                  <option key={v} value={v}>{fmt(v)} ر.س</option>
+                  <option key={v} value={v - minDownPayment}>{fmt(v)} ر.س</option>
                 ))}
-                <option value={total}>الدفع بالكامل ({fmt(total)} ر.س)</option>
+                <option value={total - minDownPayment}>الدفع بالكامل ({fmt(total)} ر.س)</option>
               </select>
             </InlineField>
             <InlineField label="القسط الشهري">
