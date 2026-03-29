@@ -95,6 +95,7 @@ type HomeConfig = { settings: HomeSettings[]; max: number };
 export default function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
   const [homeConfig, setHomeConfig] = useState<HomeConfig | null>(null);
+  const [bannerMap, setBannerMap] = useState<Record<string, string[]>>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -106,6 +107,14 @@ export default function ProductGrid() {
       .then(([prods, config]) => {
         setProducts(prods);
         setHomeConfig(Array.isArray(config) ? { settings: config, max: 4 } : config);
+        // Fetch all category banners in one bulk call
+        const cats = [...new Set((prods as Product[]).map((p) => p.category).filter(Boolean))];
+        if (cats.length) {
+          fetch(`/api/admin/category-banners-bulk?categories=${encodeURIComponent(cats.join(","))}`)
+            .then((r) => r.json())
+            .then((data) => { if (data && typeof data === "object") setBannerMap(data); })
+            .catch(() => {});
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -171,7 +180,7 @@ export default function ProductGrid() {
       {orderedCategories.map((category, catIdx) => (
         <div key={category}>
           <div className="-mx-3 sm:-mx-4 mb-4 sm:mb-6 border-t border-gray-100 pt-4 sm:pt-6">
-            <CategoryBanner category={category} />
+            <CategoryBanner category={category} images={bannerMap[category]} />
           </div>
           <CategoryRow category={category} items={grouped[category]} isFirst={catIdx === 0} />
         </div>

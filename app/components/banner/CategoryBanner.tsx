@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 const AUTO_PLAY_MS = 4000;
 const SWIPE_THRESHOLD = 50;
@@ -47,18 +47,8 @@ function CategoryBannerSlider({ images }: { images: string[] }) {
   );
 }
 
-export default function CategoryBanner({ category }: { category: string }) {
-  const [images, setImages] = useState<string[]>([]);
-
-  useEffect(() => {
-    fetch(`/api/admin/category-banners/${encodeURIComponent(category)}`)
-      .then((r) => r.json())
-      .then((data: { url: string; active: boolean }[]) => {
-        if (Array.isArray(data))
-          setImages(data.filter((b) => b.url && b.active).map((b) => b.url));
-      })
-      .catch(() => {});
-  }, [category]);
+export default function CategoryBanner({ category, images: propImages }: { category: string; images?: string[] }) {
+  const images = propImages ?? [];
 
   if (!images.length) return null;
   return <CategoryBannerSlider images={images} />;

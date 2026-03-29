@@ -243,16 +243,25 @@ export default function CategoryBannersPage() {
       </div>
 
       <div className="p-4 sm:p-6 md:p-8">
+        <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-xs mb-4">
+          <span className="shrink-0">⚠️</span>
+          <span>اختر التصنيف من الأزرار بالأسفل ثم ارفع صور البانرات — يمكنك تفعيل أو إيقاف أو حذف كل بانر على حدة. البانرات المفعّلة فقط هي التي تظهر للعملاء في صفحة التصنيف.</span>
+        </div>
         {categories.length === 0 ? (
           <div className="text-center text-gray-400 py-16">جاري تحميل التصنيفات...</div>
         ) : (
           <>
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="cat-scroll flex gap-2 mb-6 overflow-x-auto pb-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#a5b4fc #e0e7ff' }}>
+              <style>{`
+                .cat-scroll::-webkit-scrollbar { height: 6px; }
+                .cat-scroll::-webkit-scrollbar-track { background: #e0e7ff; border-radius: 3px; }
+                .cat-scroll::-webkit-scrollbar-thumb { background: #a5b4fc; border-radius: 3px; }
+              `}</style>
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setSelected(cat)}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition border ${selected === cat ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600"}`}
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition border whitespace-nowrap shrink-0 ${selected === cat ? "bg-indigo-600 text-white border-indigo-600 shadow-sm" : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300 hover:text-indigo-600"}`}
                 >
                   {cat}
                 </button>
