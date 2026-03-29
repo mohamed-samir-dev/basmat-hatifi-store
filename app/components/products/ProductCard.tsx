@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { IoCartOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
@@ -20,6 +21,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   const originalPrice = product.originalPrice ?? product.price ?? 0;
   const hasDiscount = salePrice && salePrice < originalPrice;
   const addItem = useCartStore((s) => s.addItem);
+  const router = useRouter();
   const [added, setAdded] = useState(false);
   const [toast, setToast] = useState(false);
 
@@ -28,8 +30,11 @@ export default function ProductCard({ product, priority = false }: { product: Pr
     addItem(product);
     setAdded(true);
     setToast(true);
-    setTimeout(() => setToast(false), 2000);
-    setTimeout(() => setAdded(false), 2000);
+    setTimeout(() => {
+      setToast(false);
+      setAdded(false);
+      router.push("/cart");
+    }, 1000);
   };
 
   return (
