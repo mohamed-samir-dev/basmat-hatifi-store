@@ -44,8 +44,8 @@ export default function CheckoutPage() {
         downPayment,
       }),
     });
-    const { orderId } = await res.json();
-    if (orderId) localStorage.setItem("orderId", orderId);
+    const data = res.ok ? await res.json().catch(() => ({})) : {};
+    if (data.orderId) localStorage.setItem("orderId", data.orderId);
   };
 
   return (

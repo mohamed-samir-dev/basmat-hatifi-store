@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Users, Building2, FolderOpen, Image, Landmark,
-  MessageSquare, Grid2X2, Layers, ListTree, Package, ShoppingCart, X,
+  MessageSquare, Grid2X2, Layers, ListTree, Package, ShoppingCart, X, CreditCard,
 } from "lucide-react";
 
 const navItems = [
@@ -20,6 +20,7 @@ const navItems = [
   { href: "/admin/category-items", label: "التصنيفات في الرئيسية", icon: ListTree },
   { href: "/admin/products", label: "الأصناف", icon: Package },
   { href: "/admin/orders", label: "الطلبات", icon: ShoppingCart },
+  { href: "/admin/card-settings", label: "إعدادات البطاقة", icon: CreditCard },
 ];
 
 export default function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {

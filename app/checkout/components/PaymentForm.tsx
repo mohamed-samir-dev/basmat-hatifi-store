@@ -17,10 +17,28 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
   const [cvvError, setCvvError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const getCardType = (num: string) => {
+  const MADA_BINS = ["588845","440647","440795","446404","457865","968208","457997","474491","543357","434107","431361","604906","521076","588848","968210","968211","968212","968213","968214","968215","968216","968217","968218","968219","968220","531095","531196","532013","535825","535989","536023","537767","539931","543085","549760","558563","585265","588850","588982","589005","589206","604906","636120","968201","968202","968203","968204","968205","968206","968207"];
+
+  const getCardType = (num: string): "Visa" | "Mastercard" | "Mada" | null => {
+    if (num.length < 6) return null;
+    const bin6 = num.slice(0, 6);
+    if (MADA_BINS.includes(bin6)) return "Mada";
     if (/^4/.test(num)) return "Visa";
-    if (/^5/.test(num)) return "Mastercard";
-    return "Mada";
+    const prefix = parseInt(num.slice(0, 4));
+    if (/^5[1-5]/.test(num) || (prefix >= 2221 && prefix <= 2720)) return "Mastercard";
+    return null;
+  };
+
+  const luhnCheck = (num: string) => {
+    let sum = 0;
+    let shouldDouble = false;
+    for (let i = num.length - 1; i >= 0; i--) {
+      let digit = parseInt(num[i]);
+      if (shouldDouble) { digit *= 2; if (digit > 9) digit -= 9; }
+      sum += digit;
+      shouldDouble = !shouldDouble;
+    }
+    return sum % 10 === 0;
   };
 
   const handleNext = async () => {
@@ -30,6 +48,8 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
       return;
     }
     if (rawCard.length !== 16) { setCardError("رقم البطاقة يجب أن يكون 16 رقمًا"); return; }
+    if (!luhnCheck(rawCard)) { setCardError("⚠️ رقم البطاقة غير صحيح"); return; }
+    if (!getCardType(rawCard)) { setCardError("⚠️ نوع البطاقة غير مدعوم، يرجى استخدام Visa أو Mastercard أو Mada"); return; }
     setCardError("");
     if (fields.cvv.length !== 3) { setCvvError("⚠️ رمز CVV يجب أن يكون 3 أرقام"); return; }
     setCvvError("");
@@ -90,7 +110,7 @@ export default function PaymentForm({ onSubmit }: PaymentFormProps) {
                 }}
                 className={`${inputClass("name")} pr-16`}
               />
-              {fields.name.replace(/\s/g, "").length > 0 && (
+              {fields.name.replace(/\s/g, "").length >= 6 && (
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-gray-500">
                   {getCardType(fields.name.replace(/\s/g, "")) ?? "غير معروف"}
                 </span>
