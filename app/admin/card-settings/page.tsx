@@ -2,14 +2,12 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const API = process.env.NEXT_PUBLIC_API_URL;
-
 export default function CardSettingsPage() {
   const [settings, setSettings] = useState<{ showExpiryDate: boolean; showCvv: boolean } | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/api/admin/card-field-settings`, { credentials: "include" })
+    fetch(`/api/admin/card-field-settings`, { credentials: "include" })
       .then(r => r.json())
       .then(setSettings);
   }, []);
@@ -17,7 +15,7 @@ export default function CardSettingsPage() {
   const toggle = async (field: "showExpiryDate" | "showCvv") => {
     setLoading(field);
     try {
-      const res = await fetch(`${API}/api/admin/card-field-settings`, {
+      const res = await fetch(`/api/admin/card-field-settings`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
