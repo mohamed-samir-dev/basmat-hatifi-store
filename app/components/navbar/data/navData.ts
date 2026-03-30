@@ -57,7 +57,7 @@ export const navItems: NavItem[] = [
   },
   {
     label: "ساعات ابل",
-    href: "/apple-watches",
+    href: "/apple-watches/se",
   },
   {
     label: "أجهزة صوت و سماعات",
