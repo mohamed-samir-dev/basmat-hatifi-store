@@ -1,0 +1,15 @@
+{
+  "name": "بصمة هاتفي المعتمد",
+  "short_name": "بصمة هاتفي",
+  "description": "متجر بصمة هاتفي المعتمد - أجهزة إلكترونية بالأقساط داخل المملكة العربية السعودية",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

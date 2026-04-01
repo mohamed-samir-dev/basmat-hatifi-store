@@ -35,8 +35,10 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName,
       c.nameEn || "Pasmthatfee",
       "أقساط", "جوالات", "لابتوب", "أجهزة إلكترونية",
-      "سامسونج", "آبل", "أيفون", "شاومي",
-      "السعودية", "الرياض", "جدة",
+      "سامسونج", "آبل", "أيفون", "شاومي", "هواوي", "أوبو",
+      "السعودية", "الرياض", "جدة", "مكة", "الدمام",
+      "شراء بالتقسيط", "أقساط بدون فوائد", "متجر إلكتروني",
+      "بصمة هاتفي", "بسمة هاتفي",
     ],
     authors: [{ name: siteName, url: SITE_URL }],
     creator: siteName,
@@ -63,19 +65,22 @@ export async function generateMetadata(): Promise<Metadata> {
     },
     icons: {
       icon: [
-        { url: logoUrl, sizes: "32x32", type: "image/png" },
-        { url: logoUrl, sizes: "64x64", type: "image/png" },
-        { url: logoUrl, sizes: "192x192", type: "image/png" },
+        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+        { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+        { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+        { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
       ],
-      shortcut: [{ url: logoUrl, sizes: "64x64" }],
-      apple: [{ url: logoUrl, sizes: "180x180" }],
+      shortcut: "/favicon.ico",
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     },
     alternates: {
       canonical: SITE_URL,
+      languages: { "ar-SA": SITE_URL },
     },
     verification: {
       google: process.env.GOOGLE_SITE_VERIFICATION || "",
     },
+    category: "electronics",
   };
 }
 
