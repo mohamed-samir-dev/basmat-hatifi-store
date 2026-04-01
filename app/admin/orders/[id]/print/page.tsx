@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 
 interface OrderItem { name: string; price: number; quantity: number; }
@@ -14,227 +14,195 @@ export default function PrintOrderPage() {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<Order | null>(null);
   const [company, setCompany] = useState<Company>({});
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     Promise.all([
       fetch(`/api/admin/orders/${id}`).then((r) => r.json()),
       fetch("/api/admin/company").then((r) => r.json()).catch(() => ({})),
-    ]).then(([o, c]) => {
-      setOrder(o);
-      setCompany(c);
-    });
+    ]).then(([o, c]) => { setOrder(o); setCompany(c); });
   }, [id]);
 
   useEffect(() => {
-    if (order) setTimeout(() => window.print(), 500);
+    if (!order) return;
+    setTimeout(() => {
+      if (contentRef.current) {
+        const A4_HEIGHT_PX = 1122; // 297mm at 96dpi
+        const A4_WIDTH_PX = 794;   // 210mm at 96dpi
+        const h = contentRef.current.scrollHeight;
+        const w = contentRef.current.scrollWidth;
+        const scale = Math.min(A4_HEIGHT_PX / h, A4_WIDTH_PX / w, 1);
+        contentRef.current.style.transform = `scale(${scale})`;
+        contentRef.current.style.transformOrigin = "top left";
+        contentRef.current.style.width = `${100 / scale}%`;
+      }
+      window.print();
+    }, 700);
   }, [order]);
 
   if (!order) return <div style={{ textAlign: "center", padding: 40 }}>جاري التحميل...</div>;
 
-  const style = `
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    thead { display: table-header-group; }
-    tfoot { display: table-row-group; }
-    .print-two-col td { width: 50%; }
-    .installments-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .table-scroll { overflow-x: auto; }
-    @media (max-width: 600px) {
-      .print-two-col { display: block; }
-      .print-two-col tr { display: block; }
-      .print-two-col td { display: block; width: 100% !important; border-right: none !important; border-bottom: 1px solid #e5e7eb; }
-      .installments-grid { grid-template-columns: 1fr; }
-    }
-    @media print {
-      @page { size: A4; margin: 10mm; }
-      body { font-size: 11px !important; }
-      td, th { padding: 4px 6px !important; }
-      img[alt="header"], img[alt="footer"] { width: 100% !important; max-height: none !important; }
-    }
-  `;
-
   const fin = { total: order.total, downPayment: order.downPayment, months: order.months, monthlyPayment: order.monthlyPayment };
   const date = new Date(order.createdAt).toLocaleDateString("en-GB");
 
+  const startDate = new Date(order.createdAt);
+  startDate.setMonth(startDate.getMonth() + 1);
+  const installments = order.installmentType === "installment" && fin.months > 0
+    ? Array.from({ length: fin.months }, (_, i) => {
+        const d = new Date(startDate);
+        d.setMonth(d.getMonth() + i);
+        return { num: i + 1, amount: fin.monthlyPayment, date: d.toLocaleDateString("en-GB") };
+      })
+    : [];
+  const chunks: typeof installments[] = [];
+  for (let i = 0; i < installments.length; i += 6) chunks.push(installments.slice(i, i + 6));
+  const remaining = (fin.total - fin.downPayment).toFixed(2);
+
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", padding: 24, maxWidth: 900, margin: "0 auto", position: "relative" }}>
-      {company.stamp && (
-        <img
-          src={company.stamp}
-          alt="stamp"
-          style={{
-            position: "absolute",
-            top: "60%",
-            left: "40%",
-            transform: "translate(-50%, -50%)",
-            width: 240,
-            opacity: 0.5,
-            pointerEvents: "none",
-            zIndex: 9999,
-          }}
-        />
-      )}
-      <style>{style}</style>
-      {company.header && <img src={company.header} alt="header" style={{ width: "100%", marginBottom: 24 }} />}
+    <>
+      <style>{`
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+        @media print {
+          @page { size: A4 portrait; margin: 0; }
+          html, body { margin: 0; padding: 0; width: 210mm; height: 297mm; overflow: hidden; }
+        }
+      `}</style>
+      <div ref={contentRef} style={{ fontFamily: "Arial, sans-serif", padding: "10px 16px", width: "794px", position: "relative" }}>
 
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, fontSize: 13, fontWeight: 600 }}>
-        <span>{date}</span>
-        <span>No. #{order.orderId}</span>
-      </div>
+        {company.stamp && (
+          <img src={company.stamp} alt="stamp" style={{ position: "absolute", top: "50%", left: "40%", transform: "translate(-50%, -50%)", width: 200, opacity: 0.4, pointerEvents: "none", zIndex: 9999 }} />
+        )}
 
-      {/* رسالة الترحيب */}
-      <div className="table-scroll">
-      <table className="print-two-col" style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16 }}>
-        <tbody>
-          <tr>
-            <td style={{ padding: 12, borderRight: "2px solid black", fontSize: 13, lineHeight: 2 }}>
-              <p style={{ margin: 0 }}>Dear Customer,</p>
-              <p style={{ margin: 0 }}>Thank you for shopping with {company.nameEn || "tabarak"}.</p>
-              <p style={{ margin: 0 }}>Your order has been placed.</p>
-              <p style={{ margin: 0 }}>Below is the summary of the order.</p>
-            </td>
-            <td style={{ padding: 12, fontSize: 13, lineHeight: 2, textAlign: "right", direction: "rtl" }}>
-              <p style={{ margin: 0 }}>عميلنا العزيز،</p>
-              <p style={{ margin: 0 }}>شكرا لتسوقكم من {company.nameAr || "مؤسسة تبارك الذكية"}.</p>
-              <p style={{ margin: 0 }}>لقد تم إنشاء طلبكم بنجاح.</p>
-              <p style={{ margin: 0 }}>فيما يلي ملخص الطلب.</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
+        {company.header && <img src={company.header} alt="header" style={{ width: "100%", marginBottom: 10 }} />}
 
-      {/* بيانات العميل */}
-      <div className="table-scroll">
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16, fontSize: 13, minWidth: 400 }}>
-        <thead>
-          <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
-            <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>اسم العميل</th>
-            <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>رقم الجوال</th>
-            <th style={{ padding: "6px 8px", textAlign: "right" }}>العنوان</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{order.customer}</td>
-            <td style={{ padding: "6px 8px", textAlign: "left", borderLeft: "1px solid #e5e7eb" }}>{order.whatsapp}</td>
-            <td style={{ padding: "6px 8px", textAlign: "right" }}>{order.address}</td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
+        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8, fontSize: 12, fontWeight: 600 }}>
+          <span>{date}</span>
+          <span>No. #{order.orderId}</span>
+        </div>
 
-      <div style={{ textAlign: "center", fontWeight: "bold", marginBottom: 8, fontSize: 14 }}>تفاصيل الفاتورة</div>
-
-      {/* جدول المنتجات */}
-      <div className="table-scroll">
-      <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 16, fontSize: 13, minWidth: 400 }}>
-        <thead>
-          <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
-            <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>اسم الجهاز</th>
-            <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>السعر</th>
-            <th style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>الكمية</th>
-            <th style={{ padding: "6px 8px", textAlign: "right" }}>الإجمالي</th>
-          </tr>
-        </thead>
-        <tbody>
-          {order.items.map((item: OrderItem, i: number) => (
-            <tr key={i} style={{ borderBottom: "1px solid #e5e7eb" }}>
-              <td style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{item.name}</td>
-              <td style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>{item.price.toFixed(2)}</td>
-              <td style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>{item.quantity}</td>
-              <td style={{ padding: "6px 8px", textAlign: "right" }}>{(item.price * item.quantity).toFixed(2)}</td>
+        {/* رسالة الترحيب */}
+        <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 8 }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: "6px 10px", borderRight: "2px solid black", fontSize: 11, lineHeight: 1.8, width: "50%" }}>
+                <p style={{ margin: 0 }}>Dear Customer,</p>
+                <p style={{ margin: 0 }}>Thank you for shopping with {company.nameEn || "tabarak"}.</p>
+                <p style={{ margin: 0 }}>Your order has been placed.</p>
+                <p style={{ margin: 0 }}>Below is the summary of the order.</p>
+              </td>
+              <td style={{ padding: "6px 10px", fontSize: 11, lineHeight: 1.8, textAlign: "right", direction: "rtl", width: "50%" }}>
+                <p style={{ margin: 0 }}>عميلنا العزيز،</p>
+                <p style={{ margin: 0 }}>شكرا لتسوقكم من {company.nameAr || "مؤسسة تبارك الذكية"}.</p>
+                <p style={{ margin: 0 }}>لقد تم إنشاء طلبكم بنجاح.</p>
+                <p style={{ margin: 0 }}>فيما يلي ملخص الطلب.</p>
+              </td>
             </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          <tr style={{ backgroundColor: "#eff6ff", fontWeight: "bold", borderTop: "2px solid black" }}>
-            <td colSpan={3} style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>الإجمالي</td>
-            <td style={{ padding: "6px 8px", textAlign: "right" }}>{fin.total.toFixed(2)} ريال</td>
-          </tr>
-          {order.installmentType === "installment" && (
-            <tr style={{ backgroundColor: "#eff6ff", fontWeight: "bold" }}>
-              <td colSpan={3} style={{ padding: "6px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>الدفعة المقدمة</td>
-              <td style={{ padding: "6px 8px", textAlign: "right" }}>{fin.downPayment.toFixed(2)} ريال</td>
+          </tbody>
+        </table>
+
+        {/* بيانات العميل */}
+        <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 8, fontSize: 11 }}>
+          <thead>
+            <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
+              <th style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>اسم العميل</th>
+              <th style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>رقم الجوال</th>
+              <th style={{ padding: "4px 8px", textAlign: "right" }}>العنوان</th>
             </tr>
-          )}
-        </tfoot>
-      </table>
-      </div>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{order.customer}</td>
+              <td style={{ padding: "4px 8px", textAlign: "left", borderLeft: "1px solid #e5e7eb" }}>{order.whatsapp}</td>
+              <td style={{ padding: "4px 8px", textAlign: "right" }}>{order.address}</td>
+            </tr>
+          </tbody>
+        </table>
 
-      {/* الشروط */}
-      <div className="table-scroll">
-      <table className="print-two-col" style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", fontSize: 13, marginBottom: 16 }}>
-        <tbody>
-          <tr>
-            <td style={{ padding: 12, borderRight: "2px solid black", textAlign: "right", direction: "rtl", lineHeight: 2 }}>
-              <p style={{ margin: 0 }}>سيتم اعتماد الطلب وشحنه بعد تسديد المبلغ المطلوب</p>
-              <p style={{ margin: 0 }}>التوصيل مجاناً من خلال شركة. مندوب توصيل , خلال 24 ساعة من دفع الدفعة المقدمة</p>
-            </td>
-            <td style={{ padding: 12, textAlign: "right", direction: "rtl", lineHeight: 2 }}>
-              <p style={{ margin: 0 }}>الرقم الضريبي : 314539044300003</p>
-              <p style={{ margin: 0 }}>العرض شامل الهدايا</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
+        <div style={{ textAlign: "center", fontWeight: "bold", marginBottom: 6, fontSize: 12 }}>تفاصيل الفاتورة</div>
 
-      {/* جدول الأقساط */}
-      {order.installmentType === "installment" && fin.months > 0 && (() => {
-        const startDate = new Date(order.createdAt);
-        startDate.setMonth(startDate.getMonth() + 1);
-        const installments = Array.from({ length: fin.months }, (_, i) => {
-          const d = new Date(startDate);
-          d.setMonth(d.getMonth() + i);
-          return { num: i + 1, amount: fin.monthlyPayment, date: d.toLocaleDateString("en-GB") };
-        });
-        const chunks: typeof installments[] = [];
-        for (let i = 0; i < installments.length; i += 5) chunks.push(installments.slice(i, i + 5));
-        const remaining = (fin.total - fin.downPayment).toFixed(2);
-        return (
-          <div style={{ border: "2px solid #9ca3af", borderRadius: 8, padding: 12, backgroundColor: "#f3f4f6" }}>
-            <div className="installments-grid">
+        {/* جدول المنتجات */}
+        <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", marginBottom: 8, fontSize: 11 }}>
+          <thead>
+            <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
+              <th style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>اسم الجهاز</th>
+              <th style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>السعر</th>
+              <th style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>الكمية</th>
+              <th style={{ padding: "4px 8px", textAlign: "right" }}>الإجمالي</th>
+            </tr>
+          </thead>
+          <tbody>
+            {order.items.map((item, i) => (
+              <tr key={i} style={{ borderBottom: "1px solid #e5e7eb" }}>
+                <td style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{item.name}</td>
+                <td style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>{item.price.toFixed(2)}</td>
+                <td style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>{item.quantity}</td>
+                <td style={{ padding: "4px 8px", textAlign: "right" }}>{(item.price * item.quantity).toFixed(2)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ backgroundColor: "#eff6ff", fontWeight: "bold", borderTop: "2px solid black" }}>
+              <td colSpan={3} style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>الإجمالي</td>
+              <td style={{ padding: "4px 8px", textAlign: "right" }}>{fin.total.toFixed(2)} ريال</td>
+            </tr>
+            {order.installmentType === "installment" && (
+              <tr style={{ backgroundColor: "#eff6ff", fontWeight: "bold" }}>
+                <td colSpan={3} style={{ padding: "4px 8px", textAlign: "right", borderLeft: "1px solid #e5e7eb" }}>الدفعة المقدمة</td>
+                <td style={{ padding: "4px 8px", textAlign: "right" }}>{fin.downPayment.toFixed(2)} ريال</td>
+              </tr>
+            )}
+          </tfoot>
+        </table>
+
+        {/* الشروط */}
+        <table style={{ width: "100%", borderCollapse: "collapse", border: "2px solid black", fontSize: 11, marginBottom: 8 }}>
+          <tbody>
+            <tr>
+              <td style={{ padding: "6px 10px", borderRight: "2px solid black", textAlign: "right", direction: "rtl", lineHeight: 1.8, width: "50%" }}>
+                <p style={{ margin: 0 }}>سيتم اعتماد الطلب وشحنه بعد تسديد المبلغ المطلوب</p>
+                <p style={{ margin: 0 }}>التوصيل مجاناً من خلال شركة. مندوب توصيل , خلال 24 ساعة من دفع الدفعة المقدمة</p>
+              </td>
+              <td style={{ padding: "6px 10px", textAlign: "right", direction: "rtl", lineHeight: 1.8, width: "50%" }}>
+                <p style={{ margin: 0 }}>الرقم الضريبي : 314539044300003</p>
+                <p style={{ margin: 0 }}>العرض شامل الهدايا</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        {/* جدول الأقساط */}
+        {installments.length > 0 && (
+          <div style={{ border: "2px solid #9ca3af", borderRadius: 6, padding: 8, backgroundColor: "#f3f4f6" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 6 }}>
               {chunks.map((chunk, ci) => (
-                <table key={ci} style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #d1d5db", fontSize: 13 }}>
+                <table key={ci} style={{ width: "100%", borderCollapse: "collapse", border: "1px solid #d1d5db", fontSize: 10 }}>
                   <thead>
                     <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
-                      <th style={{ padding: "6px 8px", textAlign: "center", borderLeft: "1px solid #60a5fa" }}># الدفعة</th>
-                      <th style={{ padding: "6px 8px", textAlign: "center", borderLeft: "1px solid #60a5fa" }}>المبلغ</th>
-                      <th style={{ padding: "6px 8px", textAlign: "center" }}>تاريخ الاستحقاق</th>
+                      <th style={{ padding: "3px 4px", textAlign: "center", borderLeft: "1px solid #60a5fa" }}>#</th>
+                      <th style={{ padding: "3px 4px", textAlign: "center", borderLeft: "1px solid #60a5fa" }}>المبلغ</th>
+                      <th style={{ padding: "3px 4px", textAlign: "center" }}>التاريخ</th>
                     </tr>
                   </thead>
                   <tbody>
                     {chunk.map((inst) => (
                       <tr key={inst.num} style={{ backgroundColor: "white", borderBottom: "1px solid #e5e7eb" }}>
-                        <td style={{ padding: "6px 8px", textAlign: "center", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{inst.num}</td>
-                        <td style={{ padding: "6px 8px", textAlign: "center", borderLeft: "1px solid #e5e7eb" }}>{inst.amount.toFixed(2)}</td>
-                        <td style={{ padding: "6px 8px", textAlign: "center", direction: "ltr" }}>{inst.date}</td>
+                        <td style={{ padding: "3px 4px", textAlign: "center", borderLeft: "1px solid #e5e7eb", fontWeight: 600 }}>{inst.num}</td>
+                        <td style={{ padding: "3px 4px", textAlign: "center", borderLeft: "1px solid #e5e7eb" }}>{inst.amount.toFixed(2)}</td>
+                        <td style={{ padding: "3px 4px", textAlign: "center", direction: "ltr", fontSize: 9 }}>{inst.date}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               ))}
             </div>
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: 16, border: "1px solid #d1d5db", fontSize: 15 }}>
-              <thead>
-                <tr style={{ backgroundColor: "#3b82f6", color: "white" }}>
-                  <th style={{ padding: "8px 16px", textAlign: "right", borderLeft: "1px solid #60a5fa" }}>المتبقي</th>
-                  <th style={{ padding: "8px 16px", textAlign: "center" }}>المبلغ</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ backgroundColor: "white" }}>
-                  <td style={{ padding: "10px 16px", textAlign: "right", borderLeft: "1px solid #e5e7eb", fontWeight: "bold", direction: "rtl" }}>المتبقي</td>
-                  <td style={{ padding: "10px 16px", textAlign: "center", fontWeight: "bold" }}>{remaining} ريـــال</td>
-                </tr>
-              </tbody>
-            </table>
+            <div style={{ marginTop: 8, textAlign: "right", fontWeight: "bold", fontSize: 12, direction: "rtl" }}>
+              المتبقي: {remaining} ريـــال
+            </div>
           </div>
-        );
-      })()}
-      {company.footer && (
-        <img src={company.footer} alt="footer" style={{ width: "100%", marginTop: 24 }} />
-      )}
-    </div>
+        )}
+
+        {company.footer && <img src={company.footer} alt="footer" style={{ width: "100%", marginTop: 10 }} />}
+      </div>
+    </>
   );
 }
