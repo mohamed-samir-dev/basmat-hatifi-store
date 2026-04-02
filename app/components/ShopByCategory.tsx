@@ -17,21 +17,35 @@ const categoryPageMap: Record<string, string> = {
   "ابل ايفون 15 بلس": "/smartphones/iphone-15-plus",
   "ابل ايفون 15": "/smartphones/iphone-15",
   "ابل ايفون 16 برو ماكس": "/smartphones/iphone-16-pro-max",
+  "ايفون 16 برو ماكس": "/smartphones/iphone-16-pro-max",
   "ابل ايفون 16 برو": "/smartphones/iphone-16-pro",
+  "ايفون 16 برو": "/smartphones/iphone-16-pro",
   "ابل ايفون 16 بلس": "/smartphones/iphone-16-plus",
+  "ايفون 16 بلس": "/smartphones/iphone-16-plus",
   "ابل ايفون 16 عادي": "/smartphones/iphone-16",
   "ابل ايفون 16": "/smartphones/iphone-16",
+  "ايفون 16": "/smartphones/iphone-16",
   "ابل ايفون 17 برو ماكس": "/smartphones/iphone-17-pro-max",
   "ابل ايفون 17برو ماكس": "/smartphones/iphone-17-pro-max",
   "ابل ايفون 17 برو": "/smartphones/iphone-17-pro",
   "ابل ايفون 17 اير": "/smartphones/iphone-17-air",
   "ابل ايفون 17": "/smartphones/iphone-17",
-  "سامسونج جالكسي": "/smartphones/samsung-s25-ultra",
-  "سامسونج جالكسي اس 22 الترا": "/smartphones/samsung-s22-ultra",
-  "سامسونج جالكسي اس 23 الترا": "/smartphones/samsung-s23-ultra",
-  "سامسونج جالكسي اس 24 الترا": "/smartphones/samsung-s24-ultra",
-  "سامسونج جالكسي اس 25 الترا": "/smartphones/samsung-s25-ultra",
-  "سامسونج جالكسي اس 26 الترا": "/smartphones/samsung-s26-ultra",
+  "سامسونج جالاكسي S22": "/smartphones/samsung-s22-ultra",
+  "سامسونج جلاكسي S22": "/smartphones/samsung-s22-ultra",
+  "سامسونج جالكسي S22": "/smartphones/samsung-s22-ultra",
+  "سامسونج جالاكسي S23": "/smartphones/samsung-s23-ultra",
+  "سامسونج جلاكسي S23": "/smartphones/samsung-s23-ultra",
+  "سامسونج جالكسي S23": "/smartphones/samsung-s23-ultra",
+  "سامسونج جلاكسي S23 الترا": "/smartphones/samsung-s23-ultra",
+  "سامسونج جالاكسي S24": "/smartphones/samsung-s24-ultra",
+  "سامسونج جلاكسي S24": "/smartphones/samsung-s24-ultra",
+  "سامسونج جالكسي S24": "/smartphones/samsung-s24-ultra",
+  "سامسونج جالاكسي S25": "/smartphones/samsung-s25-ultra",
+  "سامسونج جلاكسي S25": "/smartphones/samsung-s25-ultra",
+  "سامسونج جالكسي S25": "/smartphones/samsung-s25-ultra",
+  "سامسونج جالاكسي S26": "/smartphones/samsung-s26-ultra",
+  "سامسونج جلاكسي S26": "/smartphones/samsung-s26-ultra",
+  "سامسونج جالكسي S26": "/smartphones/samsung-s26-ultra",
 
   // ─── Watches ───────────────────────────────────────────────
   watch: "/apple-watches/se",
@@ -56,19 +70,29 @@ const categoryPageMap: Record<string, string> = {
   controller: "/playstation/controllers",
   "gaming-accessories": "/playstation/ps-accessories",
   "بلاي ستيشن": "/playstation/ps5",
+  "أجهزة بلاي ستيشن": "/playstation/ps5",
 
   // ─── Laptops & Monitors ────────────────────────────────────
   laptop: "/laptops/macbook-pro",
   monitor: "/laptops/samsung-monitors",
+  "ماك بوك إير": "/laptops/macbook-air",
+  "ماك بوك اير": "/laptops/macbook-air",
   "لابتوبات": "/laptops/macbook-pro",
+  "لابتوبات وشاشات": "/laptops/macbook-pro",
 
   // ─── Tablets ───────────────────────────────────────────────
   tablet: "/tablets/ipad-pro",
   "ايبادات": "/tablets/ipad-pro",
+  "الاجهزة اللوحية ايبادات": "/tablets/ipad-pro",
+  "الأجهزة اللوحية": "/tablets/ipad-pro",
 
   // ─── Accessories ───────────────────────────────────────────
   powerbank: "/accessories/anker-batteries",
   "ملحقات": "/accessories/anker-batteries",
+  "بطاريات متنقله": "/accessories/anker-batteries",
+  "بطاريات متنقلة": "/accessories/anker-batteries",
+  "بطاريات متنقلة وكيابل": "/accessories/anker-batteries",
+  "بطاريات": "/accessories/anker-batteries",
 
   // ─── Games ─────────────────────────────────────────────────
   gaming: "/games/ps5-games",
@@ -77,6 +101,9 @@ const categoryPageMap: Record<string, string> = {
   figures: "/games/figures",
   rgb: "/games/rgb-lighting",
   "العاب": "/games/ps5-games",
+  "ألعاب الفيديو": "/games/ps5-games",
+  "أجهزة صوت و سماعات": "/audio/airpods-pro",
+  "أجهزة صوت وسماعات": "/audio/airpods-pro",
 };
 
 type Category = { name: string; count: number; image: string };
@@ -110,9 +137,17 @@ export default async function ShopByCategory() {
 
   const categoriesWithHref = categories.map((cat) => {
     const name = cat.name?.trim();
-    const href = categoryPageMap[name] ?? categoryPageMap[name?.toLowerCase()]
-      ?? Object.entries(categoryPageMap).find(([k]) => name?.includes(k) || k.includes(name))?.[1]
-      ?? "#";
+    const nameLower = name?.toLowerCase();
+    const href =
+      categoryPageMap[name] ??
+      categoryPageMap[nameLower] ??
+      Object.entries(categoryPageMap)
+        .filter(([k]) => {
+          const kl = k.toLowerCase();
+          return nameLower?.includes(kl) || kl.includes(nameLower);
+        })
+        .sort((a, b) => b[0].length - a[0].length)[0]?.[1] ??
+      "/store";
     return { ...cat, href };
   });
 

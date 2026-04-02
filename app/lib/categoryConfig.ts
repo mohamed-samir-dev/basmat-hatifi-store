@@ -123,31 +123,31 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "سامسونج جالكسي اس 22 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s22 ultra", "s22 الترا", "s22 ألترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s22", "S22"] },
   },
   "samsung-s23-ultra": {
     label: "سامسونج جالكسي اس 23 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { category: "سامسونج جالكسي اس 23 الترا" },
+    filters: { brand: "Samsung", nameIncludes: ["s23", "S23"] },
   },
   "samsung-s24-ultra": {
     label: "سامسونج جالكسي اس 24 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s24 ultra", "s24 الترا", "s24 ألترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s24", "S24"] },
   },
   "samsung-s25-ultra": {
     label: "سامسونج جالكسي اس 25 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s25 ultra", "s25 الترا", "s25 ألترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s25", "S25"] },
   },
   "samsung-s26-ultra": {
     label: "سامسونج جالكسي اس 26 الترا",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Samsung", nameIncludes: ["s26 ultra", "s26 الترا", "s26 ألترا"] },
+    filters: { brand: "Samsung", nameIncludes: ["s26", "S26"] },
   },
 
   // ─── Apple Watches ─────────────────────────────────────────
@@ -263,7 +263,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "بطاريات متنقلة",
     parentLabel: "بطاريات متنقلة وكيابل",
     parentHref: "/accessories",
-    filters: { category: "powerbank" },
+    filters: { category: "بطاريات متنقله" },
   },
 
   // ─── Games ─────────────────────────────────────────────────
