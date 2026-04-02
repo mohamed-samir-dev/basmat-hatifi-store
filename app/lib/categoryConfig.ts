@@ -72,22 +72,22 @@ export const slugConfigs: Record<string, SlugConfig> = {
     filters: { category: "ابل ايفون 16 برو ماكس" },
   },
   "iphone-16-pro": {
-    label: "ابل ايفون 16 برو",
+    label: "ايفون 16 برو",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { category: "ابل ايفون 16 برو" },
+    filters: { brand: "Apple", nameIncludes: ["iphone 16 pro", "ايفون 16 برو", "آيفون 16 برو"] },
   },
   "iphone-16-plus": {
-    label: "ابل ايفون 16 بلس",
+    label: "ايفون 16 بلس",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { category: "ابل ايفون 16 بلس" },
+    filters: { brand: "Apple", nameIncludes: ["iphone 16 plus", "ايفون 16 بلس", "آيفون 16 بلس"] },
   },
   "iphone-16": {
-    label: "ابل ايفون 16 عادي",
+    label: "ايفون 16 عادي",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { category: "ابل ايفون 16" },
+    filters: { brand: "Apple", nameIncludes: ["iphone 16", "ايفون 16", "آيفون 16"] },
   },
   "iphone-17-pro-max": {
     label: "ابل ايفون 17 برو ماكس",
