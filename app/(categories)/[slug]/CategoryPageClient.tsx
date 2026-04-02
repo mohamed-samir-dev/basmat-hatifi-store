@@ -9,6 +9,29 @@ import { slugConfigs } from "../../lib/categoryConfig";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
+function parseStorage(s?: string): number {
+  if (!s) return Infinity;
+  const match = s.match(/(\d+)\s*(tb|gb)/i);
+  if (!match) return Infinity;
+  const val = parseInt(match[1]);
+  return match[2].toLowerCase() === "tb" ? val * 1024 : val;
+}
+
+function colorPriority(color?: string): number {
+  if (!color) return 999;
+  const c = color.toLowerCase();
+  if (c.includes("برتقال") || c.includes("orange")) return 0;
+  return color.charCodeAt(0);
+}
+
+function sortProducts(products: Product[]): Product[] {
+  return [...products].sort((a, b) => {
+    const colorDiff = colorPriority(a.color) - colorPriority(b.color);
+    if (colorDiff !== 0) return colorDiff;
+    return parseStorage(a.storage) - parseStorage(b.storage);
+  });
+}
+
 function filterProducts(products: Product[], slug: string): Product[] {
   const config = slugConfigs[slug];
   if (!config) return products;
@@ -39,7 +62,7 @@ export default function CategoryPageClient({ slug }: { slug: string }) {
     const query = brand ? `?brand=${encodeURIComponent(brand)}` : "";
     fetch(`${API}/api/products${query}`)
       .then((r) => r.json())
-      .then((data: Product[]) => setProducts(filterProducts(data, slug)))
+      .then((data: Product[]) => setProducts(sortProducts(filterProducts(data, slug))))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [slug, config?.filters.brand]);
