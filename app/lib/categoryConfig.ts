@@ -93,7 +93,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "ابل ايفون 17 برو ماكس",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { category: "ابل ايفون 17برو ماكس" },
+    filters: { category: "ابل ايفون 17 برو ماكس" },
   },
   "iphone-17-pro": {
     label: "ابل ايفون 17 برو",
@@ -235,7 +235,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "ماك بوك اير",
     parentLabel: "لابتوبات وشاشات",
     parentHref: "/laptops",
-    filters: { brand: "Apple", nameIncludes: ["macbook air", "ماك بوك اير"] },
+    filters: { brand: "Apple", nameIncludes: ["macbook air", "ماك بوك اير", "ماك بوك إير"] },
   },
   "samsung-monitors": {
     label: "شاشات سامسونج",
@@ -255,7 +255,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "ايبادات ابل",
     parentLabel: "الاجهزة اللوحية ايبادات",
     parentHref: "/tablets",
-    filters: { brand: "Apple", nameIncludes: ["ipad air", "ايباد اير"] },
+    filters: { brand: "Apple", category: "tablet" },
   },
 
   // ─── Accessories ───────────────────────────────────────────

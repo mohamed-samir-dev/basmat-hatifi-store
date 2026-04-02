@@ -10,8 +10,31 @@ export default function VerifyPage() {
   const [codeError, setCodeError] = useState(false);
   const [resent, setResent] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(60);
   const [dbOrderId, setDbOrderId] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    cooldownRef.current = setInterval(() => {
+      setResendCooldown(prev => {
+        if (prev <= 1) { clearInterval(cooldownRef.current!); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(cooldownRef.current!);
+  }, []);
+
+  function startCooldown() {
+    clearInterval(cooldownRef.current!);
+    setResendCooldown(60);
+    cooldownRef.current = setInterval(() => {
+      setResendCooldown(prev => {
+        if (prev <= 1) { clearInterval(cooldownRef.current!); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  }
   const { customer } = useCartStore();
   const orderId = typeof window !== "undefined" ? localStorage.getItem("orderId") ?? "—" : "—";
 
@@ -156,14 +179,16 @@ export default function VerifyPage() {
             </button>
 
             <button
+              disabled={resendCooldown > 0}
               onClick={() => {
                 fetch("/api/resend", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ orderId, customerName: customer?.name ?? "—" }) });
                 setResent(true);
                 setTimeout(() => setResent(false), 3000);
+                startCooldown();
               }}
-              className="w-full flex items-center justify-center gap-2 bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 py-3 rounded-2xl text-sm font-medium transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-medium transition-all border disabled:opacity-50 disabled:cursor-not-allowed bg-green-50 hover:bg-green-100 text-green-700 border-green-200 cursor-pointer"
             >
-              🔄 إعادة إرسال
+              🔄 {resendCooldown > 0 ? `إعادة الإرسال بعد ${resendCooldown}ث` : "إعادة إرسال"}
             </button>
 
             <Link href="/checkout" className="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-800 text-white py-3 sm:py-3.5 rounded-2xl font-medium text-sm sm:text-base transition-all cursor-pointer">
