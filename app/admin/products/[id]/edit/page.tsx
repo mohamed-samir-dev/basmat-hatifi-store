@@ -122,33 +122,32 @@ export default function EditProductPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const body: Record<string, unknown> = {};
+      const fd = new FormData();
       const fields: (keyof ProductForm)[] = [
         "name", "originalPrice", "salePrice", "category", "subCategory", "brand",
         "color", "storage", "network", "screenSize", "description", "deliveryTime", "warrantyYears",
       ];
       fields.forEach((f) => {
         if (f === "salePrice" && !form.salePrice) return;
-        body[f] = form[f];
+        fd.append(f, String(form[f]));
       });
-      body["freeDelivery"] = form.freeDelivery;
-      body["taxIncluded"] = form.taxIncluded;
-      body["inStock"] = form.inStock;
-      body["installment.available"] = String(form.installmentAvailable);
-      body["installment.downPayment"] = form.installmentDownPayment;
-      body["installment.months"] = form.installmentMonths;
-      body["installment.note"] = form.installmentNote;
+      fd.append("freeDelivery", String(form.freeDelivery));
+      fd.append("taxIncluded", String(form.taxIncluded));
+      fd.append("inStock", String(form.inStock));
+      fd.append("installment.available", String(form.installmentAvailable));
+      fd.append("installment.downPayment", form.installmentDownPayment);
+      fd.append("installment.months", form.installmentMonths);
+      fd.append("installment.note", form.installmentNote);
 
       const specKeys = Object.keys(form.specs) as (keyof ProductForm["specs"])[];
-      specKeys.forEach((k) => { body[`specs.${k}`] = form.specs[k]; });
+      specKeys.forEach((k) => fd.append(`specs.${k}`, form.specs[k]));
 
-      if (form.multiColor) body["colors"] = JSON.stringify(colors);
+      if (form.multiColor) fd.append("colors", JSON.stringify(colors));
 
       const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+        body: fd,
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "فشل الحفظ");

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -43,10 +43,7 @@ const EMPTY_FORM: ProductForm = {
 export default function NewProductPage() {
   const router = useRouter();
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
   const [saving, setSaving] = useState(false);
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [subCategories, setSubCategories] = useState<string[]>([]);
 
@@ -67,14 +64,6 @@ export default function NewProductPage() {
 
   function setSpec(key: keyof ProductForm["specs"], value: string) {
     setForm((prev) => ({ ...prev, specs: { ...prev.specs, [key]: value } }));
-  }
-
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-    e.target.value = "";
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -101,8 +90,6 @@ export default function NewProductPage() {
       (Object.keys(form.specs) as (keyof ProductForm["specs"])[]).forEach((k) =>
         fd.append(`specs.${k}`, form.specs[k])
       );
-
-      if (imageFile) fd.append("image", imageFile);
 
       const res = await fetch("/api/admin/products", {
         method: "POST",
@@ -249,29 +236,6 @@ export default function NewProductPage() {
               </div>
             </div>
           )}
-        </div>
-
-        {/* Image */}
-        <div className="bg-white rounded-xl shadow p-5 space-y-4">
-          <h2 className="font-semibold text-gray-700 border-b pb-2">الصورة</h2>
-          <div className="flex flex-col sm:flex-row items-start gap-5">
-            {imagePreview ? (
-              <div className="w-32 h-32 rounded-xl overflow-hidden border border-gray-200 shrink-0 flex items-center justify-center bg-gray-50">
-                <img src={imagePreview} alt="صورة المنتج" className="w-full h-full object-contain" />
-              </div>
-            ) : (
-              <div className="w-32 h-32 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs shrink-0">
-                لا توجد صورة
-              </div>
-            )}
-            <div className="flex flex-col gap-2">
-              <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-              <button type="button" onClick={() => imageInputRef.current?.click()} className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-                {imagePreview ? "تغيير الصورة" : "رفع صورة"}
-              </button>
-              {imageFile && <p className="text-xs text-green-600">✓ {imageFile.name}</p>}
-            </div>
-          </div>
         </div>
 
         {/* Specs */}
