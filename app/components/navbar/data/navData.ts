@@ -63,11 +63,10 @@ export const navItems: NavItem[] = [
     href: "/playstation",
   },
   {
-    label: "لابتوبات وشاشات",
+    label: "لابتوبات ",
     href: "/laptops",
     children: [
       { label: "ماك بوك اير", href: "/laptops/macbook-air" },
-      { label: "شاشات سامسونج", href: "/laptops/samsung-monitors" },
     ],
   },
   {
