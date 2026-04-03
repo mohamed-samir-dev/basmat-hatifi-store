@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 type ColorVariant = { color: string; images: string[] };
@@ -48,6 +48,9 @@ const EMPTY_FORM: ProductForm = {
 export default function EditProductPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromPage = searchParams.get("from") || "1";
+  const backUrl = `/admin/products?page=${fromPage}`;
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM);
   const [currentImage, setCurrentImage] = useState<string>("");
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
@@ -170,7 +173,7 @@ export default function EditProductPage() {
         setNewImagePreview("");
       }
       toast.success("تم حفظ التعديلات بنجاح ✅");
-      router.push("/admin/products");
+      router.push(backUrl);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "حدث خطأ");
     } finally {
@@ -196,7 +199,7 @@ export default function EditProductPage() {
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => router.push("/admin/products")}
+            onClick={() => router.push(backUrl)}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
           >
             إلغاء
@@ -227,17 +230,14 @@ export default function EditProductPage() {
           </Field>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-           
-            <Field label="السعر الجديد (سعر البيع)">
+            <Field label="سعر البيع (بعد الخصم)">
               <input type="number" value={form.salePrice} onChange={(e) => set("salePrice", e.target.value)} className={inputCls} min="0" step="0.01" placeholder="0.00" />
             </Field>
-            <Field label="السعر القديم (المشطوب عليه)">
+            <Field label="السعر الأصلي (المشطوب عليه)">
               <input type="number" value={form.originalPrice} onChange={(e) => set("originalPrice", e.target.value)} className={inputCls} required min="0" step="0.01" />
             </Field>
           </div>
-          {form.salePrice && form.originalPrice && Number(form.salePrice) >= Number(form.originalPrice) && (
-            <p className="text-red-500 text-sm">⚠️ سعر البيع يجب أن يكون أقل من السعر الأصلي</p>
-          )}
+
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="التصنيف">
@@ -429,7 +429,7 @@ export default function EditProductPage() {
       <div className="flex justify-end gap-2 mt-6">
         <button
           type="button"
-          onClick={() => router.push("/admin/products")}
+          onClick={() => router.push(backUrl)}
           className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
         >
           إلغاء

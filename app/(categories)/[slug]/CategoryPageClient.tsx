@@ -6,43 +6,24 @@ import Link from "next/link";
 import ProductCard from "../../components/products/ProductCard";
 import type { Product } from "../../components/products/types";
 import { slugConfigs } from "../../lib/categoryConfig";
+import { sortProducts } from "../../lib/sortProducts";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-function parseStorage(s?: string): number {
-  if (!s) return Infinity;
-  const match = s.match(/(\d+)\s*(tb|gb)/i);
-  if (!match) return Infinity;
-  const val = parseInt(match[1]);
-  return match[2].toLowerCase() === "tb" ? val * 1024 : val;
-}
-
-function colorPriority(color?: string): number {
-  if (!color) return 999;
-  const c = color.toLowerCase();
-  if (c.includes("برتقال") || c.includes("orange")) return 0;
-  return color.charCodeAt(0);
-}
-
-function sortProducts(products: Product[]): Product[] {
-  return [...products].sort((a, b) => {
-    const colorDiff = colorPriority(a.color) - colorPriority(b.color);
-    if (colorDiff !== 0) return colorDiff;
-    return parseStorage(a.storage) - parseStorage(b.storage);
-  });
-}
 
 function filterProducts(products: Product[], slug: string): Product[] {
   const config = slugConfigs[slug];
   if (!config) return products;
-  const { brand, category, nameIncludes } = config.filters;
+  const { brand, category, nameIncludes, nameExcludes } = config.filters;
   return products.filter((p) => {
     const matchBrand = brand ? p.brand?.toLowerCase() === brand.toLowerCase() : true;
     const matchCategory = category ? p.category === category : true;
     const matchName = nameIncludes?.length
       ? nameIncludes.some((kw) => p.name?.toLowerCase().includes(kw.toLowerCase()))
       : true;
-    return matchBrand && matchCategory && matchName;
+    const matchExclude = nameExcludes?.length
+      ? !nameExcludes.some((kw) => p.name?.toLowerCase().includes(kw.toLowerCase()))
+      : true;
+    return matchBrand && matchCategory && matchName && matchExclude;
   });
 }
 

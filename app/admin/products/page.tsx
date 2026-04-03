@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 type Product = {
@@ -10,6 +10,8 @@ type Product = {
   originalPrice: number;
   salePrice?: number;
 };
+
+type SubCat = { name: string; category: string; count: number };
 
 const TrashIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -26,10 +28,18 @@ const EditIcon = () => (
 export default function ProductsPage() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
+  const [subCategories, setSubCategories] = useState<SubCat[]>([]);
+  const [selectedCat, setSelectedCat] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const searchParams = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(() => Number(searchParams.get("page")) || 1);
   const PAGE_SIZE = 10;
+
+  function goToPage(page: number) {
+    setCurrentPage(page);
+    router.replace(`/admin/products?page=${page}`, { scroll: false });
+  }
 
   async function fetchProducts() {
     const res = await fetch("/api/admin/products", { credentials: "include" });
@@ -40,6 +50,9 @@ export default function ProductsPage() {
     fetch("/api/admin/products", { credentials: "include" })
       .then((res) => res.ok ? res.json() : null)
       .then((data) => { if (data) setProducts(data); });
+    fetch("/api/admin/sub-categories", { credentials: "include" })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => { if (data) setSubCategories(data); });
   }, []);
 
   async function confirmDeleteAction() {
@@ -55,7 +68,9 @@ export default function ProductsPage() {
   }
 
   const filtered = products.filter(
-    (p) => p.name?.includes(search) || p.category?.includes(search)
+    (p) =>
+      (!selectedCat || p.category === selectedCat) &&
+      (p.name?.includes(search) || p.category?.includes(search))
   );
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
@@ -71,6 +86,35 @@ export default function ProductsPage() {
           + إضافة منتج
         </button>
       </div>
+
+      {subCategories.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4">
+          <button
+            onClick={() => { setSelectedCat(null); setCurrentPage(1); }}
+            className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium border transition-colors ${
+              selectedCat === null
+                ? "bg-blue-600 text-white border-blue-600"
+                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+            }`}
+          >
+            الكل
+          </button>
+          {subCategories.map((cat) => (
+            <button
+              key={`${cat.category}-${cat.name}`}
+              onClick={() => { setSelectedCat(cat.name); setCurrentPage(1); }}
+              className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-full text-xs sm:text-sm font-medium border transition-colors ${
+                selectedCat === cat.name
+                  ? "bg-blue-600 text-white border-blue-600"
+                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-50"
+              }`}
+            >
+              {cat.name}
+              <span className="mr-1 text-xs opacity-70">({cat.count})</span>
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="bg-white rounded-xl shadow overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 border-b border-gray-100">
@@ -115,7 +159,7 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => router.push(`/admin/products/${p._id}/edit`)} className="text-blue-500 hover:text-blue-700" title="تعديل">
+                      <button onClick={() => router.push(`/admin/products/${p._id}/edit?from=${currentPage}`)} className="text-blue-500 hover:text-blue-700" title="تعديل">
                         <EditIcon />
                       </button>
                       <button onClick={() => setConfirmDelete({ id: p._id, name: p.name })} className="text-red-500 hover:text-red-700" title="حذف">
@@ -138,7 +182,7 @@ export default function ProductsPage() {
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-1 mt-4 flex-wrap">
           <button
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            onClick={() => goToPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
             className="px-3 py-1 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
           >
@@ -161,7 +205,7 @@ export default function ProductsPage() {
               ) : (
                 <button
                   key={page}
-                  onClick={() => setCurrentPage(page as number)}
+                  onClick={() => goToPage(page as number)}
                   className={`px-3 py-1 rounded-lg border text-sm font-medium ${
                     page === currentPage
                       ? "bg-blue-600 text-white border-blue-600"
@@ -174,7 +218,7 @@ export default function ProductsPage() {
             );
           })()}
           <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => goToPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
             className="px-3 py-1 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
           >

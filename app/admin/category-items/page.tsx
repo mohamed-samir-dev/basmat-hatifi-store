@@ -1,10 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { apiFetch } from "../../lib/api";
 
 type SubCat = { name: string; category: string; count: number };
 type Settings = { category: string; subCategory: string; showInHome: boolean; order: number };
+type CatImage = { name: string; image: string };
 
 export default function CategoryItemsPage() {
   const [items, setItems] = useState<SubCat[]>([]);
@@ -14,17 +15,26 @@ export default function CategoryItemsPage() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // image upload state
+  const [categories, setCategories] = useState<CatImage[]>([]);
+  const [selectedCat, setSelectedCat] = useState("");
+  const [preview, setPreview] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     Promise.all([
       apiFetch("/api/admin/sub-categories", { credentials: "include" }).then((r) => r.json()),
       apiFetch("/api/admin/sub-categories/settings", { credentials: "include" }).then((r) => r.json()),
       apiFetch("/api/admin/sub-categories/settings/max", { credentials: "include" }).then((r) => r.json()),
-    ]).then(([subs, sets, maxData]) => {
+      apiFetch("/api/admin/sub-categories/public").then((r) => r.json()),
+    ]).then(([subs, sets, maxData, cats]) => {
       setItems(subs);
       setSettings(sets);
       const m = maxData?.max ?? 4;
       setMax(m);
       setMaxInput(m);
+      setCategories(cats);
       setLoading(false);
     });
   }, []);
@@ -43,6 +53,36 @@ export default function CategoryItemsPage() {
     setMax(maxInput);
     toast.success(`تم تحديث الحد إلى ${maxInput} ✅`);
   }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPreview(URL.createObjectURL(file));
+  }
+
+  async function handleUploadImage() {
+    if (!selectedCat) return toast.error("اختر تصنيفاً أولاً");
+    const file = fileRef.current?.files?.[0];
+    if (!file) return toast.error("اختر صورة أولاً");
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("category", selectedCat);
+    fd.append("image", file);
+    const res = await apiFetch("/api/admin/sub-categories/settings/image", {
+      method: "POST",
+      credentials: "include",
+      body: fd,
+    });
+    setUploading(false);
+    if (!res.ok) return toast.error("حدث خطأ أثناء الرفع");
+    const { url } = await res.json();
+    setCategories((prev) => prev.map((c) => c.name === selectedCat ? { ...c, image: url } : c));
+    setPreview("");
+    if (fileRef.current) fileRef.current.value = "";
+    toast.success("تم رفع الصورة بنجاح ✅");
+  }
+
+  const currentImage = categories.find((c) => c.name === selectedCat)?.image ?? "";
 
   const visible = settings
     .filter((s) => s.showInHome && s.category !== "__config__")
@@ -84,6 +124,47 @@ export default function CategoryItemsPage() {
             ⚠️ يوجد {visible.length} تصنيف مختار، سيظهر أول {maxInput} فقط
           </span>
         )}
+      </div>
+
+      {/* Category image upload */}
+      <div className="bg-white rounded-xl shadow p-4 mb-4">
+        <h2 className="text-sm font-semibold text-gray-700 mb-3">صورة التصنيف في قسم &quot;تسوق حسب الأقسام&quot;</h2>
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-xs text-gray-500">اختر التصنيف</label>
+            <select
+              value={selectedCat}
+              onChange={(e) => { setSelectedCat(e.target.value); setPreview(""); if (fileRef.current) fileRef.current.value = ""; }}
+              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[160px]"
+            >
+              <option value="">-- اختر --</option>
+              {categories.map((c) => (
+                <option key={c.name} value={c.name}>{c.name}</option>
+              ))}
+            </select>
+          </div>
+
+          {selectedCat && (
+            <>
+              {(preview || currentImage) && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={preview || currentImage} alt="" className="w-16 h-16 object-cover rounded-lg border" />
+              )}
+              <div className="flex flex-col gap-1">
+                <label className="text-xs text-gray-500">ارفع صورة جديدة</label>
+                <input ref={fileRef} type="file" accept="image/*" onChange={handleFileChange}
+                  className="text-sm text-gray-600 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+              </div>
+              <button
+                onClick={handleUploadImage}
+                disabled={uploading || !fileRef.current?.files?.length}
+                className="bg-teal-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {uploading ? "جاري الرفع..." : "رفع الصورة"}
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">

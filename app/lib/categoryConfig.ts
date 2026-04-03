@@ -6,6 +6,7 @@ export interface SlugConfig {
     brand?: string;
     category?: string;
     nameIncludes?: string[];
+    nameExcludes?: string[];
   };
 }
 
@@ -87,7 +88,7 @@ export const slugConfigs: Record<string, SlugConfig> = {
     label: "ايفون 16 عادي",
     parentLabel: "الهواتف الذكية",
     parentHref: "/smartphones",
-    filters: { brand: "Apple", nameIncludes: ["iphone 16", "ايفون 16", "آيفون 16"] },
+    filters: { category: "ايفون 16" },
   },
   "iphone-17-pro-max": {
     label: "ابل ايفون 17 برو ماكس",

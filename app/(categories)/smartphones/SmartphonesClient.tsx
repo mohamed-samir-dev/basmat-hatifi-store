@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import ProductCard from "../../components/products/ProductCard";
 import type { Product } from "../../components/products/types";
+import { sortProducts } from "../../lib/sortProducts";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -23,7 +24,7 @@ export default function SmartphonesClient() {
           p.category?.toLowerCase().includes("iphone") ||
           p.category?.toLowerCase().includes("samsung")
         );
-        setProducts(filtered);
+        setProducts(sortProducts(filtered));
       })
       .catch(console.error)
       .finally(() => setLoading(false));

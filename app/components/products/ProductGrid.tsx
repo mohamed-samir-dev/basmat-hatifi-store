@@ -4,6 +4,7 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import type { Product } from "./types";
 import CategoryBanner from "../banner/CategoryBanner";
+import { sortProducts } from "../../lib/sortProducts";
 
 const LIMIT = 4;
 
@@ -125,6 +126,7 @@ export default function ProductGrid() {
       const cat = p.category || "أخرى";
       (map[cat] ??= []).push(p);
     });
+    Object.keys(map).forEach((cat) => { map[cat] = sortProducts(map[cat]); });
     return map;
   }, [products]);
 
