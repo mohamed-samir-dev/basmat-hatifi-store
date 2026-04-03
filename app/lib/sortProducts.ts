@@ -40,8 +40,8 @@ function parseStorage(s?: string, name?: string): number {
 
 export function sortProducts(products: Product[]): Product[] {
   return [...products].sort((a, b) => {
-    const colorDiff = colorPriority(a.color, a.name) - colorPriority(b.color, b.name);
-    if (colorDiff !== 0) return colorDiff;
-    return parseStorage(a.storage, a.name) - parseStorage(b.storage, b.name);
+    const storageDiff = parseStorage(a.storage, a.name) - parseStorage(b.storage, b.name);
+    if (storageDiff !== 0) return storageDiff;
+    return colorPriority(a.color, a.name) - colorPriority(b.color, b.name);
   });
 }
