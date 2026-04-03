@@ -15,11 +15,13 @@ const resolveImg = (src: string) =>
   src.startsWith("http") ? src : `${API}${src.startsWith("/") ? src : "/" + src}`;
 
 export default function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
-  const { name, salePrice, discountPercent = 0 } = product;
+  const { name, discountPercent = 0 } = product;
   const image = product.images?.[0] || product.image;
   const resolvedImage = image ? resolveImg(image) : undefined;
   const originalPrice = product.originalPrice ?? product.price ?? 0;
-  const hasDiscount = salePrice && salePrice < originalPrice;
+  const salePrice = product.salePrice;
+  const displayPrice = salePrice != null && salePrice > 0 ? salePrice : originalPrice;
+  const hasDiscount = salePrice != null && salePrice > 0 && salePrice < originalPrice;
   const addItem = useCartStore((s) => s.addItem);
   const router = useRouter();
   const [added, setAdded] = useState(false);
@@ -72,10 +74,10 @@ export default function ProductCard({ product, priority = false }: { product: Pr
           {hasDiscount ? (
             <>
               <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through">{fmt(originalPrice)} ر.س</span>
-              <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(salePrice)} ر.س</span>
+              <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(displayPrice)} ر.س</span>
             </>
           ) : (
-            <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(originalPrice)} ر.س</span>
+            <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(displayPrice)} ر.س</span>
           )}
         </div>
       </div>

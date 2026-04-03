@@ -86,7 +86,10 @@ export default function NewProductPage() {
         "name", "originalPrice", "salePrice", "category", "subCategory", "brand",
         "color", "storage", "network", "screenSize", "description", "deliveryTime", "warrantyYears",
       ];
-      fields.forEach((f) => fd.append(f, String(form[f])));
+      fields.forEach((f) => {
+        if (f === "salePrice" && !form.salePrice) return;
+        fd.append(f, String(form[f]));
+      });
       fd.append("freeDelivery", String(form.freeDelivery));
       fd.append("taxIncluded", String(form.taxIncluded));
       fd.append("inStock", String(form.inStock));
