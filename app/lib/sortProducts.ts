@@ -2,20 +2,20 @@ import type { Product } from "../components/products/types";
 
 const COLOR_ORDER: string[] = [
   "برتقالي",
-  "أسود تيتانيوم",
-  "أسود",
-  "أبيض تيتانيوم",
-  "أبيض",
+  "سيلفر",
+  "سيبفلر",
   "أزرق تيتانيوم",
   "أزرق فاتح",
   "أزرق",
   "ازرق",
+  "أسود تيتانيوم",
+  "أسود",
+  "أبيض تيتانيوم",
+  "أبيض",
   "بينك",
   "جولد",
   "رصاصي",
   "رمادي تيتانيوم",
-  "سيلفر",
-  "سيبفلر",
   "صحراوي",
 ];
 
@@ -31,11 +31,17 @@ function colorPriority(color?: string, name?: string): number {
 }
 
 function parseStorage(s?: string, name?: string): number {
-  const raw = (s && s.trim()) ? s.trim() : (name || "");
-  const match = raw.replace(/\s+/g, "").match(/(\d+)(tb|gb)/i);
-  if (!match) return Infinity;
-  const val = parseInt(match[1]);
-  return match[2].toLowerCase() === "tb" ? val * 1024 : val;
+  const sources = [s, name].filter(Boolean) as string[];
+  for (const raw of sources) {
+    const clean = raw.replace(/\s+/g, "");
+    const en = clean.match(/(\d+)(tb|gb)/i) || clean.match(/(gb|tb)(\d+)/i);
+    if (en) {
+      const num = parseInt(en[1]) || parseInt(en[2]);
+      const unit = (en[1].match(/\d/) ? en[2] : en[1]).toLowerCase();
+      return unit === "tb" ? num * 1024 : num;
+    }
+  }
+  return Infinity;
 }
 
 export function sortProducts(products: Product[]): Product[] {
