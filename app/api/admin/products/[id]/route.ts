@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackend, forwardCookies } from "../../_lib";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const res = await fetch(`${getBackend()}/api/admin/products/${id}`, forwardCookies(req, { method: "GET" }));
@@ -11,8 +14,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const contentType = req.headers.get("content-type") || "";
     const cookie = req.headers.get("cookie") || "";
+    const contentType = req.headers.get("content-type") || "";
     const body = await req.arrayBuffer();
     const res = await fetch(`${getBackend()}/api/admin/products/${id}`, {
       method: "PUT",

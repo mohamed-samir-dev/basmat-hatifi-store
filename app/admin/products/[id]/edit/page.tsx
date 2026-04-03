@@ -262,7 +262,15 @@ export default function EditProductPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Field label="الماركة">
-              <input type="text" value={form.brand} onChange={(e) => set("brand", e.target.value)} className={inputCls} />
+              <select value={form.brand} onChange={(e) => set("brand", e.target.value)} className={inputCls}>
+                <option value="">-- اختر الماركة --</option>
+                <option value="Apple">Apple</option>
+                <option value="Samsung">Samsung</option>
+                <option value="Sony">Sony</option>
+                <option value="Microsoft">Microsoft</option>
+                <option value="Anker">Anker</option>
+                <option value="Other">Other</option>
+              </select>
             </Field>
             <Field label="اللون">
               <input type="text" value={form.color} onChange={(e) => set("color", e.target.value)} className={inputCls} />
