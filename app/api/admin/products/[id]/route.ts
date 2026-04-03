@@ -15,12 +15,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   try {
     const cookie = req.headers.get("cookie") || "";
-    const contentType = req.headers.get("content-type") || "";
-    const body = await req.arrayBuffer();
+    const body = await req.json();
     const res = await fetch(`${getBackend()}/api/admin/products/${id}`, {
       method: "PUT",
-      headers: { cookie, "content-type": contentType },
-      body,
+      headers: { cookie, "content-type": "application/json" },
+      body: JSON.stringify(body),
     });
     const text = await res.text();
     try {

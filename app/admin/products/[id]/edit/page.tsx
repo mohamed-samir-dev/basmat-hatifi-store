@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -52,14 +52,9 @@ export default function EditProductPage() {
   const fromPage = searchParams.get("from") || "1";
   const backUrl = `/admin/products?page=${fromPage}`;
   const [form, setForm] = useState<ProductForm>(EMPTY_FORM);
-  const [currentImage, setCurrentImage] = useState<string>("");
-  const [newImageFile, setNewImageFile] = useState<File | null>(null);
-  const [newImagePreview, setNewImagePreview] = useState<string>("");
   const [colors, setColors] = useState<ColorVariant[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [imageTs, setImageTs] = useState(() => Date.now());
-  const imageInputRef = useRef<HTMLInputElement>(null);
   const [subCategories, setSubCategories] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
 
@@ -109,7 +104,6 @@ export default function EditProductPage() {
             charging: p.specs?.charging || "", os: p.specs?.os || "", extras: p.specs?.extras || "",
           },
         });
-        setCurrentImage(p.image || "");
         if (Array.isArray(p.colors)) setColors(p.colors);
       })
       .catch(() => toast.error("فشل تحميل المنتج"))
@@ -124,57 +118,40 @@ export default function EditProductPage() {
     setForm((prev) => ({ ...prev, specs: { ...prev.specs, [key]: value } }));
   }
 
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setNewImageFile(file);
-    setNewImagePreview(URL.createObjectURL(file));
-    // reset input so same file can be re-selected
-    e.target.value = "";
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     try {
-      const fd = new FormData();
+      const body: Record<string, unknown> = {};
       const fields: (keyof ProductForm)[] = [
         "name", "originalPrice", "salePrice", "category", "subCategory", "brand",
         "color", "storage", "network", "screenSize", "description", "deliveryTime", "warrantyYears",
       ];
       fields.forEach((f) => {
         if (f === "salePrice" && !form.salePrice) return;
-        fd.append(f, String(form[f]));
+        body[f] = form[f];
       });
-      fd.append("freeDelivery", String(form.freeDelivery));
-      fd.append("taxIncluded", String(form.taxIncluded));
-      fd.append("inStock", String(form.inStock));
-      fd.append("installment.available", String(form.installmentAvailable));
-      fd.append("installment.downPayment", form.installmentDownPayment);
-      fd.append("installment.months", form.installmentMonths);
-      fd.append("installment.note", form.installmentNote);
+      body["freeDelivery"] = form.freeDelivery;
+      body["taxIncluded"] = form.taxIncluded;
+      body["inStock"] = form.inStock;
+      body["installment.available"] = String(form.installmentAvailable);
+      body["installment.downPayment"] = form.installmentDownPayment;
+      body["installment.months"] = form.installmentMonths;
+      body["installment.note"] = form.installmentNote;
 
       const specKeys = Object.keys(form.specs) as (keyof ProductForm["specs"])[];
-      specKeys.forEach((k) => fd.append(`specs.${k}`, form.specs[k]));
+      specKeys.forEach((k) => { body[`specs.${k}`] = form.specs[k]; });
 
-      if (form.multiColor) fd.append("colors", JSON.stringify(colors));
-
-      if (newImageFile) fd.append("image", newImageFile);
+      if (form.multiColor) body["colors"] = JSON.stringify(colors);
 
       const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",
         credentials: "include",
-        body: fd,
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "فشل الحفظ");
-      // update displayed image from response and bust cache
-      if (data.image) {
-        setCurrentImage(data.image);
-        setImageTs(Date.now());
-        setNewImageFile(null);
-        setNewImagePreview("");
-      }
       toast.success("تم حفظ التعديلات بنجاح ✅");
       router.push(backUrl);
     } catch (err: unknown) {
@@ -191,8 +168,6 @@ export default function EditProductPage() {
       </div>
     );
   }
-
-  const displayImage = newImagePreview || (currentImage ? `${currentImage}?t=${imageTs}` : "");
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
@@ -407,33 +382,6 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {/* Image */}
-        <div className="bg-white rounded-xl shadow p-5 space-y-4">
-          <h2 className="font-semibold text-gray-700 border-b pb-2">الصورة</h2>
-          <div className="flex flex-col sm:flex-row items-start gap-5">
-            {displayImage ? (
-              <div className="w-32 h-32 rounded-xl overflow-hidden border border-gray-200 shrink-0 flex items-center justify-center bg-gray-50">
-                <img src={displayImage} alt="صورة المنتج" className="w-full h-full object-contain" />
-              </div>
-            ) : (
-              <div className="w-32 h-32 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center text-gray-400 text-xs shrink-0">
-                لا توجد صورة
-              </div>
-            )}
-            <div className="flex flex-col gap-2">
-              <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-              <button
-                type="button"
-                onClick={() => imageInputRef.current?.click()}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
-              >
-                {displayImage ? "تغيير الصورة" : "رفع صورة"}
-              </button>
-              {newImageFile && <p className="text-xs text-green-600">✓ {newImageFile.name}</p>}
-              {!newImageFile && currentImage && <p className="text-xs text-gray-400">الصورة الحالية محفوظة</p>}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Bottom Save */}
