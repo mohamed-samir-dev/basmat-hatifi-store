@@ -11,11 +11,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const formData = await req.formData();
-    const res = await fetch(`${getBackend()}/api/admin/products/${id}`, forwardCookies(req, {
+    const contentType = req.headers.get("content-type") || "";
+    const cookie = req.headers.get("cookie") || "";
+    const body = await req.arrayBuffer();
+    const res = await fetch(`${getBackend()}/api/admin/products/${id}`, {
       method: "PUT",
-      body: formData,
-    }));
+      headers: { cookie, "content-type": contentType },
+      body,
+    });
     const text = await res.text();
     try {
       return NextResponse.json(JSON.parse(text), { status: res.status });
