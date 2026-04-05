@@ -4,7 +4,7 @@ import ClientLayout from "./components/ClientLayout";
 import Footer from "./components/Footer";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
-const SITE_URL = "https://www.pasmthatfee.com";
+const SITE_URL = "https://www.pasmthatfere.com";
 
 async function getCompany() {
   try {
@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const description = c.details || "متجر بصمة هاتفي المعتمد - أجهزة إلكترونية بالأقساط داخل المملكة العربية السعودية. أفضل الأسعار على الجوالات، اللابتوبات، الأجهزة اللوحية والإكسسوارات.";
   const logoUrl = c.logo
     ? (c.logo.startsWith("http") ? c.logo : `${BACKEND}${c.logo}`)
-    : `${SITE_URL}/og-default.png`;
+    : `${SITE_URL}/og-image.png`;
 
   return {
     metadataBase: new URL(SITE_URL),
