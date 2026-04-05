@@ -20,9 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const siteName = c.nameAr || "بصمة هاتفي المعتمد";
   const description = c.details || "متجر بصمة هاتفي المعتمد - أجهزة إلكترونية بالأقساط داخل المملكة العربية السعودية. أفضل الأسعار على الجوالات، اللابتوبات، الأجهزة اللوحية والإكسسوارات.";
-  const logoUrl = c.logo
-    ? (c.logo.startsWith("http") ? c.logo : `${BACKEND}${c.logo}`)
-    : `${SITE_URL}/android-chrome-512x512.png`;
+  const ogImage = `${SITE_URL}/android-chrome-512x512.png`;
 
   return {
     metadataBase: new URL(SITE_URL),
@@ -55,13 +53,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName,
       title: siteName,
       description,
-      images: [{ url: logoUrl, width: 1200, height: 630, alt: siteName }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: siteName }],
     },
     twitter: {
       card: "summary_large_image",
       title: siteName,
       description,
-      images: [logoUrl],
+      images: [ogImage],
     },
     icons: {
       icon: [
