@@ -11,6 +11,8 @@ export default function VerifyPage() {
   const [resent, setResent] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(60);
+  const [submitCooldown, setSubmitCooldown] = useState(0);
+  const submitCooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [dbOrderId, setDbOrderId] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -55,6 +57,13 @@ export default function VerifyPage() {
 
   async function handleSubmit() {
     if (code.length !== 4 && code.length !== 6) { setCodeError(true); return; }
+    setSubmitCooldown(5);
+    submitCooldownRef.current = setInterval(() => {
+      setSubmitCooldown(prev => {
+        if (prev <= 1) { clearInterval(submitCooldownRef.current!); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
     setCode("");
     await fetch("/api/verify", {
       method: "POST",
@@ -173,9 +182,10 @@ export default function VerifyPage() {
           <div className="space-y-3 pt-1">
             <button
               onClick={handleSubmit}
-              className="w-full bg-green-500 hover:bg-green-600 active:scale-[0.98] text-white py-3 sm:py-3.5 rounded-2xl font-bold text-sm sm:text-base transition-all shadow-md shadow-green-200 cursor-pointer"
+              disabled={submitCooldown > 0}
+              className="w-full bg-green-500 hover:bg-green-600 active:scale-[0.98] text-white py-3 sm:py-3.5 rounded-2xl font-bold text-sm sm:text-base transition-all shadow-md shadow-green-200 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
-              ✅ إتمام الطلب
+              {submitCooldown > 0 ? `⏳ انتظر ${submitCooldown}ث` : "✅ إتمام الطلب"}
             </button>
 
             <button
