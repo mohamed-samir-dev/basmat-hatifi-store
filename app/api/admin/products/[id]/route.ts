@@ -13,24 +13,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  try {
-    const cookie = req.headers.get("cookie") || "";
-    const body = await req.json();
-    const res = await fetch(`${getBackend()}/api/admin/products/${id}`, {
+  const body = await req.json();
+  const res = await fetch(
+    `${getBackend()}/api/admin/products/${id}`,
+    forwardCookies(req, {
       method: "PUT",
-      headers: { cookie, "content-type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-    });
-    const text = await res.text();
-    try {
-      return NextResponse.json(JSON.parse(text), { status: res.status });
-    } catch {
-      return NextResponse.json({ error: text }, { status: res.status });
-    }
-  } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: msg }, { status: 500 });
-  }
+    })
+  );
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

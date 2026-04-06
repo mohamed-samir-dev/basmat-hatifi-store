@@ -1,6 +1,6 @@
 "use client";
 import { Suspense, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 type Product = {
@@ -21,24 +21,24 @@ const TrashIcon = () => (
 
 const EditIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
   </svg>
 );
 
 function ProductsContent() {
-  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [subCategories, setSubCategories] = useState<SubCat[]>([]);
   const [selectedCat, setSelectedCat] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [confirmDelete, setConfirmDelete] = useState<{ id: string; name: string } | null>(null);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState(() => Number(searchParams.get("page")) || 1);
   const PAGE_SIZE = 10;
 
   function goToPage(page: number) {
     setCurrentPage(page);
-    router.replace(`/admin/products?page=${page}`, { scroll: false });
   }
 
   async function fetchProducts() {
@@ -81,9 +81,10 @@ function ProductsContent() {
         <h1 className="text-2xl font-bold text-gray-800">الأصناف</h1>
         <button
           onClick={() => router.push("/admin/products/new")}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
-          + إضافة منتج
+          <span className="text-lg leading-none">+</span>
+          إضافة منتج جديد
         </button>
       </div>
 
@@ -159,7 +160,7 @@ function ProductsContent() {
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">
-                      <button onClick={() => router.push(`/admin/products/${p._id}/edit?from=${currentPage}`)} className="text-blue-500 hover:text-blue-700" title="تعديل">
+                      <button onClick={() => router.push(`/admin/products/${p._id}/edit`)} className="text-blue-500 hover:text-blue-700" title="تعديل">
                         <EditIcon />
                       </button>
                       <button onClick={() => setConfirmDelete({ id: p._id, name: p.name })} className="text-red-500 hover:text-red-700" title="حذف">

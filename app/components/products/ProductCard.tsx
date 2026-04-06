@@ -20,8 +20,8 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   const resolvedImage = image ? resolveImg(image) : undefined;
   const originalPrice = product.originalPrice ?? product.price ?? 0;
   const salePrice = product.salePrice;
-  const displayPrice = salePrice != null && salePrice > 0 ? salePrice : originalPrice;
   const hasDiscount = salePrice != null && salePrice > 0 && salePrice < originalPrice;
+  const displayPrice = hasDiscount ? salePrice : originalPrice;
   const addItem = useCartStore((s) => s.addItem);
   const router = useRouter();
   const [added, setAdded] = useState(false);

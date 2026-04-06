@@ -23,8 +23,22 @@ export async function POST(req: NextRequest) {
   const data = await res.json();
   const response = NextResponse.json(data, { status: res.status });
 
-  const setCookie = res.headers.get("set-cookie");
-  if (setCookie) response.headers.set("set-cookie", setCookie);
+  if (res.ok) {
+    const setCookie = res.headers.get("set-cookie");
+    if (setCookie) {
+      // Extract token value from set-cookie header
+      const tokenMatch = setCookie.match(/admin_token=([^;]+)/);
+      if (tokenMatch) {
+        response.cookies.set("admin_token", tokenMatch[1], {
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax",
+          maxAge: 8 * 60 * 60,
+          path: "/",
+        });
+      }
+    }
+  }
 
   return response;
 }
