@@ -20,6 +20,7 @@ export default function CategoryItemsPage() {
   const [selectedCat, setSelectedCat] = useState("");
   const [preview, setPreview] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [hasFile, setHasFile] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -56,6 +57,7 @@ export default function CategoryItemsPage() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    setHasFile(!!file);
     if (!file) return;
     setPreview(URL.createObjectURL(file));
   }
@@ -78,6 +80,7 @@ export default function CategoryItemsPage() {
     const { url } = await res.json();
     setCategories((prev) => prev.map((c) => c.name === selectedCat ? { ...c, image: url } : c));
     setPreview("");
+    setHasFile(false);
     if (fileRef.current) fileRef.current.value = "";
     toast.success("تم رفع الصورة بنجاح ✅");
   }
@@ -134,7 +137,7 @@ export default function CategoryItemsPage() {
             <label className="text-xs text-gray-500">اختر التصنيف</label>
             <select
               value={selectedCat}
-              onChange={(e) => { setSelectedCat(e.target.value); setPreview(""); if (fileRef.current) fileRef.current.value = ""; }}
+              onChange={(e) => { setSelectedCat(e.target.value); setPreview(""); setHasFile(false); if (fileRef.current) fileRef.current.value = ""; }}
               className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[160px]"
             >
               <option value="">-- اختر --</option>
@@ -157,7 +160,7 @@ export default function CategoryItemsPage() {
               </div>
               <button
                 onClick={handleUploadImage}
-                disabled={uploading || !fileRef.current?.files?.length}
+                disabled={uploading || !hasFile}
                 className="bg-teal-600 text-white text-sm px-4 py-1.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {uploading ? "جاري الرفع..." : "رفع الصورة"}

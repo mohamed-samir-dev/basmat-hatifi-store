@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { apiFetch } from "../../lib/api";
@@ -71,6 +72,7 @@ export default function SubCategoriesPage() {
     fetchData();
   }
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchData(); }, []);
 
   const visibleCount = settings.filter((s) => s.showInHome && s.category !== "__config__").length;
@@ -159,7 +161,7 @@ export default function SubCategoriesPage() {
 
       <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 text-sm mb-4">
         <span className="shrink-0">⚠️</span>
-        <span>لعرض منتجات تصنيف فرعي في الصفحة الرئيسية، فعّل خيار <span className="font-bold">"عرض في الرئيسية"</span> بجانبه، ثم حدد <span className="font-bold">الترتيب</span> الذي تريده — الرقم الأصغر يظهر أولاً. الحد الأقصى {max} تصنيفات — لزيادة العدد اذهب لـ <a href="/admin/category-items" className="font-bold underline hover:text-amber-800">إعدادات التصنيفات</a>.</span>
+        <span>لعرض منتجات تصنيف فرعي في الصفحة الرئيسية، فعّل خيار <span className="font-bold">&quot;عرض في الرئيسية&quot;</span> بجانبه، ثم حدد <span className="font-bold">الترتيب</span> الذي تريده — الرقم الأصغر يظهر أولاً. الحد الأقصى {max} تصنيفات — لزيادة العدد اذهب لـ <Link href="/admin/category-items" className="font-bold underline hover:text-amber-800">إعدادات التصنيفات</Link>.</span>
       </div>
 
       <div className="bg-white rounded-xl shadow overflow-hidden">

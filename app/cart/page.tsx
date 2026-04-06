@@ -16,6 +16,7 @@ export default function CartPage() {
   const { items, removeItem, updateQty, totalPrice, totalItems, setCustomer, customer } = useCartStore();
   const [mounted, setMounted] = useState(false);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
   const total = mounted ? totalPrice() : 0;

@@ -13,6 +13,7 @@ export default function SearchClient() {
 
   useEffect(() => {
     if (!q) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLoading(true);
     fetch(`/api/products?q=${encodeURIComponent(q)}`)
       .then((r) => r.json())
