@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 const BACKEND = "https://backend-for-bsmastore-public-production-5e58.up.railway.app";
 
 export function getBackend(): string {
-  return process.env.BACKEND_URL || BACKEND;
+  return process.env.BACKEND_URL || process.env.NEXT_PUBLIC_API_URL || BACKEND;
 }
 
 export function forwardCookies(req: NextRequest, init: RequestInit): RequestInit {

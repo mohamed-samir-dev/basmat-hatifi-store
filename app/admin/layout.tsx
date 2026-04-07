@@ -1,17 +1,28 @@
 "use client";
-import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import AdminNavbar from "./components/AdminNavbar";
 import AdminSidebar from "./components/AdminSidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [verified, setVerified] = useState(false);
   const isLogin = pathname === "/admin/login";
   const isPrint = pathname.endsWith("/print") || pathname.endsWith("/receipt") || pathname.endsWith("/invoice") || pathname.endsWith("/contract");
 
+  useEffect(() => {
+    if (isLogin || isPrint) { setVerified(true); return; }
+    fetch("/api/admin/verify", { credentials: "include" })
+      .then((r) => { if (!r.ok) router.replace("/admin/login"); else setVerified(true); })
+      .catch(() => router.replace("/admin/login"));
+  }, [pathname]);
+
   if (isLogin || isPrint) return <>{children}</>;
+
+  if (!verified) return null;
 
   return (
     <div className="min-h-screen bg-gray-50" dir="rtl">
