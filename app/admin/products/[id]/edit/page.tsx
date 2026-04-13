@@ -40,9 +40,10 @@ export default function EditProductPage() {
           description: product.description || "",
           inStock: product.inStock === false ? "false" : "true",
         });
-        if (product.image) {
-          setImageUrl(product.image);
-          setImagePreview(product.image);
+        const img = product.images?.[0] || product.image || "";
+        if (img) {
+          setImageUrl(img);
+          setImagePreview(img);
         }
       }
       setLoading(false);
@@ -91,7 +92,10 @@ export default function EditProductPage() {
         inStock: form.inStock === "true",
         salePrice: form.salePrice ? Number(form.salePrice) : "",
       };
-      if (imageUrl) body.image = imageUrl;
+      if (imageUrl) {
+        body.image = imageUrl;
+        body.images = [imageUrl];
+      }
 
       const res = await fetch(`/api/admin/products/${id}`, {
         method: "PUT",

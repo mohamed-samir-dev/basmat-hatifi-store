@@ -71,7 +71,10 @@ export default function NewProductPage() {
         inStock: form.inStock === "true",
       };
       if (form.salePrice) body.salePrice = Number(form.salePrice);
-      if (imageUrl) body.image = imageUrl;
+      if (imageUrl) {
+        body.image = imageUrl;
+        body.images = [imageUrl];
+      }
 
       const res = await fetch("/api/admin/products", {
         method: "POST",
