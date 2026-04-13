@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { slugConfigs } from "./lib/categoryConfig";
 
-const BASE_URL = "https://pasmthatfee.com";
+const BASE_URL = "https://pasmthatfi.com";
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const staticRoutes = [
