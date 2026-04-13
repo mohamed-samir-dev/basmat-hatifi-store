@@ -35,6 +35,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
     setTimeout(() => {
       setToast(false);
       setAdded(false);
+      window.scrollTo(0, 0);
       router.push("/cart");
     }, 1000);
   };
