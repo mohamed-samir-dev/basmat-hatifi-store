@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, useEffect, ReactNode, ReactElement } from "react";
+import { useRef, useState, useEffect, ReactNode, ReactElement, useCallback } from "react";
 
 function FadeUp({ children, delay = 0 }: { children: ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,11 +44,21 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({ title = "وسائل التواصل", phone, whatsapp, email, fadeDelay = 300 }: ContactSectionProps) {
+  const [copied, setCopied] = useState(false);
+
+  const copyPhone = useCallback(() => {
+    if (!phone) return;
+    navigator.clipboard.writeText(phone).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [phone]);
+
   const items = [
-    phone    && { label: "جوال",              value: phone,    href: `tel:+${phone.replace(/\D/g, "")}`,          iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600",  hoverBorder: "hover:border-blue-200",    Icon: IconPhone },
+    phone    && { label: copied ? "✅ تم نسخ الرقم" : "جوال — اضغط للنسخ", value: phone, href: "#", onClick: copyPhone, iconBg: "bg-gradient-to-br from-blue-500 to-indigo-600",  hoverBorder: "hover:border-blue-200",    Icon: IconPhone },
     whatsapp && { label: "واتساب",            value: whatsapp, href: `https://wa.me/${whatsapp.replace(/\D/g, "")}`, iconBg: "bg-gradient-to-br from-emerald-500 to-green-600", hoverBorder: "hover:border-emerald-200", Icon: IconWhatsapp },
     email    && { label: "البريد الإلكتروني", value: email,    href: `mailto:${email}`,                            iconBg: "bg-gradient-to-br from-rose-500 to-pink-600",    hoverBorder: "hover:border-rose-200",    Icon: IconMail },
-  ].filter(Boolean) as { label: string; value: string; href: string; iconBg: string; hoverBorder: string; Icon: () => ReactElement }[];
+  ].filter(Boolean) as { label: string; value: string; href: string; onClick?: () => void; iconBg: string; hoverBorder: string; Icon: () => ReactElement }[];
 
   if (!items.length) return null;
 
@@ -71,7 +81,8 @@ export default function ContactSection({ title = "وسائل التواصل", ph
             {items.map((item, i) => (
               <FadeUp key={item.label} delay={i * 80}>
                 <a
-                  href={item.href}
+                  href={item.onClick ? undefined : item.href}
+                  onClick={item.onClick ? (e) => { e.preventDefault(); item.onClick!(); } : undefined}
                   target={item.href.startsWith("http") ? "_blank" : undefined}
                   rel="noreferrer"
                   className={`group/card flex items-center gap-3 p-3 sm:p-4 lg:p-5 rounded-xl sm:rounded-2xl border border-gray-100 bg-gray-50/60 ${item.hoverBorder} hover:bg-white hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer`}
