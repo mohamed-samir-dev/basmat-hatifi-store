@@ -18,9 +18,9 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   const { name, discountPercent = 0 } = product;
   const image = product.images?.[0] || product.image;
   const resolvedImage = image ? resolveImg(image) : undefined;
-  const originalPrice = product.originalPrice ?? product.price ?? 0;
-  const salePrice = product.salePrice;
-  const hasDiscount = salePrice != null && salePrice > 0 && salePrice < originalPrice;
+  const originalPrice = product.originalPrice || product.price || 0;
+  const salePrice = product.salePrice && product.salePrice > 0 ? product.salePrice : undefined;
+  const hasDiscount = salePrice != null && salePrice < originalPrice;
   const displayPrice = hasDiscount ? salePrice : originalPrice;
   const addItem = useCartStore((s) => s.addItem);
   const router = useRouter();
@@ -43,60 +43,86 @@ export default function ProductCard({ product, priority = false }: { product: Pr
   return (
     <>
       {toast && (
-        <div className="fixed top-4 right-4 z-50 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-2 text-base font-medium animate-fade-in-down">
+        <div className="fixed top-4 right-4 z-50 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-2 text-base font-medium animate-fade-in-down">
           <IoCheckmarkCircleOutline size={18} />
           تمت إضافة المنتج للسلة
         </div>
       )}
-    <Link href={`/product/${product._id}`} className="relative bg-white rounded-xl sm:rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full" dir="rtl">
-      {/* Discount Badge */}
-      {discountPercent > 0 && (
-        <span className="absolute z-10 top-2 right-2 bg-red-600 text-white text-[9px] sm:text-xs md:text-sm font-bold px-1.5 sm:px-2.5 md:px-3 py-0.5 rounded-full">
-          {discountPercent}%-
-        </span>
-      )}
 
-      {/* Image */}
-      <div className="relative w-full" style={{ paddingBottom: "100%" }}>
-        <div className="absolute inset-0 bg-gray-50">
+      <Link
+        href={`/product/${product._id}`}
+        className="product-card group relative flex flex-col h-full rounded-2xl bg-white overflow-hidden transition-all duration-300"
+        dir="rtl"
+      >
+        {/* ── Image ── */}
+        <div className="relative w-full aspect-square bg-gradient-to-br from-slate-50 via-white to-teal-50/40 overflow-hidden">
+          {/* Corner decorative accent */}
+          <div className="absolute top-0 left-0 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-teal-100/50 to-transparent rounded-br-[40px] pointer-events-none" />
+
+          {/* Discount ribbon */}
+          {discountPercent > 0 && (
+            <div className="absolute z-10 top-0 right-0 bg-gradient-to-l from-red-500 to-rose-500 text-white text-[9px] sm:text-[11px] font-extrabold px-3 sm:px-4 py-1 sm:py-1.5 rounded-bl-xl shadow-md">
+              خصم {discountPercent}%
+            </div>
+          )}
+
           {resolvedImage ? (
-            <Image src={resolvedImage} alt={name} fill className="object-contain p-2 sm:p-4" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" priority={priority} loading={priority ? "eager" : "lazy"} />
+            <Image
+              src={resolvedImage}
+              alt={name}
+              fill
+              className="object-contain p-4 sm:p-5 transition-transform duration-500 group-hover:scale-105"
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              priority={priority}
+              loading={priority ? "eager" : "lazy"}
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-300 text-3xl sm:text-5xl">📱</div>
+            <div className="w-full h-full flex items-center justify-center text-gray-200 text-4xl">📱</div>
           )}
         </div>
-      </div>
 
-      {/* Name + Price */}
-      <div className="px-2 sm:px-3 pt-2 sm:pt-3 pb-1.5 sm:pb-2 flex flex-col gap-1 flex-1">
-        <h3 className="text-xs sm:text-sm md:text-base lg:text-lg font-bold text-gray-800 leading-snug line-clamp-2">{name}</h3>
+        {/* ── Content ── */}
+        <div className="flex flex-col flex-1 px-2.5 sm:px-3 pt-2.5 sm:pt-3 pb-1.5 gap-1">
+          <h3 className="text-[11px] sm:text-[13px] md:text-sm font-bold text-gray-800 leading-snug line-clamp-2 group-hover:text-teal-700 transition-colors">
+            {name}
+          </h3>
 
-        <div className="flex flex-col gap-0.5 mt-auto">
-          {hasDiscount ? (
-            <>
-              <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 line-through">{fmt(originalPrice)} ر.س</span>
-              <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(displayPrice)} ر.س</span>
-            </>
-          ) : (
-            <span className="text-sm sm:text-base md:text-lg font-extrabold text-red-600">{fmt(displayPrice)} ر.س</span>
-          )}
+          {/* Price row */}
+          <div className="mt-auto flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-[15px] sm:text-lg md:text-xl font-black text-teal-700">
+              {fmt(displayPrice)}
+            </span>
+            <span className="text-[9px] sm:text-[11px] font-semibold text-teal-600/70">ر.س</span>
+            {hasDiscount && (
+              <span className="text-[10px] sm:text-xs text-gray-400 line-through mr-1">
+                {fmt(originalPrice)}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Cart Button */}
-      <div className="px-2 sm:px-3 pb-2 sm:pb-3 pt-1">
-        <button
-          onClick={handleAddToCart}
-          className={`cart-btn ${added ? "added" : ""}`}
-        >
-          {added ? (
-            <><IoCheckmarkCircleOutline size={16} className="sm:hidden" /><IoCheckmarkCircleOutline size={18} className="hidden sm:block lg:hidden" /><IoCheckmarkCircleOutline size={20} className="hidden lg:block" />تمت الإضافة</>
-          ) : (
-            <><IoCartOutline size={16} className="sm:hidden" /><IoCartOutline size={18} className="hidden sm:block lg:hidden" /><IoCartOutline size={20} className="hidden lg:block" />أضف للسلة</>
-          )}
-        </button>
-      </div>
-    </Link>
+        {/* ── Cart button - always visible ── */}
+        <div className="p-2.5 sm:p-3 pt-1.5">
+          <button
+            onClick={handleAddToCart}
+            className={`cart-btn ${added ? "added" : ""}`}
+          >
+            {added ? (
+              <>
+                <IoCheckmarkCircleOutline size={16} className="sm:hidden" />
+                <IoCheckmarkCircleOutline size={18} className="hidden sm:block" />
+                تمت الإضافة
+              </>
+            ) : (
+              <>
+                <IoCartOutline size={16} className="sm:hidden" />
+                <IoCartOutline size={18} className="hidden sm:block" />
+                أضف للسلة
+              </>
+            )}
+          </button>
+        </div>
+      </Link>
     </>
   );
 }
