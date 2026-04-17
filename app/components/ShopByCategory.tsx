@@ -152,17 +152,19 @@ export default async function ShopByCategory() {
   });
 
   return (
-    <div className="w-full px-3 sm:px-6 py-4" dir="rtl">
-    <section className="max-w-6xl mx-auto rounded-2xl py-10 shadow-md overflow-hidden bg-white" dir="rtl">
-      <div className="px-3 sm:px-4">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex-1 h-px bg-teal-300" />
-          <h2 className="text-lg sm:text-xl font-bold text-teal-700 whitespace-nowrap">تسوق حسب الأقسام</h2>
-          <div className="flex-1 h-px bg-teal-300" />
+    <div className="w-full px-3 sm:px-6 lg:px-8 py-3" dir="rtl">
+      <section className="max-w-6xl mx-auto rounded-3xl py-8 sm:py-10 overflow-hidden bg-gradient-to-br from-white via-teal-50/50 to-emerald-50/50 border border-teal-100/60 shadow-sm" dir="rtl">
+        <div className="px-3 sm:px-5">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-gradient-to-l from-teal-300 to-transparent" />
+            <div className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-5 py-2 rounded-full shadow-md">
+              <span className="text-sm sm:text-base font-bold">تسوق حسب الأقسام</span>
+            </div>
+            <div className="flex-1 h-px bg-gradient-to-r from-teal-300 to-transparent" />
+          </div>
+          <CategorySlider categories={categoriesWithHref} />
         </div>
-        <CategorySlider categories={categoriesWithHref} />
-      </div>
-    </section>
+      </section>
     </div>
   );
 }

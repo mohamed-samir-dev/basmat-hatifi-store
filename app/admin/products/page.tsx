@@ -149,7 +149,7 @@ function ProductsContent() {
                   <td className="px-5 py-3 font-medium text-gray-800">{p.name}</td>
                   <td className="px-5 py-3 text-gray-600">{p.category || "—"}</td>
                   <td className="px-5 py-3 text-gray-700">
-                    {p.salePrice ? (
+                    {p.salePrice && p.salePrice > 0 && p.salePrice < p.originalPrice ? (
                       <span>
                         <span className="text-green-600 font-semibold">{p.salePrice} ر.س</span>
                         <span className="text-gray-400 line-through text-xs mr-1">{p.originalPrice}</span>

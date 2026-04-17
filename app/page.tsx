@@ -79,7 +79,7 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
       />
-      <main className="min-h-screen bg-teal-50">
+      <main className="min-h-screen bg-gradient-to-b from-white via-gray-50/50 to-teal-50/30">
         <Banner />
         <ShopByCategory />
         <ProductGrid />

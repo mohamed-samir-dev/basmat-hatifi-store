@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
+import { IoArrowBack } from "react-icons/io5";
 import ProductCard from "./ProductCard";
 import type { Product } from "./types";
 import CategoryBanner from "../banner/CategoryBanner";
@@ -8,9 +9,7 @@ import { sortProducts } from "../../lib/sortProducts";
 
 const LIMIT = 4;
 
-// map category value → page path for "عرض الكل" link
 const categoryPageMap: Record<string, string> = {
-  // English keys
   smartphone: "/smartphones/apple-only",
   smartphones: "/smartphones/apple-only",
   watch: "/apple-watches/se",
@@ -31,7 +30,6 @@ const categoryPageMap: Record<string, string> = {
   microphone: "/games/microphones",
   figures: "/games/figures",
   rgb: "/games/rgb-lighting",
-  // Arabic category names from products
   "ابل ايفون 17 برو": "/smartphones/iphone-17-pro",
   "ابل ايفون 17 برو ماكس": "/smartphones/iphone-17-pro-max",
   "ابل ايفون 17برو ماكس": "/smartphones/iphone-17-pro-max",
@@ -65,31 +63,39 @@ const categoryPageMap: Record<string, string> = {
   "العاب": "/games/ps5-games",
 };
 
-function CategoryRow({ category, items, isFirst }: { category: string; items: Product[]; isFirst?: boolean }) {
+/* ── alternating accent colors per category row ── */
+const accents = [
+  { bg: "bg-gradient-to-br from-teal-600 to-emerald-700", light: "bg-teal-50", ring: "ring-teal-200" },
+  { bg: "bg-gradient-to-br from-emerald-600 to-green-700", light: "bg-emerald-50", ring: "ring-emerald-200" },
+  { bg: "bg-gradient-to-br from-cyan-600 to-teal-700", light: "bg-cyan-50", ring: "ring-cyan-200" },
+];
+
+function CategoryRow({ category, items, isFirst, accentIdx }: { category: string; items: Product[]; isFirst?: boolean; accentIdx: number }) {
   const visible = items.slice(0, LIMIT);
   const href = categoryPageMap[category] ?? categoryPageMap[category.toLowerCase()] ?? "#";
+  const accent = accents[accentIdx % accents.length];
 
   return (
-    <div className="mb-10">
-      <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6" dir="rtl">
-        <div className="flex-1 h-px bg-gray-300" />
-        <h2 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-700 whitespace-nowrap px-2 sm:px-3">{category}</h2>
-        <div className="flex-1 h-px bg-gray-300" />
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-        {visible.map((p, i) => (
-          <ProductCard key={p._id} product={p} priority={isFirst && i === 0} />
-        ))}
-      </div>
-      <div className="flex items-center gap-3 mt-6" dir="rtl">
-        <div className="flex-1 h-px bg-gray-200" />
+    <div className={`rounded-3xl overflow-hidden ${accent.light} border border-white/60 shadow-sm mb-6`} dir="rtl">
+      {/* ── Top bar: category name + view-all ── */}
+      <div className={`flex items-center justify-between px-4 sm:px-6 py-3 ${accent.bg}`}>
+        <h2 className="text-sm sm:text-base md:text-lg font-bold text-white truncate">{category}</h2>
         <Link
           href={href}
-          className="text-xs sm:text-sm font-semibold text-purple-600 hover:text-purple-800 whitespace-nowrap px-4 py-2 rounded-lg border border-purple-300 hover:bg-purple-50 transition-colors"
+          className="shrink-0 flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-white/90 hover:text-white bg-white/15 hover:bg-white/25 backdrop-blur-sm px-3 py-1.5 rounded-full transition-all duration-200"
         >
           عرض الكل
+          <IoArrowBack size={13} />
         </Link>
-        <div className="flex-1 h-px bg-gray-200" />
+      </div>
+
+      {/* ── Products grid ── */}
+      <div className="p-3 sm:p-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+          {visible.map((p, i) => (
+            <ProductCard key={p._id} product={p} priority={isFirst && i === 0} />
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -112,7 +118,6 @@ export default function ProductGrid() {
       .then(([prods, config]) => {
         setProducts(prods);
         setHomeConfig(Array.isArray(config) ? { settings: config, max: 4 } : config);
-        // Fetch all category banners in one bulk call
         const cats = [...new Set((prods as Product[]).map((p) => p.category).filter(Boolean))];
         if (cats.length) {
           fetch(`/api/admin/category-banners-bulk?categories=${encodeURIComponent(cats.join(","))}`)
@@ -135,7 +140,6 @@ export default function ProductGrid() {
     return map;
   }, [products]);
 
-  // If no settings configured yet, show all. Otherwise filter & sort by settings.
   const orderedCategories = useMemo(() => {
     const allCats = Object.keys(grouped).filter((c) => c !== "أخرى");
     if (!homeConfig) return allCats;
@@ -148,29 +152,25 @@ export default function ProductGrid() {
       .map((s) => s.category)
       .filter((c, idx, arr) => arr.indexOf(c) === idx)
       .filter((c) => allCats.includes(c));
-    // الكاتيجوريز الجديدة اللي ما عندها setting تظهر في الآخر
     const unconfigured = allCats.filter((c) => !settings.some((s) => s.category === c) && c !== "أخرى");
     return [...orderedCats, ...unconfigured];
   }, [grouped, homeConfig]);
 
+  /* ── Loading skeleton ── */
   if (loading) return (
-    <section className="w-full max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
+    <section className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-8">
       {[1, 2, 3].map((g) => (
-        <div key={g} className="mb-10">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-gray-200" />
-            <div className="h-6 w-32 bg-gray-200 animate-pulse rounded" />
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div key={g} className="mb-6 rounded-3xl overflow-hidden border border-gray-100">
+          <div className="h-12 bg-gray-100 animate-pulse" />
+          <div className="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-                <div className="w-full aspect-square bg-gray-200 animate-pulse" />
-                <div className="p-3 space-y-2">
-                  <div className="h-4 bg-gray-200 animate-pulse rounded w-3/4" />
-                  <div className="h-4 bg-gray-200 animate-pulse rounded w-1/2" />
+              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-50">
+                <div className="w-full aspect-square bg-gray-50 animate-pulse" />
+                <div className="p-3 space-y-2.5">
+                  <div className="h-4 bg-gray-100 animate-pulse rounded-full w-3/4" />
+                  <div className="h-4 bg-gray-100 animate-pulse rounded-full w-1/2" />
                 </div>
-                <div className="border-t border-gray-100 h-12 bg-gray-50 animate-pulse" />
+                <div className="h-11 bg-gray-50 animate-pulse mx-3 mb-3 rounded-xl" />
               </div>
             ))}
           </div>
@@ -178,20 +178,24 @@ export default function ProductGrid() {
       ))}
     </section>
   );
+
   if (!products.length) return <p className="text-center text-gray-400 py-10">لا توجد منتجات حالياً</p>;
 
   return (
-    <section className="w-full bg-teal-50 py-6 sm:py-8 overflow-hidden">
-    <div className="max-w-6xl mx-auto px-3 sm:px-4">
-      {orderedCategories.map((category, catIdx) => (
-        <div key={category}>
-          <div className="-mx-3 sm:-mx-4 mb-4 sm:mb-6 border-t border-gray-100 pt-4 sm:pt-6">
-            <CategoryBanner category={category} images={bannerMap[category]} />
+    <section className="w-full py-6 sm:py-8 overflow-hidden">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6">
+        {orderedCategories.map((category, catIdx) => (
+          <div key={category}>
+            {/* Category banner (full-bleed) */}
+            {bannerMap[category]?.length > 0 && (
+              <div className="-mx-3 sm:-mx-6 mb-4">
+                <CategoryBanner category={category} images={bannerMap[category]} />
+              </div>
+            )}
+            <CategoryRow category={category} items={grouped[category]} isFirst={catIdx === 0} accentIdx={catIdx} />
           </div>
-          <CategoryRow category={category} items={grouped[category]} isFirst={catIdx === 0} />
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
     </section>
   );
 }

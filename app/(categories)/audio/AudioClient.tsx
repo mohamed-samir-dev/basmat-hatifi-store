@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { IoHomeOutline, IoChevronBack, IoArrowForward, IoArrowBack } from "react-icons/io5";
 import ProductCard from "../../components/products/ProductCard";
 import type { Product } from "../../components/products/types";
 
@@ -31,66 +32,95 @@ export default function AudioClient() {
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 
   return (
-    <main className="min-h-screen bg-gray-50" dir="rtl">
-      <div className="bg-white border-b border-gray-100 shadow-sm">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-gray-400 mb-2">
-            <Link href="/" className="hover:text-purple-600 transition">الرئيسية</Link>
-            <span>/</span>
-            <span className="text-gray-600">أجهزة صوت و سماعات</span>
-          </div>
-          <h1 className="text-lg sm:text-2xl font-bold text-gray-800">أجهزة صوت و سماعات</h1>
-          <p className="text-xs sm:text-sm text-gray-500">جميع المنتجات المتوفرة</p>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white" dir="rtl">
+      <div className="bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-600 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-white rounded-full -translate-y-1/2 translate-x-1/3" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-1/2 -translate-x-1/4" />
+        </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 relative z-10">
+          <nav className="flex items-center gap-1.5 text-[11px] sm:text-xs text-teal-100 mb-3 sm:mb-4">
+            <Link href="/" className="hover:text-white transition flex items-center gap-1">
+              <IoHomeOutline size={13} />
+              الرئيسية
+            </Link>
+            <IoChevronBack size={11} className="opacity-60" />
+            <span className="text-white font-medium">أجهزة صوت و سماعات</span>
+          </nav>
+          <h1 className="text-xl sm:text-3xl font-extrabold text-white mb-1.5">أجهزة صوت و سماعات</h1>
+          {!loading && products.length > 0 && (
+            <p className="text-teal-100 text-xs sm:text-sm">
+              <span className="inline-flex items-center gap-1 bg-white/15 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-white font-medium">
+                {products.length} منتج متوفر
+              </span>
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl h-52 sm:h-64 animate-pulse" />
+              <div key={i} className="bg-white rounded-2xl overflow-hidden border border-gray-100">
+                <div className="w-full aspect-square bg-gray-50 animate-pulse" />
+                <div className="p-3 space-y-2">
+                  <div className="h-3.5 bg-gray-100 animate-pulse rounded-full w-3/4" />
+                  <div className="h-3.5 bg-gray-100 animate-pulse rounded-full w-1/2" />
+                </div>
+                <div className="h-10 bg-gray-50 animate-pulse mx-3 mb-3 rounded-xl" />
+              </div>
             ))}
           </div>
         ) : !products.length ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
-            <span className="text-5xl">🎧</span>
-            <p className="text-gray-500 text-base font-medium">المنتجات ستُضاف قريباً</p>
-            <Link href="/" className="mt-2 text-sm text-purple-600 hover:underline">← العودة إلى الرئيسية</Link>
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
+            <div className="w-20 h-20 rounded-full bg-teal-50 flex items-center justify-center text-4xl">🎧</div>
+            <div>
+              <p className="text-gray-700 text-base font-bold mb-1">المنتجات ستُضاف قريباً</p>
+              <p className="text-gray-400 text-sm">هذا القسم قيد التحضير، تابعنا للمزيد</p>
+            </div>
+            <Link href="/" className="mt-2 text-sm font-semibold text-teal-600 hover:text-teal-800 flex items-center gap-1 bg-teal-50 px-4 py-2 rounded-full transition-colors">
+              <IoArrowForward size={14} />
+              العودة إلى الرئيسية
+            </Link>
           </div>
         ) : (
           <>
-            <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-4">{products.length} منتج</p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
               {products.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE).map((p) => (
                 <ProductCard key={p._id} product={p} />
               ))}
             </div>
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
+              <div className="flex justify-center items-center gap-1.5 sm:gap-2 mt-10">
                 <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() => { setPage((p) => Math.max(1, p - 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                   disabled={page === 1}
-                  className="px-4 py-2 rounded-lg border text-sm font-medium disabled:opacity-40 hover:bg-purple-50 hover:border-purple-400 transition"
+                  className="flex items-center gap-1 px-3 sm:px-4 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm font-medium disabled:opacity-30 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-700 transition-all"
                 >
+                  <IoArrowForward size={14} />
                   السابق
                 </button>
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                   <button
                     key={n}
-                    onClick={() => setPage(n)}
-                    className={`w-9 h-9 rounded-lg border text-sm font-medium transition ${
-                      page === n ? "bg-purple-600 text-white border-purple-600" : "hover:bg-purple-50 hover:border-purple-400"
+                    onClick={() => { setPage(n); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                    className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                      page === n
+                        ? "bg-gradient-to-br from-teal-600 to-emerald-600 text-white shadow-md shadow-teal-200"
+                        : "border border-gray-200 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-700"
                     }`}
                   >
                     {n}
                   </button>
                 ))}
                 <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  onClick={() => { setPage((p) => Math.min(totalPages, p + 1)); window.scrollTo({ top: 0, behavior: "smooth" }); }}
                   disabled={page === totalPages}
-                  className="px-4 py-2 rounded-lg border text-sm font-medium disabled:opacity-40 hover:bg-purple-50 hover:border-purple-400 transition"
+                  className="flex items-center gap-1 px-3 sm:px-4 py-2 rounded-xl border border-gray-200 text-xs sm:text-sm font-medium disabled:opacity-30 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-700 transition-all"
                 >
                   التالي
+                  <IoArrowBack size={14} />
                 </button>
               </div>
             )}

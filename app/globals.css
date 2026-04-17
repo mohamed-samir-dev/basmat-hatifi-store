@@ -26,22 +26,32 @@ body {
 .scrollbar-visible::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 .scrollbar-visible { scrollbar-width: thin; scrollbar-color: #cbd5e1 #f1f5f9; }
 
+/* Product Card */
+.product-card {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border: 1px solid #f0f0f0;
+}
+.product-card:hover {
+  box-shadow: 0 12px 32px rgba(13, 148, 136, 0.15), 0 2px 8px rgba(0,0,0,0.06);
+  border-color: #99f6e4;
+}
+
 /* Cart Button */
 .cart-btn {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, #0d9488, #059669);
   color: white;
   font-weight: 700;
-  border-radius: 12px;
-  padding: 8px 0;
+  border-radius: 14px;
+  padding: 9px 0;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
   font-size: 0.75rem;
-  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 @media (min-width: 640px) {
@@ -58,7 +68,7 @@ body {
     padding: 12px 0;
     gap: 8px;
     font-size: 0.95rem;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.35);
+    box-shadow: 0 4px 16px rgba(13, 148, 136, 0.3);
   }
 }
 .cart-btn::before {
@@ -68,9 +78,9 @@ body {
   left: -75%;
   width: 50%;
   height: 200%;
-  background: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.2);
   transform: skewX(-20deg);
-  animation: shimmer 2.5s infinite;
+  animation: shimmer 3s infinite;
 }
 @keyframes shimmer {
   0% { left: -75%; }
@@ -78,7 +88,7 @@ body {
 }
 .cart-btn:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+  box-shadow: 0 8px 28px rgba(13, 148, 136, 0.45);
 }
 .cart-btn:active { transform: scale(0.96); }
 .cart-btn.added {
@@ -100,14 +110,14 @@ body {
 
 /* Swiper reviews pagination */
 .swiper-pagination-bullet {
-  background: #d1d5db;
+  background: #99f6e4;
   opacity: 1;
   width: 8px;
   height: 8px;
 }
 .swiper-pagination-bullet-active {
-  background: #7c3aed;
-  width: 20px;
+  background: #0d9488;
+  width: 22px;
   border-radius: 4px;
   transition: width 0.3s ease;
 }
