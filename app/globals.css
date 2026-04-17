@@ -80,7 +80,13 @@ body {
   height: 200%;
   background: rgba(255,255,255,0.2);
   transform: skewX(-20deg);
-  animation: shimmer 3s infinite;
+  will-change: left;
+  /* shimmer disabled on mobile by default */
+}
+@media (min-width: 1024px) {
+  .cart-btn::before {
+    animation: shimmer 3s infinite;
+  }
 }
 @keyframes shimmer {
   0% { left: -75%; }
@@ -95,11 +101,16 @@ body {
   background: linear-gradient(135deg, #34d399, #10b981);
   box-shadow: 0 4px 15px rgba(52, 211, 153, 0.4);
   animation: pop 0.3s ease;
+  will-change: transform;
 }
 @keyframes pop {
   0% { transform: scale(1); }
   50% { transform: scale(1.06); }
   100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cart-btn::before { animation: none; }
+  .cart-btn.added { animation: none; }
 }
 
 @keyframes fade-in-down {
