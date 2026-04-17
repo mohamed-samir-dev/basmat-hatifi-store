@@ -79,18 +79,13 @@ body {
   width: 50%;
   height: 200%;
   background: rgba(255,255,255,0.2);
-  transform: skewX(-20deg);
-  will-change: left;
-  /* shimmer disabled on mobile by default */
-}
-@media (min-width: 1024px) {
-  .cart-btn::before {
-    animation: shimmer 3s infinite;
-  }
+  transform: skewX(-20deg) translateX(-100%);
+  will-change: transform;
+  animation: shimmer 3s infinite;
 }
 @keyframes shimmer {
-  0% { left: -75%; }
-  100% { left: 125%; }
+  0%   { transform: skewX(-20deg) translateX(-100%); }
+  100% { transform: skewX(-20deg) translateX(400%); }
 }
 .cart-btn:hover {
   transform: translateY(-2px) scale(1.02);
