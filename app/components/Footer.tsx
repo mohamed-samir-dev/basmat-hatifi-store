@@ -99,44 +99,44 @@ export default async function Footer() {
             )}
           </ul>
 
-          <div className="flex gap-3 flex-wrap items-center">
+          <div className="flex gap-1 items-center flex-nowrap overflow-x-auto">
             {/* QR */}
             {qrSrc && (
               qrLink
-                ? <a href={qrLink} target="_blank" rel="noreferrer">
-                    <Image src={qrSrc} alt="qr" width={55} height={55} className="object-contain rounded border border-gray-200 bg-white p-1" style={{ width: "auto" }} />
+                ? <a href={qrLink} target="_blank" rel="noreferrer" className="shrink-0">
+                    <Image src={qrSrc} alt="qr" width={200} height={200} className="rounded border border-gray-200 bg-white p-1 h-auto w-auto max-h-16" />
                   </a>
-                : <Image src={qrSrc} alt="qr" width={55} height={55} className="object-contain rounded border border-gray-200 bg-white p-1" style={{ width: "auto" }} />
+                : <Image src={qrSrc} alt="qr" width={200} height={200} className="rounded border border-gray-200 bg-white p-1 shrink-0 h-auto w-auto max-h-16" />
             )}
 
             {/* Footer Items */}
             {footerItems.map((item, i) => {
               const href = getHref(item);
               const el = (
-                <Image key={i} src={item.image} alt={`footer-item-${i}`} width={60} height={40}
-                  className="object-contain rounded" style={{ width: 60, height: 40 }} />
+                <Image key={i} src={item.image} alt={`footer-item-${i}`} width={200} height={200}
+                  className="rounded h-auto w-auto max-h-16" />
               );
               return href
-                ? <a key={i} href={href} target="_blank" rel="noreferrer">{el}</a>
-                : <span key={i}>{el}</span>;
+                ? <a key={i} href={href} target="_blank" rel="noreferrer" className="shrink-0">{el}</a>
+                : <span key={i} className="shrink-0">{el}</span>;
             })}
 
             {/* img1 */}
             {img1 && (
               link1
-                ? <a href={link1} target="_blank" rel="noreferrer">
-                    <Image src={img1} alt="img1" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+                ? <a href={link1} target="_blank" rel="noreferrer" className="shrink-0">
+                    <Image src={img1} alt="img1" width={200} height={200} className="rounded h-auto w-auto max-h-16" />
                   </a>
-                : <Image src={img1} alt="img1" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+                : <Image src={img1} alt="img1" width={200} height={200} className="rounded shrink-0 h-auto w-auto max-h-16" />
             )}
 
             {/* img2 */}
             {img2 && (
               link2
-                ? <a href={link2} target="_blank" rel="noreferrer">
-                    <Image src={img2} alt="img2" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+                ? <a href={link2} target="_blank" rel="noreferrer" className="shrink-0">
+                    <Image src={img2} alt="img2" width={200} height={200} className="rounded h-auto w-auto max-h-16" />
                   </a>
-                : <Image src={img2} alt="img2" width={90} height={60} className="object-contain rounded" style={{ width: 90, height: 60 }} />
+                : <Image src={img2} alt="img2" width={200} height={200} className="rounded shrink-0 h-auto w-auto max-h-16" />
             )}
           </div>
         </div>
