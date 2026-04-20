@@ -15,7 +15,7 @@ export default function SimilarProducts({ product }: { product: Product }) {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    if (!product.category && !product.subCategory && !product.brand) return;
+    if (!product.category && !product.subCategory) return;
 
     fetch(`${API}/api/products`)
       .then((r) => r.json())
@@ -24,19 +24,23 @@ export default function SimilarProducts({ product }: { product: Product }) {
           (p) => p._id !== product._id
         );
 
-        // Score similarity
-        const scored = all.map((p) => {
-          let score = 0;
-          if (p.brand && p.brand === product.brand) score += 3;
-          if (p.subCategory && p.subCategory === product.subCategory) score += 2;
-          if (p.category && p.category === product.category) score += 1;
-          return { product: p, score };
+        // Same category/subCategory but DIFFERENT brand or different model
+        const similar = all.filter((p) => {
+          const sameCategory =
+            (p.subCategory && p.subCategory === product.subCategory) ||
+            (p.category && p.category === product.category);
+          const differentProduct = p.brand !== product.brand || p.name !== product.name;
+          return sameCategory && differentProduct;
         });
 
-        scored.sort((a, b) => b.score - a.score);
-        setProducts(
-          scored.filter((s) => s.score > 0).slice(0, 6).map((s) => s.product)
-        );
+        // Prioritize different brand first, then same brand different model
+        similar.sort((a, b) => {
+          const aDiffBrand = a.brand !== product.brand ? 1 : 0;
+          const bDiffBrand = b.brand !== product.brand ? 1 : 0;
+          return bDiffBrand - aDiffBrand;
+        });
+
+        setProducts(similar.slice(0, 6));
       })
       .catch(() => {});
   }, [product]);
