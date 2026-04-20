@@ -7,6 +7,7 @@ type Product = {
   _id: string;
   name: string;
   category: string;
+  price: number;
   originalPrice: number;
   salePrice?: number;
 };
@@ -149,14 +150,18 @@ function ProductsContent() {
                   <td className="px-5 py-3 font-medium text-gray-800">{p.name}</td>
                   <td className="px-5 py-3 text-gray-600">{p.category || "—"}</td>
                   <td className="px-5 py-3 text-gray-700">
-                    {p.salePrice && p.salePrice > 0 && p.salePrice < p.originalPrice ? (
-                      <span>
-                        <span className="text-green-600 font-semibold">{p.salePrice} ر.س</span>
-                        <span className="text-gray-400 line-through text-xs mr-1">{p.originalPrice}</span>
-                      </span>
-                    ) : (
-                      <span>{p.originalPrice} ر.س</span>
-                    )}
+                    {(() => {
+                      const mainPrice = p.originalPrice || p.price || 0;
+                      const sale = p.salePrice && p.salePrice > 0 && p.salePrice < mainPrice ? p.salePrice : null;
+                      return sale ? (
+                        <span>
+                          <span className="text-green-600 font-semibold">{sale} ر.س</span>
+                          <span className="text-gray-400 line-through text-xs mr-1">{mainPrice}</span>
+                        </span>
+                      ) : (
+                        <span>{mainPrice} ر.س</span>
+                      );
+                    })()}
                   </td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-3">

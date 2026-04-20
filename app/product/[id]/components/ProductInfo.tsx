@@ -15,7 +15,7 @@ interface ProductInfoProps {
 export default function ProductInfo({ product, addedToCart, onAddToCart }: ProductInfoProps) {
   const router = useRouter();
   const { name, brand, color, storage, network, salePrice, taxIncluded, installment, freeDelivery, deliveryTime, inStock } = product;
-  const originalPrice = product.originalPrice ?? 0;
+  const originalPrice = product.originalPrice || product.price || 0;
   const hasDiscount = salePrice != null && salePrice > 0 && salePrice < originalPrice;
 
   return (
@@ -93,8 +93,8 @@ export default function ProductInfo({ product, addedToCart, onAddToCart }: Produ
               {item.icon}
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] sm:text-xs font-bold text-gray-700 truncate">{item.title}</p>
-              {item.sub && <p className="text-[10px] sm:text-[11px] text-gray-400 truncate">{item.sub}</p>}
+              <p className="text-[10px] sm:text-xs font-bold text-gray-700 leading-snug">{item.title}</p>
+              {item.sub && <p className="text-[9px] sm:text-[11px] text-gray-400">{item.sub}</p>}
             </div>
           </div>
         ))}

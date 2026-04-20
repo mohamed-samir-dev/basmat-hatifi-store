@@ -66,6 +66,7 @@ export default function NewProductPage() {
       const body: Record<string, unknown> = {
         name: form.name,
         originalPrice: Number(form.originalPrice),
+        price: Number(form.salePrice || form.originalPrice),
         category: form.category,
         description: form.description,
         inStock: form.inStock === "true",
@@ -155,31 +156,33 @@ export default function NewProductPage() {
             {/* الأسعار */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">السعر قبل الخصم (ر.س) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">السعر الأساسي (ر.س) *</label>
                 <input
                   name="originalPrice"
                   type="number"
                   min="0"
+                  step="any"
                   value={form.originalPrice}
                   onChange={handleChange}
                   required
-                  placeholder="0"
+                  placeholder="مثال: 5000"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-xs text-gray-400 mt-1">هذا هو السعر المشطوب عليه</p>
+                <p className="text-xs text-gray-400 mt-1">السعر الأصلي للمنتج (يُشطب عليه عند وجود خصم)</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">سعر البيع (ر.س)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">سعر البيع بعد الخصم (ر.س)</label>
                 <input
                   name="salePrice"
                   type="number"
                   min="0"
+                  step="any"
                   value={form.salePrice}
                   onChange={handleChange}
-                  placeholder="اتركه فارغاً إن لم يكن هناك خصم"
+                  placeholder="مثال: 4500"
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <p className="text-xs text-gray-400 mt-1">هذا هو السعر المعروض بالأحمر</p>
+                <p className="text-xs text-gray-400 mt-1">اتركه فارغ لو مفيش خصم - هذا السعر اللي يدفعه العميل</p>
               </div>
             </div>
 
