@@ -9,6 +9,7 @@ import { useCartStore } from "../../store/cartStore";
 import ProductImages from "./components/ProductImages";
 import ProductInfo from "./components/ProductInfo";
 import ProductDetails from "./components/ProductDetails";
+import SimilarProducts from "./components/SimilarProducts";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
@@ -118,6 +119,7 @@ export default function ProductPageClient({ id }: { id: string }) {
           />
         </div>
         <ProductDetails installment={product.installment} description={product.description} specs={product.specs} />
+        <SimilarProducts product={product} />
       </div>
     </main>
   );

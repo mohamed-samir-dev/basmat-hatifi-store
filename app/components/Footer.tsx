@@ -99,7 +99,7 @@ export default async function Footer() {
             )}
           </ul>
 
-          <div className="flex gap-1 items-center flex-nowrap overflow-x-auto">
+          <div className="flex gap-1 items-center justify-center flex-nowrap overflow-x-auto">
             {/* QR */}
             {qrSrc && (
               qrLink
@@ -142,12 +142,12 @@ export default async function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-green-600 flex items-center justify-between max-w-6xl mx-auto px-4 py-4 text-xs text-green-200">
-        <span>الحقوق محفوظة بصمة هاتفي المعتمد © 2026</span>
-        <div className="flex gap-2">
+      <div className="border-t border-green-600 flex flex-col items-center gap-3 max-w-6xl mx-auto px-4 py-4 text-xs text-green-200">
+        <div className="flex gap-2 justify-center">
           <Image src="/cc975b.png" alt="cc" width={50} height={30} className="object-contain" style={{ width: "auto" }} />
           <Image src="/mada975b.png" alt="mada" width={50} height={30} className="object-contain" style={{ width: "auto" }} />
         </div>
+        <span>الحقوق محفوظة بصمة هاتفي المعتمد © 2026</span>
       </div>
     </footer>
   );
