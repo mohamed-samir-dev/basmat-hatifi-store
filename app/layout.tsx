@@ -4,7 +4,7 @@ import ClientLayout from "./components/ClientLayout";
 import Footer from "./components/Footer";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
-const SITE_URL = "https://www.pasmthatfi.com";
+const SITE_URL = "https://basmat-hatify-store.com";
 
 async function getCompany() {
   try {
@@ -31,7 +31,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     keywords: [
       siteName,
-      c.nameEn || "Pasmthatfi",
+      c.nameEn || "Basmat Hatify Store",
       "أقساط", "جوالات", "لابتوب", "أجهزة إلكترونية",
       "سامسونج", "آبل", "أيفون", "شاومي", "هواوي", "أوبو",
       "السعودية", "الرياض", "جدة", "مكة", "الدمام",

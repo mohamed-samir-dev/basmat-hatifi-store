@@ -1,4 +1,4 @@
-const ALLOWED_HOSTS = ["localhost", "pasmthatfi.com", "backend-for-bsmastore-public-production-5e58.up.railway.app"];
+const ALLOWED_HOSTS = ["localhost", "basmat-hatify-store.com", "backend-for-bsmastore-public-production-5e58.up.railway.app"];
 const ALLOWED_PREFIXES = [
   "/api/admin",
   "/api/products",

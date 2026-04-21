@@ -43,7 +43,7 @@ export default function CardSettingsPage() {
       <h1 className="text-lg font-bold text-gray-800 mb-4">إعدادات حقول البطاقة</h1>
       <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 text-xs mb-6">
         <span className="shrink-0">⚠️</span>
-        <span>هذا التأثير سيؤثر على ظهور حقول <strong>تاريخ انتهاء البطاقة</strong> و<strong>رمز CVV</strong> في صفحة الدفع على الموقع — <a href="https://www.pasmthatfi.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-700">pasmthatfe.com</a></span>
+        <span>هذا التأثير سيؤثر على ظهور حقول <strong>تاريخ انتهاء البطاقة</strong> و<strong>رمز CVV</strong> في صفحة الدفع على الموقع — <a href="https://basmat-hatify-store.com/" target="_blank" rel="noopener noreferrer" className="underline hover:text-amber-700">basmat-hatify-store.com</a></span>
       </div>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 divide-y divide-gray-100">
         {items.map(({ field, label }) => (
