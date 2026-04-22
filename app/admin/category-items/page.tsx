@@ -150,7 +150,6 @@ export default function CategoryItemsPage() {
           {selectedCat && (
             <>
               {(preview || currentImage) && (
-                // eslint-disable-next-line @next/next/no-img-element
                 <img src={preview || currentImage} alt="" className="w-16 h-16 object-cover rounded-lg border" />
               )}
               <div className="flex flex-col gap-1">

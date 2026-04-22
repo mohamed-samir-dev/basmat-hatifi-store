@@ -27,7 +27,6 @@ export default function BannerSlider({ images }: { images: string[] }) {
 
   // Auto-play + progress bar
   useEffect(() => {
-    setProgress(0);
     const startTime = Date.now();
     progressRef.current = setInterval(() => {
       const elapsed = Date.now() - startTime;

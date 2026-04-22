@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { IoCheckmarkCircle, IoDocumentTextOutline, IoListOutline, IoCardOutline, IoChevronDown } from "react-icons/io5";
+import { IoCheckmarkCircle, IoDocumentTextOutline, IoListOutline, IoCardOutline } from "react-icons/io5";
 import type { Product } from "../../../components/products/types";
 
 const fmt = (n: number) => n.toLocaleString("ar-SA");
@@ -52,6 +52,7 @@ export default function ProductDetails({ installment, description, specs }: Prod
     if (el) {
       setIndicator({ left: el.offsetLeft, width: el.offsetWidth });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, visibleTabs.length]);
 
   if (!visibleTabs.length) return null;

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   IoHomeOutline,
   IoChevronBack,
@@ -81,7 +80,7 @@ export default function CategoryLandingClient({ title, emoji, subCategories, fil
       .then((data: Product[]) => setProducts(sortProducts(data.filter(filterFn))))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  }, [filterFn]);
 
   const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
 

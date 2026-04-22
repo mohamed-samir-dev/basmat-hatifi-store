@@ -115,7 +115,6 @@ export default function NewProductPage() {
             >
               {imagePreview ? (
                 <div className="relative w-full h-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={imagePreview} alt="preview" className="w-full h-full object-contain rounded-xl" />
                   {uploading && (
                     <div className="absolute inset-0 bg-white/70 flex items-center justify-center rounded-xl">

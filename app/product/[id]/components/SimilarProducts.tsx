@@ -141,7 +141,7 @@ export default function SimilarProducts({ product }: { product: Product }) {
           ref={scrollRef}
           className="flex gap-4 sm:gap-5 overflow-x-auto pb-3 snap-x snap-mandatory scrollbar-hide -mx-2 px-2"
         >
-          {products.map((p, idx) => {
+          {products.map((p) => {
             const image = p.images?.[0] || p.image;
             const resolvedImage = image ? resolveImg(image) : undefined;
             const originalPrice = p.originalPrice || p.price || 0;

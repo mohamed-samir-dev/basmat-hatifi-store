@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { IoPersonOutline, IoCardOutline, IoLocationOutline, IoLogoWhatsapp, IoCalendarOutline } from "react-icons/io5";
+import { IoPersonOutline, IoCardOutline, IoLogoWhatsapp, IoCalendarOutline } from "react-icons/io5";
 import type { CustomerInfo } from "../../store/cartStore";
 
 const fmt = (n: number) => n.toLocaleString("en-US");
