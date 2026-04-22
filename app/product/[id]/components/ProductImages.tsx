@@ -22,7 +22,7 @@ export default function ProductImages({ images, name, discountPercent = 0 }: Pro
       {/* Main Image */}
       <div
         className="relative aspect-square overflow-hidden cursor-zoom-in group"
-        style={{ background: "linear-gradient(145deg, #fafbfc 0%, #f0f4f5 50%, #f5f8f8 100%)" }}
+        style={{ background: "#ffffff" }}
         onClick={() => setZoomed(!zoomed)}
         onTouchStart={(e) => { touchStart.current = e.touches[0].clientX; }}
         onTouchEnd={(e) => {
@@ -49,7 +49,7 @@ export default function ProductImages({ images, name, discountPercent = 0 }: Pro
             src={images[selected]}
             alt={name}
             fill
-            className={`object-contain p-8 sm:p-12 transition-all duration-500 ease-out ${zoomed ? "scale-150" : "group-hover:scale-105"}`}
+            className={`object-contain p-3 sm:p-12 transition-all duration-500 ease-out ${zoomed ? "scale-150" : "group-hover:scale-105"}`}
             priority
             sizes="(max-width: 1024px) 100vw, 58vw"
           />
