@@ -2,6 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { IoArrowBack } from "react-icons/io5";
+import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
 import type { Product } from "./types";
 import CategoryBanner from "../banner/CategoryBanner";
@@ -65,10 +66,19 @@ const categoryPageMap: Record<string, string> = {
 
 /* ── alternating accent colors per category row ── */
 const accents = [
-  { bg: "bg-gradient-to-br from-teal-600 to-emerald-700", light: "bg-teal-50", ring: "ring-teal-200" },
-  { bg: "bg-gradient-to-br from-emerald-600 to-green-700", light: "bg-emerald-50", ring: "ring-emerald-200" },
-  { bg: "bg-gradient-to-br from-cyan-600 to-teal-700", light: "bg-cyan-50", ring: "ring-cyan-200" },
+  { gradient: "linear-gradient(135deg, #0d9488, #059669)", shadow: "rgba(13,148,136,0.3)" },
+  { gradient: "linear-gradient(135deg, #059669, #16a34a)", shadow: "rgba(5,150,105,0.3)" },
+  { gradient: "linear-gradient(135deg, #0891b2, #0d9488)", shadow: "rgba(8,145,178,0.3)" },
 ];
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+const cardVariants = {
+  hidden: { opacity: 0, y: 24, scale: 0.96 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
+};
 
 function CategoryRow({ category, items, isFirst, accentIdx }: { category: string; items: Product[]; isFirst?: boolean; accentIdx: number }) {
   const visible = items.slice(0, LIMIT);
@@ -76,13 +86,24 @@ function CategoryRow({ category, items, isFirst, accentIdx }: { category: string
   const accent = accents[accentIdx % accents.length];
 
   return (
-    <div className={`rounded-3xl overflow-hidden ${accent.light} border border-white/60 shadow-sm mb-6`} dir="rtl">
-      {/* ── Top bar: category name + view-all ── */}
-      <div className={`flex items-center justify-between px-4 sm:px-6 py-3 ${accent.bg}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5 }}
+      className="rounded-3xl overflow-hidden mb-6 border border-gray-100/80 bg-white"
+      style={{ boxShadow: "0 2px 20px -4px rgba(0,0,0,0.06)" }}
+      dir="rtl"
+    >
+      {/* ── Top bar ── */}
+      <div
+        className="flex items-center justify-between px-4 sm:px-6 py-3.5"
+        style={{ background: accent.gradient, boxShadow: `0 4px 16px -4px ${accent.shadow}` }}
+      >
         <h2 className="text-sm sm:text-base md:text-lg font-bold text-white truncate">{category}</h2>
         <Link
           href={href}
-          className="shrink-0 flex items-center gap-1 text-[11px] sm:text-xs font-semibold text-white/90 hover:text-white bg-white/15 hover:bg-white/25 backdrop-blur-sm px-3 py-1.5 rounded-full transition-all duration-200"
+          className="shrink-0 flex items-center gap-1.5 text-[11px] sm:text-xs font-bold text-white bg-white/15 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-full transition-all duration-300 border border-white/10 hover:border-white/25"
         >
           عرض الكل
           <IoArrowBack size={13} />
@@ -91,13 +112,21 @@ function CategoryRow({ category, items, isFirst, accentIdx }: { category: string
 
       {/* ── Products grid ── */}
       <div className="p-3 sm:p-5">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-20px" }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+        >
           {visible.map((p, i) => (
-            <ProductCard key={p._id} product={p} priority={isFirst && i === 0} />
+            <motion.div key={p._id} variants={cardVariants}>
+              <ProductCard product={p} priority={isFirst && i === 0} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

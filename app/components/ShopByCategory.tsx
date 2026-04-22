@@ -152,15 +152,28 @@ export default async function ShopByCategory() {
   });
 
   return (
-    <div className="w-full px-3 sm:px-6 lg:px-8 py-3" dir="rtl">
-      <section className="max-w-6xl mx-auto rounded-3xl py-8 sm:py-10 overflow-hidden bg-gradient-to-br from-white via-teal-50/50 to-emerald-50/50 border border-teal-100/60 shadow-sm" dir="rtl">
-        <div className="px-3 sm:px-5">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="flex-1 h-px bg-gradient-to-l from-teal-300 to-transparent" />
-            <div className="flex items-center gap-2 bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-5 py-2 rounded-full shadow-md">
-              <span className="text-sm sm:text-base font-bold">تسوق حسب الأقسام</span>
+    <div className="w-full px-3 sm:px-6 lg:px-8 py-4" dir="rtl">
+      <section
+        className="relative max-w-6xl mx-auto rounded-3xl py-8 sm:py-10 overflow-hidden border border-teal-100/60"
+        style={{
+          background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.8) 50%, rgba(236,253,245,0.7) 100%)",
+          boxShadow: "0 4px 24px -4px rgba(13,148,136,0.08), 0 0 0 1px rgba(13,148,136,0.04)",
+        }}
+        dir="rtl"
+      >
+        {/* Decorative dots pattern */}
+        <div className="absolute top-0 left-0 w-32 h-32 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #0d9488 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
+        <div className="absolute bottom-0 right-0 w-32 h-32 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #0d9488 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
+
+        <div className="px-3 sm:px-5 relative">
+          {/* Title */}
+          <div className="flex items-center gap-3 mb-7">
+            <div className="flex-1 h-px bg-gradient-to-l from-teal-200/80 to-transparent" />
+            <div className="flex items-center gap-2.5 px-6 py-2.5 rounded-full" style={{ background: "linear-gradient(135deg, #0d9488, #059669)", boxShadow: "0 4px 16px -2px rgba(13,148,136,0.4)" }}>
+              <span className="text-white text-base">🏷️</span>
+              <span className="text-sm sm:text-base font-bold text-white tracking-wide">تسوق حسب الأقسام</span>
             </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-teal-300 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-teal-200/80 to-transparent" />
           </div>
           <CategorySlider categories={categoriesWithHref} />
         </div>
