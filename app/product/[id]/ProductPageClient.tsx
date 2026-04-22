@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { IoArrowForward, IoShareSocial, IoHeartOutline, IoHeart } from "react-icons/io5";
+import { IoArrowForward, IoShareSocial } from "react-icons/io5";
 import type { Product } from "../../components/products/types";
 import { useCartStore } from "../../store/cartStore";
 import ProductImages from "./components/ProductImages";
@@ -18,7 +18,6 @@ export default function ProductPageClient({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [addedToCart, setAddedToCart] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [liked, setLiked] = useState(false);
   const addItem = useCartStore((s) => s.addItem);
 
   useEffect(() => {
@@ -115,16 +114,6 @@ export default function ProductPageClient({ id }: { id: string }) {
               </h1>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setLiked(!liked)}
-                className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${
-                  scrolled
-                    ? "bg-gray-100/80 text-gray-700 hover:bg-gray-200/80"
-                    : "pdp-nav-glass text-white hover:bg-white/15"
-                }`}
-              >
-                {liked ? <IoHeart size={18} className="text-rose-500" /> : <IoHeartOutline size={18} />}
-              </button>
               <button
                 onClick={handleShare}
                 className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-300 ${

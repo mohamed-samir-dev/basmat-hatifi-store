@@ -142,11 +142,7 @@ export default function ProductDetails({ installment, description, specs }: Prod
                     ))}
                   </div>
                 )}
-                <div className="mt-6 bg-amber-50/80 border border-amber-100/60 rounded-2xl px-5 py-3.5 text-center">
-                  <p className="text-[11px] sm:text-xs font-bold text-amber-700">
-                    ⚠️ عدم استيفاء أي من الشروط أعلاه قد يؤدي إلى رفض الطلب
-                  </p>
-                </div>
+
               </div>
             );
           })()}
