@@ -116,7 +116,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
               </span>
             )}
             {tags.map((t, i) => (
-              <span key={i} className="text-[9px] sm:text-[11px] font-semibold text-gray-400 bg-gray-100 px-1 sm:px-1.5 py-0.5 rounded-md">
+              <span key={i} className="text-[9px] sm:text-[11px] font-semibold text-teal-600 bg-teal-500/8  px-1 sm:px-1.5 py-0.5 rounded-md">
                 {t}
               </span>
             ))}
