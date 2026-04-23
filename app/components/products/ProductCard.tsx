@@ -10,6 +10,8 @@ import {
   IoFlash,
   IoCarOutline,
   IoShieldCheckmarkOutline,
+  IoEyeOutline,
+  IoStar,
 } from "react-icons/io5";
 import type { Product } from "./types";
 import { useCartStore } from "../../store/cartStore";
@@ -60,43 +62,56 @@ export default function ProductCard({ product, priority = false }: { product: Pr
 
       <Link
         href={`/product/${product._id}`}
-        className="product-card group relative flex flex-col h-full rounded-2xl sm:rounded-[22px] bg-white overflow-hidden transition-all duration-300"
+        className="product-card group relative flex flex-col h-full rounded-[20px] sm:rounded-[24px] bg-white overflow-hidden"
         dir="rtl"
       >
-        {/* ── Image section with overlay ── */}
-        <div className="relative w-full aspect-[4/3] sm:aspect-square bg-white overflow-hidden">
-          {/* Discount ribbon */}
+        {/* ── Decorative corner glow on hover ── */}
+        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-teal-400/0 to-emerald-400/0 group-hover:from-teal-400/10 group-hover:to-emerald-400/15 rounded-full blur-2xl transition-all duration-700 pointer-events-none" />
+
+        {/* ── Image Section ── */}
+        <div className="relative w-full aspect-[4/3] sm:aspect-square overflow-hidden bg-gradient-to-br from-gray-50 via-white to-slate-50">
+          {/* Discount badge - premium ribbon style */}
           {discountPercent > 0 && (
-            <div className="absolute z-10 top-0 right-0 bg-red-500 text-white text-[8px] sm:text-[11px] font-black px-2 sm:px-4 py-1 sm:py-2 rounded-bl-xl sm:rounded-bl-2xl shadow-md">
-              {discountPercent}%−
+            <div className="absolute z-10 top-2.5 right-2.5 sm:top-3 sm:right-3">
+              <div className="relative bg-gradient-to-l from-rose-500 to-red-600 text-white text-[9px] sm:text-[11px] font-black px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-lg shadow-lg shadow-red-500/30">
+                <IoFlash size={10} className="inline-block ml-0.5 -mt-0.5" />
+                {discountPercent}%−
+              </div>
             </div>
           )}
 
-          {/* Stock dot - top left */}
-          <div className={`absolute z-10 top-2 left-2 sm:top-3 sm:left-3 flex items-center gap-1 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[7px] sm:text-[10px] font-bold backdrop-blur-md ${
+          {/* Stock indicator */}
+          <div className={`absolute z-10 top-2.5 left-2.5 sm:top-3 sm:left-3 flex items-center gap-1 px-2 sm:px-2.5 py-1 rounded-lg text-[8px] sm:text-[10px] font-bold backdrop-blur-xl border ${
             inStock
-              ? "bg-emerald-500/15 text-emerald-700 ring-1 ring-emerald-500/20"
-              : "bg-red-500/15 text-red-600 ring-1 ring-red-500/20"
+              ? "bg-emerald-50/80 text-emerald-700 border-emerald-200/60"
+              : "bg-red-50/80 text-red-600 border-red-200/60"
           }`}>
-            <span className={`h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-red-500"}`} />
+            <span className={`h-1.5 w-1.5 rounded-full animate-pulse ${inStock ? "bg-emerald-500" : "bg-red-500"}`} />
             {inStock ? "متوفر" : "نفذ"}
           </div>
 
-          {/* Installment chip */}
+          {/* Installment badge */}
           {installment?.available && (
-            <div className="absolute z-10 bottom-2 left-2 sm:bottom-3 sm:left-3 flex items-center gap-1 bg-amber-500/15 backdrop-blur-md text-amber-700 ring-1 ring-amber-500/20 px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full text-[7px] sm:text-[10px] font-bold">
-              <IoFlash size={9} className="sm:hidden" />
-              <IoFlash size={10} className="hidden sm:block" />
+            <div className="absolute z-10 bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1 bg-gradient-to-l from-amber-500 to-orange-500 text-white px-2 sm:px-2.5 py-1 rounded-lg text-[8px] sm:text-[10px] font-bold shadow-lg shadow-amber-500/25">
+              <IoFlash size={10} />
               تقسيط
             </div>
           )}
+
+          {/* Hover overlay with view button */}
+          <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end justify-center pb-4">
+            <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md text-gray-800 px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <IoEyeOutline size={14} />
+              عرض التفاصيل
+            </div>
+          </div>
 
           {resolvedImage ? (
             <Image
               src={resolvedImage}
               alt={name}
               fill
-              className="object-contain p-3 sm:p-8 transition-transform duration-500 group-hover:scale-105"
+              className="object-contain p-4 sm:p-8 transition-all duration-700 group-hover:scale-110"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority={priority}
               loading={priority ? "eager" : "lazy"}
@@ -106,64 +121,68 @@ export default function ProductCard({ product, priority = false }: { product: Pr
           )}
         </div>
 
+        {/* ── Separator line ── */}
+        <div className="h-[1px] bg-gradient-to-l from-transparent via-teal-200/60 to-transparent mx-4" />
+
         {/* ── Content ── */}
-        <div className="flex flex-col flex-1 px-2.5 sm:p-4 pt-2 sm:pt-4 pb-1.5 gap-1 sm:gap-2">
-          {/* Brand + Tags row */}
+        <div className="flex flex-col flex-1 px-3 sm:px-4 pt-3 sm:pt-4 pb-2 gap-1.5 sm:gap-2">
+          {/* Brand + Tags */}
           <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
             {brand && (
-              <span className="text-[9px] sm:text-[11px] font-extrabold text-teal-600 bg-teal-500/8 px-1.5 sm:px-2 py-0.5 rounded-md tracking-wide uppercase">
+              <span className="text-[9px] sm:text-[11px] font-extrabold text-white bg-gradient-to-l from-teal-600 to-emerald-600 px-2 sm:px-2.5 py-0.5 rounded-md tracking-wide uppercase shadow-sm">
                 {brand}
               </span>
             )}
             {tags.map((t, i) => (
-              <span key={i} className="text-[9px] sm:text-[11px] font-semibold text-teal-600 bg-teal-500/8  px-1 sm:px-1.5 py-0.5 rounded-md">
+              <span key={i} className="text-[9px] sm:text-[11px] font-semibold text-white bg-gradient-to-l from-teal-600 to-emerald-600  px-1.5 sm:px-2 py-0.5 rounded-md">
                 {t}
               </span>
             ))}
           </div>
 
           {/* Name */}
-          <h3 className="text-[12px] sm:text-[14px] font-bold text-gray-800 leading-[1.5] line-clamp-2 group-hover:text-teal-700 transition-colors">
+          <h3 className="text-[12px] sm:text-[14px] font-bold text-gray-800 leading-[1.6] line-clamp-2 group-hover:text-teal-700 transition-colors duration-300">
             {name}
           </h3>
 
-          {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Price block */}
-          <div className="flex items-end justify-between gap-1">
-            <div className="flex flex-col">
-              {hasDiscount && (
-                <span className="text-[9px] sm:text-[11px] text-gray-400 line-through decoration-red-300">
-                  {fmt(originalPrice)} ر.س
+          {/* Price section */}
+          <div className="bg-gradient-to-l from-slate-50/80 to-gray-50/80 rounded-xl p-2 sm:p-2.5 -mx-0.5">
+            <div className="flex items-end justify-between gap-1">
+              <div className="flex flex-col">
+                {hasDiscount && (
+                  <span className="text-[9px] sm:text-[11px] text-gray-400 line-through decoration-red-400/60">
+                    {fmt(originalPrice)} ر.س
+                  </span>
+                )}
+                <div className="flex items-baseline gap-1">
+                  <span className="text-[17px] sm:text-[22px] font-black text-gray-900 tracking-tight leading-none">
+                    {fmt(displayPrice)}
+                  </span>
+                  <span className="text-[9px] sm:text-[11px] font-bold text-gray-400">ر.س</span>
+                </div>
+              </div>
+              {hasDiscount && savings > 0 && (
+                <span className="text-[8px] sm:text-[10px] font-extrabold text-white bg-gradient-to-l from-rose-500 to-red-500 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg shadow-sm shadow-red-500/20">
+                  وفّر {fmt(savings)}
                 </span>
               )}
-              <div className="flex items-baseline gap-0.5">
-                <span className="text-[16px] sm:text-xl font-black text-gray-900 tracking-tight">
-                  {fmt(displayPrice)}
-                </span>
-                <span className="text-[9px] sm:text-[11px] font-bold text-gray-400">ر.س</span>
-              </div>
             </div>
-            {hasDiscount && savings > 0 && (
-              <span className="text-[8px] sm:text-[10px] font-extrabold text-white bg-red-500 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg shadow-sm">
-                وفّر {fmt(savings)}
-              </span>
-            )}
           </div>
 
-          {/* Warranty + Delivery */}
+          {/* Warranty + Delivery badges */}
           {(warrantyYears > 0 || freeDelivery) && (
-            <div className="flex items-center gap-1.5 sm:gap-3 pt-1 sm:pt-1.5 border-t border-dashed border-gray-100">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 pt-1">
               {warrantyYears > 0 && (
-                <span className="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[10px] font-bold text-violet-500">
+                <span className="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[10px] font-bold text-violet-600 bg-violet-50 px-1.5 sm:px-2 py-0.5 rounded-md">
                   <IoShieldCheckmarkOutline size={10} className="sm:hidden" />
                   <IoShieldCheckmarkOutline size={12} className="hidden sm:block" />
                   {warrantyYears} سنة
                 </span>
               )}
               {freeDelivery && (
-                <span className="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[10px] font-bold text-sky-500">
+                <span className="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[10px] font-bold text-sky-600 bg-sky-50 px-1.5 sm:px-2 py-0.5 rounded-md">
                   <IoCarOutline size={10} className="sm:hidden" />
                   <IoCarOutline size={12} className="hidden sm:block" />
                   توصيل مجاني
@@ -174,7 +193,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
         </div>
 
         {/* ── Cart button ── */}
-        <div className="px-2.5 sm:px-4 pb-2.5 sm:pb-4">
+        <div className="px-3 sm:px-4 pb-3 sm:pb-4">
           <button
             onClick={handleAddToCart}
             className={`cart-btn ${added ? "added" : ""}`}

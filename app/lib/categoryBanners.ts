@@ -5,5 +5,6 @@ export const categoryBanners: Record<string, string> = {
   // Add more banners here:
    "iphone-17-pro": "/iPhone_17_Pro_Max_Cosmic_Orange_PDP_Image_Position_7__en-ME-scaled (1).avif",
    "iphone-17-air": "/iPhone_Air_Cloud_White_PDP_Image_Position_7__en-ME-scaled(1).avif",
-  // "samsung-s25-ultra": "/samsung-s25-ultra-banner.avif",
+   "iphone-17":"https://res.cloudinary.com/dyqkhcuxe/image/upload/v1776894316/iPhone_16_Black_PDP_Image_Position_5__en-ME-scaled_o6hv98.avif",
+   "iphone-16-pro-max":"https://res.cloudinary.com/dyqkhcuxe/image/upload/v1776817319/iPhone_16_Pro_Desert_Titanium_PDP_Image_Position_5__en-ME-scaled_h1zf9u.avif"
 };
