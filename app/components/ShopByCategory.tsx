@@ -152,28 +152,34 @@ export default async function ShopByCategory() {
   });
 
   return (
-    <div className="w-full px-3 sm:px-6 lg:px-8 py-4" dir="rtl">
+    <div className="w-full px-3 sm:px-6 lg:px-8 py-6" dir="rtl">
       <section
-        className="relative max-w-6xl mx-auto rounded-3xl py-8 sm:py-10 overflow-hidden border border-teal-100/60"
+        className="relative max-w-6xl mx-auto rounded-3xl py-8 sm:py-12 overflow-hidden"
         style={{
-          background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,253,250,0.8) 50%, rgba(236,253,245,0.7) 100%)",
-          boxShadow: "0 4px 24px -4px rgba(13,148,136,0.08), 0 0 0 1px rgba(13,148,136,0.04)",
+          background: "linear-gradient(160deg, #134e4a 0%, #115e59 30%, #0f766e 60%, #115e59 100%)",
+          boxShadow: "0 8px 40px rgba(13,148,136,0.15), 0 0 0 1px rgba(13,148,136,0.2)",
         }}
         dir="rtl"
       >
-        {/* Decorative dots pattern */}
-        <div className="absolute top-0 left-0 w-32 h-32 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #0d9488 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
-        <div className="absolute bottom-0 right-0 w-32 h-32 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle, #0d9488 1px, transparent 1px)", backgroundSize: "12px 12px" }} />
+        {/* Ambient glows */}
+        <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-[400px] h-32 rounded-full" style={{ background: "radial-gradient(ellipse, rgba(94,234,212,0.12), transparent 70%)", filter: "blur(40px)" }} />
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-72 h-20 rounded-full" style={{ background: "radial-gradient(ellipse, rgba(153,246,228,0.08), transparent 70%)", filter: "blur(30px)" }} />
+
+        {/* Subtle dot pattern */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle, rgba(153,246,228,0.5) 0.5px, transparent 0.5px)", backgroundSize: "32px 32px" }} />
 
         <div className="px-3 sm:px-5 relative">
           {/* Title */}
-          <div className="flex items-center gap-3 mb-7">
-            <div className="flex-1 h-px bg-gradient-to-l from-teal-200/80 to-transparent" />
-            <div className="flex items-center gap-2.5 px-6 py-2.5 rounded-full" style={{ background: "linear-gradient(135deg, #0d9488, #059669)", boxShadow: "0 4px 16px -2px rgba(13,148,136,0.4)" }}>
-              <span className="text-white text-base">🏷️</span>
-              <span className="text-sm sm:text-base font-bold text-white tracking-wide">تسوق حسب الأقسام</span>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, rgba(153,246,228,0.25), transparent)" }} />
+            <div className="flex flex-col items-center gap-1">
+              <div className="flex items-center gap-2.5 px-7 py-3 rounded-full" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(153,246,228,0.2)", backdropFilter: "blur(8px)" }}>
+                <span className="text-lg">✨</span>
+                <span className="text-sm sm:text-base font-bold text-white tracking-wide">تسوق حسب الأقسام</span>
+              </div>
+              <p className="text-[11px] text-teal-300/40 mt-1">اسحب أو اضغط للتنقل</p>
             </div>
-            <div className="flex-1 h-px bg-gradient-to-r from-teal-200/80 to-transparent" />
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(to right, rgba(153,246,228,0.25), transparent)" }} />
           </div>
           <CategorySlider categories={categoriesWithHref} />
         </div>
