@@ -89,34 +89,11 @@ export default function BannerSlider({ images }: { images: string[] }) {
                 priority={current === 0}
                 unoptimized
               />
-              {/* Gradient overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-900/20 to-transparent" />
+
             </motion.div>
           </AnimatePresence>
 
-          {/* Animated floating text */}
-          <div className="absolute bottom-6 sm:bottom-10 right-4 sm:right-10 z-10 max-w-md">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={current}
-                initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <h2
-                  className="text-lg sm:text-2xl lg:text-3xl font-black text-white drop-shadow-lg leading-tight"
-                  style={{ textShadow: "0 2px 20px rgba(0,0,0,0.4)" }}
-                >
-                  بصمة هاتفي المعتمد
-                </h2>
-                <p className="text-xs sm:text-sm text-white/80 mt-1 sm:mt-2 font-medium">
-                  أفضل العروض على الأجهزة الذكية
-                </p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+
 
           {/* Decorative corner glow */}
           <div className="absolute -top-20 -left-20 w-60 h-60 bg-teal-400/15 rounded-full blur-3xl pointer-events-none" />
