@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ALLOWED_BACKENDS = ["http://localhost:5000", "https://pasmthatfee.com", "https://backend-for-bsmastore-public-production.up.railway.app"];
+const ALLOWED_BACKENDS = ["http://localhost:5000", "https://pasmthatfee.com", "https://backend-for-bsmastore-public-production.up.railway.app", "https://backend-for-bsmastore-public-production-5e58.up.railway.app"];
 
 function getBackend(): string {
   const url = process.env.BACKEND_URL || "http://localhost:5000";
