@@ -10,7 +10,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const [activeIdx, setActiveIdx] = useState(0);
-  const autoRef = useRef<ReturnType<typeof setInterval>>();
+  const autoRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const dragRef = useRef({ startX: 0, scrollLeft: 0, dragging: false, dist: 0 });
 
   const checkScroll = useCallback(() => {
