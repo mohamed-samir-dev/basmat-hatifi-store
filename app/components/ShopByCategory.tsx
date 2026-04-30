@@ -152,9 +152,9 @@ export default async function ShopByCategory() {
   });
 
   return (
-    <div className="w-full px-3 sm:px-6 lg:px-8 py-6" dir="rtl">
+    <div className="w-full px-2 sm:px-6 lg:px-8 py-4 sm:py-6" dir="rtl">
       <section
-        className="relative max-w-6xl mx-auto rounded-3xl py-8 sm:py-12 overflow-hidden"
+        className="relative max-w-6xl mx-auto rounded-2xl sm:rounded-3xl py-5 sm:py-12 overflow-hidden"
         style={{
           background: "linear-gradient(160deg, #134e4a 0%, #115e59 30%, #0f766e 60%, #115e59 100%)",
           boxShadow: "0 8px 40px rgba(13,148,136,0.15), 0 0 0 1px rgba(13,148,136,0.2)",
@@ -170,12 +170,12 @@ export default async function ShopByCategory() {
 
         <div className="px-3 sm:px-5 relative">
           {/* Title */}
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
             <div className="flex-1 h-px" style={{ background: "linear-gradient(to left, rgba(153,246,228,0.25), transparent)" }} />
             <div className="flex flex-col items-center gap-1">
-              <div className="flex items-center gap-2.5 px-7 py-3 rounded-full" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(153,246,228,0.2)", backdropFilter: "blur(8px)" }}>
-                <span className="text-lg">✨</span>
-                <span className="text-sm sm:text-base font-bold text-white tracking-wide">تسوق حسب الأقسام</span>
+              <div className="flex items-center gap-2 px-4 sm:px-7 py-2 sm:py-3 rounded-full" style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(153,246,228,0.2)", backdropFilter: "blur(8px)" }}>
+                <span className="text-sm sm:text-lg">✨</span>
+                <span className="text-xs sm:text-base font-bold text-white tracking-wide">تسوق حسب الأقسام</span>
               </div>
               <p className="text-[11px] text-teal-300/40 mt-1">اسحب أو اضغط للتنقل</p>
             </div>

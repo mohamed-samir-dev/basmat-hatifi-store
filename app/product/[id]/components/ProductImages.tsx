@@ -36,7 +36,7 @@ export default function ProductImages({ images, name, discountPercent = 0 }: Pro
         <div className="absolute bottom-0 right-0 w-24 sm:w-36 h-24 sm:h-36 bg-gradient-to-tl from-emerald-50/30 to-transparent rounded-tl-[50px] sm:rounded-tl-[80px] pointer-events-none z-[1] hidden sm:block" />
 
         <div
-          className="relative aspect-square overflow-hidden cursor-zoom-in group"
+          className="relative aspect-[4/3.5] sm:aspect-[4/3] overflow-hidden cursor-zoom-in group"
           onClick={() => setZoomed(!zoomed)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setZoomed(false)}
@@ -75,7 +75,7 @@ export default function ProductImages({ images, name, discountPercent = 0 }: Pro
               src={images[selected]}
               alt={name}
               fill
-              className="object-contain p-3 sm:p-6 md:p-10 lg:p-14 transition-all duration-500 ease-out"
+              className="object-contain p-3 sm:p-5 md:p-8 lg:p-10 transition-all duration-500 ease-out"
               style={
                 zoomed
                   ? { transform: "scale(2.2)", transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }

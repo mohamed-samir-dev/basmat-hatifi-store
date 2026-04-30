@@ -98,6 +98,17 @@ export default function CategorySlider({ categories }: { categories: Category[] 
     if (el) el.style.scrollSnapType = "";
   };
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  const activeSize = isMobile ? 90 : 140;
+  const inactiveSize = isMobile ? 75 : 120;
+
   return (
     <div className="w-full flex flex-col items-center select-none" dir="rtl">
       <div className="relative w-full">
@@ -105,7 +116,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
         {canScrollRight && (
           <button
             onClick={() => scroll(1)}
-            className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            className="absolute right-0 sm:right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
             style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(153,246,228,0.2)",
@@ -120,7 +131,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
         {canScrollLeft && (
           <button
             onClick={() => scroll(-1)}
-            className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
+            className="absolute left-0 sm:left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
             style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(153,246,228,0.2)",
@@ -135,7 +146,7 @@ export default function CategorySlider({ categories }: { categories: Category[] 
         {/* Scrollable container */}
         <div
           ref={scrollRef}
-          className="flex gap-4 sm:gap-6 overflow-x-auto px-6 sm:px-12 py-6 cursor-grab active:cursor-grabbing"
+          className="flex gap-2.5 sm:gap-6 overflow-x-auto px-4 sm:px-12 py-4 sm:py-6 cursor-grab active:cursor-grabbing"
           style={{ scrollSnapType: "x mandatory", scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
           onPointerDown={e => onDown(e.clientX)}
           onPointerMove={e => onMove(e.clientX)}
@@ -147,14 +158,14 @@ export default function CategorySlider({ categories }: { categories: Category[] 
               key={`${cat.name}-${i}`}
               href={cat.href}
               onClick={e => { if (dragRef.current.dist > 8) e.preventDefault(); }}
-              className="flex-shrink-0 flex flex-col items-center gap-2.5 group"
+              className="flex-shrink-0 flex flex-col items-center gap-1.5 sm:gap-2.5 group"
               style={{ scrollSnapAlign: "center" }}
             >
               <div
                 className="relative rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-105"
                 style={{
-                  width: activeIdx === i ? 140 : 120,
-                  height: activeIdx === i ? 140 : 120,
+                  width: activeIdx === i ? activeSize : inactiveSize,
+                  height: activeIdx === i ? activeSize : inactiveSize,
                   background: activeIdx === i
                     ? "linear-gradient(145deg, rgba(255,255,255,0.95), rgba(240,253,250,0.9))"
                     : "linear-gradient(145deg, rgba(255,255,255,0.8), rgba(240,253,250,0.7))",
@@ -173,27 +184,27 @@ export default function CategorySlider({ categories }: { categories: Category[] 
                     alt={cat.name}
                     fill
                     unoptimized
-                    className="object-contain p-4"
-                    sizes="140px"
+                    className="object-contain p-2.5 sm:p-4"
+                    sizes="(max-width:640px) 90px, 140px"
                     draggable={false}
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>
+                  <div className="w-full h-full flex items-center justify-center text-3xl sm:text-4xl">🛍️</div>
                 )}
               </div>
               <div className="text-center">
                 <p
                   className="font-bold leading-tight line-clamp-2 transition-colors duration-300"
                   style={{
-                    fontSize: activeIdx === i ? 14 : 12,
-                    maxWidth: 140,
+                    fontSize: isMobile ? (activeIdx === i ? 11 : 10) : (activeIdx === i ? 14 : 12),
+                    maxWidth: isMobile ? 90 : 140,
                     color: activeIdx === i ? "#ffffff" : "rgba(153,246,228,0.6)",
                   }}
                 >
                   {cat.name}
                 </p>
                 {cat.count > 0 && (
-                  <p className="mt-0.5" style={{ fontSize: 11, color: "rgba(153,246,228,0.5)" }}>
+                  <p className="mt-0.5" style={{ fontSize: isMobile ? 9 : 11, color: "rgba(153,246,228,0.5)" }}>
                     {cat.count} منتج
                   </p>
                 )}
