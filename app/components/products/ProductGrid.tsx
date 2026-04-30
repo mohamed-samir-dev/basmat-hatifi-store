@@ -2,7 +2,6 @@
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { IoArrowBack } from "react-icons/io5";
-import { motion } from "framer-motion";
 import ProductCard from "./ProductCard";
 import type { Product } from "./types";
 import CategoryBanner from "../banner/CategoryBanner";
@@ -71,31 +70,17 @@ const accents = [
   { gradient: "linear-gradient(135deg, #0891b2, #0d9488)", shadow: "rgba(8,145,178,0.3)" },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-const cardVariants = {
-  hidden: { opacity: 0, y: 24, scale: 0.96 },
-  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
-};
-
 function CategoryRow({ category, items, isFirst, accentIdx }: { category: string; items: Product[]; isFirst?: boolean; accentIdx: number }) {
   const visible = items.slice(0, LIMIT);
   const href = categoryPageMap[category] ?? categoryPageMap[category.toLowerCase()] ?? "#";
   const accent = accents[accentIdx % accents.length];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5 }}
+    <div
       className="rounded-3xl overflow-hidden mb-6 border border-gray-100/80 bg-white"
       style={{ boxShadow: "0 2px 20px -4px rgba(0,0,0,0.06)" }}
       dir="rtl"
     >
-      {/* ── Top bar ── */}
       <div
         className="flex items-center justify-between px-4 sm:px-6 py-3.5"
         style={{ background: accent.gradient, boxShadow: `0 4px 16px -4px ${accent.shadow}` }}
@@ -110,23 +95,14 @@ function CategoryRow({ category, items, isFirst, accentIdx }: { category: string
         </Link>
       </div>
 
-      {/* ── Products grid ── */}
       <div className="p-3 sm:p-5">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-20px" }}
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
           {visible.map((p, i) => (
-            <motion.div key={p._id} variants={cardVariants}>
-              <ProductCard product={p} priority={isFirst && i === 0} />
-            </motion.div>
+            <ProductCard key={p._id} product={p} priority={isFirst && i === 0} />
           ))}
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

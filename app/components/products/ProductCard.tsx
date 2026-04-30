@@ -10,8 +10,6 @@ import {
   IoFlash,
   IoCarOutline,
   IoShieldCheckmarkOutline,
-  IoEyeOutline,
-  IoStar,
 } from "react-icons/io5";
 import type { Product } from "./types";
 import { useCartStore } from "../../store/cartStore";
@@ -65,8 +63,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
         className="product-card group relative flex flex-col h-full rounded-[20px] sm:rounded-[24px] bg-white overflow-hidden"
         dir="rtl"
       >
-        {/* ── Decorative corner glow on hover ── */}
-        <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-teal-400/0 to-emerald-400/0 group-hover:from-teal-400/10 group-hover:to-emerald-400/15 rounded-full blur-2xl transition-all duration-700 pointer-events-none" />
+
 
         {/* ── Image Section ── */}
         <div className="relative w-full aspect-[4/3] sm:aspect-square overflow-hidden bg-gradient-to-br from-gray-50 via-white to-slate-50">
@@ -86,7 +83,7 @@ export default function ProductCard({ product, priority = false }: { product: Pr
               ? "bg-emerald-50/80 text-emerald-700 border-emerald-200/60"
               : "bg-red-50/80 text-red-600 border-red-200/60"
           }`}>
-            <span className={`h-1.5 w-1.5 rounded-full animate-pulse ${inStock ? "bg-emerald-500" : "bg-red-500"}`} />
+            <span className={`h-1.5 w-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-red-500"}`} />
             {inStock ? "متوفر" : "نفذ"}
           </div>
 
@@ -98,20 +95,12 @@ export default function ProductCard({ product, priority = false }: { product: Pr
             </div>
           )}
 
-          {/* Hover overlay with view button */}
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end justify-center pb-4">
-            <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md text-gray-800 px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-bold shadow-xl translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-              <IoEyeOutline size={14} />
-              عرض التفاصيل
-            </div>
-          </div>
-
           {resolvedImage ? (
             <Image
               src={resolvedImage}
               alt={name}
               fill
-              className="object-contain p-4 sm:p-8 transition-all duration-700 group-hover:scale-110"
+              className="object-contain p-4 sm:p-8"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority={priority}
               loading={priority ? "eager" : "lazy"}
