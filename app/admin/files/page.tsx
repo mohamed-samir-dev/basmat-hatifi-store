@@ -4,10 +4,10 @@ import Image from "next/image";
 import { FiUpload, FiLink, FiExternalLink, FiTrash2 } from "react-icons/fi";
 
 type FooterItem = { image: string; linkType: string; link: string; file: string };
-type Data = { qrImage: string; qrLink: string; img1: string; link1: string; linkType1: string; file1: string; img2: string; link2: string; linkType2: string; file2: string; footerItems: FooterItem[] };
+type Data = { qrImage: string; qrLink: string; qrLinkType: string; qrFile: string; img1: string; link1: string; linkType1: string; file1: string; img2: string; link2: string; linkType2: string; file2: string; footerItems: FooterItem[] };
 
 export default function FilesPage() {
-  const [data, setData] = useState<Data>({ qrImage: "", qrLink: "", img1: "", link1: "", linkType1: "link", file1: "", img2: "", link2: "", linkType2: "link", file2: "", footerItems: [] });
+  const [data, setData] = useState<Data>({ qrImage: "", qrLink: "", qrLinkType: "link", qrFile: "", img1: "", link1: "", linkType1: "link", file1: "", img2: "", link2: "", linkType2: "link", file2: "", footerItems: [] });
   const [savingSection, setSavingSection] = useState<string | null>(null);
   const [msgs, setMsgs] = useState<Record<string, string>>({});
 
@@ -24,6 +24,7 @@ export default function FilesPage() {
   }
   const [imgKeys, setImgKeys] = useState<Record<string, number>>({});
   const qrRef = useRef<HTMLInputElement>(null);
+  const qrFileRef = useRef<HTMLInputElement>(null);
   const img1Ref = useRef<HTMLInputElement>(null);
   const img2Ref = useRef<HTMLInputElement>(null);
   const fileRef1 = useRef<HTMLInputElement>(null);
@@ -41,7 +42,7 @@ export default function FilesPage() {
         const items = (d.footerItems && d.footerItems.length > 0
           ? d.footerItems
           : [{}, {}, {}]).map(normalize);
-        setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", img1: d.img1 || "", link1: d.link1 || "", linkType1: d.linkType1 || (d.file1 ? "file" : "link"), file1: d.file1 || "", img2: d.img2 || "", link2: d.link2 || "", linkType2: d.linkType2 || (d.file2 ? "file" : "link"), file2: d.file2 || "", footerItems: items });
+        setData({ qrImage: d.qrImage || "", qrLink: d.qrLink || "", qrLinkType: d.qrLinkType || (d.qrFile ? "file" : "link"), qrFile: d.qrFile || "", img1: d.img1 || "", link1: d.link1 || "", linkType1: d.linkType1 || (d.file1 ? "file" : "link"), file1: d.file1 || "", img2: d.img2 || "", link2: d.link2 || "", linkType2: d.linkType2 || (d.file2 ? "file" : "link"), file2: d.file2 || "", footerItems: items });
       });
   }, []);
 
@@ -72,6 +73,16 @@ export default function FilesPage() {
     const r = await fetch(`/api/admin/company/footer-image/img2`, { method: "POST", credentials: "include", body: fd });
     const json = await r.json();
     if (json.url) { setData((p) => ({ ...p, img2: json.url })); bumpKey("img2"); }
+    setUploading(null);
+  }
+
+  async function uploadQrFile(file: File) {
+    setUploading("qrFile");
+    const fd = new FormData();
+    fd.append("file", file);
+    const r = await fetch(`/api/admin/company/footer-file/qrFile`, { method: "POST", credentials: "include", body: fd });
+    const json = await r.json();
+    if (json.url) setData((p) => ({ ...p, qrFile: json.url }));
     setUploading(null);
   }
 
@@ -162,7 +173,7 @@ export default function FilesPage() {
           <h2 className="text-sm font-semibold text-gray-600">الكيو آر</h2>
           <div className="flex items-center gap-2">
             {msgs["qr"] && <span className={`text-xs px-2 py-1 rounded-lg font-medium ${msgs["qr"].includes("✅") ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}>{msgs["qr"]}</span>}
-            <button onClick={() => saveSection("qr", { qrLink: data.qrLink })} disabled={savingSection === "qr"}
+            <button onClick={() => saveSection("qr", { qrLink: data.qrLink, qrLinkType: data.qrLinkType, qrFile: data.qrFile })} disabled={savingSection === "qr"}
               className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors">
               {savingSection === "qr" ? "جاري..." : "حفظ"}
             </button>
@@ -198,13 +209,59 @@ export default function FilesPage() {
               </button>
             )}
           </div>
-          {/* رابط QR */}
-          <div className="flex-1 min-w-0 w-full flex items-center gap-2">
-            <FiLink className="text-gray-400 shrink-0" size={15} />
-            <input type="text" value={data.qrLink ?? ""}
-              onChange={(e) => setData((p) => ({ ...p, qrLink: e.target.value }))}
-              placeholder="رابط عند الضغط على الكيو آر..."
-              className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
+          {/* رابط أو ملف QR */}
+          <div className="flex-1 min-w-0 w-full space-y-2">
+            <div className="flex gap-4">
+              {["link", "file"].map((t) => (
+                <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
+                  <input type="radio" name="type-qr" value={t}
+                    checked={(data.qrLinkType || "link") === t}
+                    onChange={() => setData((p) => ({ ...p, qrLinkType: t }))}
+                    className="accent-blue-600" />
+                  {t === "link" ? "رابط" : "ملف"}
+                </label>
+              ))}
+            </div>
+            <div className="flex items-start gap-1.5 text-amber-600 bg-amber-50 border border-amber-200 rounded-lg px-3 py-1.5 text-xs w-full">
+              <span className="shrink-0">⚠️</span>
+              <span>مسموح برابط واحد أو ملف واحد فقط — لا يمكن الجمع بينهما</span>
+            </div>
+
+            {(data.qrLinkType || "link") === "link" ? (
+              <div key="qr-link" className="flex items-center gap-2 w-full">
+                <FiLink className="text-gray-400 shrink-0" size={15} />
+                <input type="text" value={data.qrLink ?? ""}
+                  onChange={(e) => setData((p) => ({ ...p, qrLink: e.target.value }))}
+                  placeholder="رابط عند الضغط على الكيو آر..."
+                  className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white" />
+              </div>
+            ) : (
+              <div key="qr-file" className="flex flex-wrap items-center gap-2">
+                <button onClick={() => qrFileRef.current?.click()}
+                  disabled={uploading === "qrFile"}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-blue-50 text-blue-600 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-200 transition-colors disabled:opacity-50 shrink-0">
+                  {uploading === "qrFile"
+                    ? <span className="w-3.5 h-3.5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    : <FiUpload size={13} />}
+                  رفع ملف
+                </button>
+                <input type="file" className="hidden" ref={qrFileRef}
+                  onChange={(e) => e.target.files?.[0] && uploadQrFile(e.target.files[0])} />
+                {data.qrFile && (
+                  <>
+                    <button onClick={() => openFile(data.qrFile)}
+                      className="flex items-center gap-1 text-emerald-600 text-sm hover:underline">
+                      <FiExternalLink size={13} />
+                      عرض الملف
+                    </button>
+                    <button onClick={() => setData((p) => ({ ...p, qrFile: "" }))}
+                      className="text-red-400 hover:text-red-600 text-xs hover:underline">
+                      حذف
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

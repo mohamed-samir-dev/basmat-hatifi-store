@@ -28,7 +28,8 @@ export default async function Footer() {
   }
 
   const qrSrc: string = c.qrImage || "";
-  const qrLink: string = ensureAbsolute(c.qrLink || "");
+  const qrLinkType: string = c.qrLinkType || "link";
+  const qrLink: string = qrLinkType === "file" ? toInlineUrl(c.qrFile || "") : ensureAbsolute(c.qrLink || "");
 
   const footerItems: { image: string; linkType: string; link: string; file: string }[] =
     (c.footerItems || []).filter((item: { image: string }) => item.image);
