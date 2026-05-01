@@ -132,12 +132,7 @@ export default function FilesPage() {
   function updateItem(index: number, field: keyof FooterItem, value: string) {
     setData((p) => {
       const items = [...p.footerItems];
-      const updated = { ...items[index], [field]: value };
-      if (field === "linkType") {
-        if (value === "link") updated.file = "";
-        else updated.link = "";
-      }
-      items[index] = updated;
+      items[index] = { ...items[index], [field]: value };
       return { ...p, footerItems: items };
     });
   }
@@ -379,7 +374,7 @@ export default function FilesPage() {
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                   <input type="radio" name="type-1" value={t}
                     checked={(data.linkType1 || "link") === t}
-                    onChange={() => setData((p) => ({ ...p, linkType1: t, ...(t === "link" ? { file1: "" } : { link1: "" }) }))}
+                    onChange={() => setData((p) => ({ ...p, linkType1: t }))}
                     className="accent-blue-600" />
                   {t === "link" ? "رابط" : "ملف"}
                 </label>
@@ -476,7 +471,7 @@ export default function FilesPage() {
                 <label key={t} className="flex items-center gap-1.5 cursor-pointer text-sm text-gray-600">
                   <input type="radio" name="type-2" value={t}
                     checked={(data.linkType2 || "link") === t}
-                    onChange={() => setData((p) => ({ ...p, linkType2: t, ...(t === "link" ? { file2: "" } : { link2: "" }) }))}
+                    onChange={() => setData((p) => ({ ...p, linkType2: t }))}
                     className="accent-blue-600" />
                   {t === "link" ? "رابط" : "ملف"}
                 </label>
