@@ -33,8 +33,7 @@ export default function PrintOrderPage() {
         const w = contentRef.current.scrollWidth;
         const scale = Math.min(A4_HEIGHT_PX / h, A4_WIDTH_PX / w, 1);
         contentRef.current.style.transform = `scale(${scale})`;
-        contentRef.current.style.transformOrigin = "top left";
-        contentRef.current.style.width = `${100 / scale}%`;
+        contentRef.current.style.transformOrigin = "top center";
       }
       window.print();
     }, 700);
@@ -65,8 +64,10 @@ export default function PrintOrderPage() {
         @media print {
           @page { size: A4 portrait; margin: 0; }
           html, body { margin: 0; padding: 0; width: 210mm; height: 297mm; overflow: hidden; }
+          #print-wrapper { display: flex; justify-content: center; }
         }
       `}</style>
+      <div id="print-wrapper" style={{ display: "flex", justifyContent: "center" }}>
       <div ref={contentRef} style={{ fontFamily: "Arial, sans-serif", padding: "10px 16px", width: "794px", position: "relative" }}>
 
         {company.stamp && (
@@ -202,6 +203,7 @@ export default function PrintOrderPage() {
         )}
 
         {company.footer && <img src={company.footer} alt="footer" style={{ width: "100%", marginTop: 10 }} />}
+      </div>
       </div>
     </>
   );
