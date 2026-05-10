@@ -4,7 +4,7 @@ import ClientLayout from "./components/ClientLayout";
 import Footer from "./components/Footer";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:5000";
-const SITE_URL = "https://basmat-hatify-store.com";
+const SITE_URL = "https://basmathatify.com";
 
 async function getCompany() {
   try {
