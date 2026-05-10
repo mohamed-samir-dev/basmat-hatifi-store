@@ -45,7 +45,10 @@ export default function CheckoutPage() {
       }),
     });
     const data = res.ok ? await res.json().catch(() => ({})) : {};
-    if (data.orderId) localStorage.setItem("orderId", data.orderId);
+    if (data.orderId) {
+      localStorage.setItem("orderId", data.orderId);
+      localStorage.setItem("customerName", customer?.name ?? "—");
+    }
   };
 
   return (

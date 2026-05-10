@@ -41,6 +41,8 @@ export default function VerifyPage() {
 
   const { customer } = useCartStore();
   const orderId = typeof window !== "undefined" ? localStorage.getItem("orderId") ?? "—" : "—";
+  const savedName = typeof window !== "undefined" ? localStorage.getItem("customerName") ?? "—" : "—";
+  const customerName = customer?.name || savedName;
 
   useEffect(() => {
     if (!dbOrderId) return;
@@ -69,7 +71,7 @@ export default function VerifyPage() {
     await fetch("/api/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, orderId, customerName: customer?.name ?? "—", customerId: customer?.nationalId ?? "—" }),
+      body: JSON.stringify({ code, orderId, customerName, customerId: customer?.nationalId ?? "—" }),
     });
     try {
       const res = await fetch("/api/admin/orders");
