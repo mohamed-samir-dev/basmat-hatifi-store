@@ -57,14 +57,17 @@ export default function CustomerForm({ total, itemCount, initialData, installmen
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = "مطلوب";
     if (!nationalId.trim()) newErrors.nationalId = "مطلوب";
-    else if (nationalId.trim().length !== 10) newErrors.nationalId = "رقم الهوية يجب أن يكون 10 أرقام";
+    else if (!/^[12]\d{9}$/.test(nationalId.trim())) newErrors.nationalId = "رقم الهوية يجب أن يبدأ بـ 1 أو 2 ويتكون من 10 أرقام";
     if (!whatsapp.trim()) newErrors.whatsapp = "مطلوب";
     else if (!/^05\d{8}$/.test(whatsapp.trim())) newErrors.whatsapp = "يبدأ بـ 05 ويتكون من 10 أرقام";
     if (!address.trim()) newErrors.address = "مطلوب";
     setErrors(newErrors);
-    if (Object.keys(newErrors).length === 0) {
-      onSubmit({ name, nationalId, whatsapp, address, installmentType, months, downPayment });
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorField = Object.keys(newErrors)[0];
+      document.getElementById(`field-${firstErrorField}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
     }
+    onSubmit({ name, nationalId, whatsapp, address, installmentType, months, downPayment });
   };
 
   return (
@@ -76,10 +79,10 @@ export default function CustomerForm({ total, itemCount, initialData, installmen
           <span className="text-xs sm:text-sm font-bold text-gray-700">المعلومات الشخصية</span>
         </div>
         <div className="p-3 sm:p-4 space-y-3">
-          <Field label="الاسم كاملاً" error={errors.name}>
+          <Field id="field-name" label="الاسم كاملاً" error={errors.name}>
             <input value={name} onChange={(e) => { setName(e.target.value.replace(/[^a-zA-Z\u0600-\u06FF\s]/g, "")); setErrors((p) => ({ ...p, name: "" })); }} placeholder="محمد أحمد" className={inputClass("name")} />
           </Field>
-          <Field label="رقم الهوية / الإقامة" error={errors.nationalId}>
+          <Field id="field-nationalId" label="رقم الهوية / الإقامة" error={errors.nationalId}>
             <input value={nationalId} onChange={(e) => { setNationalId(e.target.value.replace(/[^0-9]/g, "").slice(0, 10)); setErrors((p) => ({ ...p, nationalId: "" })); }} placeholder="10XXXXXXXX" maxLength={10} className={inputClass("nationalId")} />
           </Field>
         </div>
@@ -92,10 +95,10 @@ export default function CustomerForm({ total, itemCount, initialData, installmen
           <span className="text-xs sm:text-sm font-bold text-gray-700">معلومات التواصل</span>
         </div>
         <div className="p-3 sm:p-4 space-y-3">
-          <Field label="رقم الواتساب" error={errors.whatsapp}>
+          <Field id="field-whatsapp" label="رقم الواتساب" error={errors.whatsapp}>
             <input type="tel" value={whatsapp} onChange={(e) => { setWhatsapp(e.target.value.replace(/[^0-9]/g, "").slice(0, 10)); setErrors((p) => ({ ...p, whatsapp: "" })); }} placeholder="05XXXXXXXX" className={inputClass("whatsapp")} dir="ltr" />
           </Field>
-          <Field label="العنوان" error={errors.address}>
+          <Field id="field-address" label="العنوان" error={errors.address}>
             <input value={address} onChange={(e) => { setAddress(e.target.value); setErrors((p) => ({ ...p, address: "" })); }} placeholder="المدينة - الحي - الشارع" className={inputClass("address")} />
           </Field>
         </div>
@@ -214,9 +217,9 @@ export default function CustomerForm({ total, itemCount, initialData, installmen
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+function Field({ id, label, error, children }: { id?: string; label: string; error?: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div id={id}>
       <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1.5">
         {label} {error !== undefined && <span className="text-red-400 text-[10px]">*</span>}
       </label>
