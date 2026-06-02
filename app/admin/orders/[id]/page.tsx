@@ -268,13 +268,21 @@ export default function OrderDetailPage() {
         </Section>
       )}
       {/* زرار الطباعة */}
-      <div className="pb-6 flex justify-center">
+      <div className="pb-6 flex justify-center gap-3 flex-wrap">
         <button
           onClick={() => window.open(`/admin/orders/${id}/invoice`, "_blank")}
           className="px-10 py-3 bg-purple-600 hover:bg-purple-700 text-white text-base font-bold rounded-xl transition-colors flex items-center gap-2 shadow"
         >
           🖨️ طباعة
         </button>
+        {order.status === "cancelled" && (
+          <button
+            onClick={() => window.open(`/admin/orders/${id}/cancellation`, "_blank")}
+            className="px-10 py-3 bg-red-600 hover:bg-red-700 text-white text-base font-bold rounded-xl transition-colors flex items-center gap-2 shadow"
+          >
+            ❌ فاتورة الإلغاء
+          </button>
+        )}
       </div>
 
 

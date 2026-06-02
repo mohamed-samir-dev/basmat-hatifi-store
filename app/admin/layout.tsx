@@ -10,7 +10,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isLogin = pathname === "/admin/login";
-  const isPrint = pathname.endsWith("/print") || pathname.endsWith("/receipt") || pathname.endsWith("/invoice") || pathname.endsWith("/contract");
+  const isPrint = pathname.endsWith("/print") || pathname.endsWith("/receipt") || pathname.endsWith("/invoice") || pathname.endsWith("/contract") || pathname.endsWith("/cancellation");
   const [verified, setVerified] = useState(isLogin || isPrint);
 
   useEffect(() => {
